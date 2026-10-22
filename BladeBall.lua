@@ -1,1 +1,9692 @@
-local _a:any=getgenv()if _a.Visual_Unload then pcall(_a.Visual_Unload)end repeat task.wait()until game:IsLoaded()_a.Unlock_Enabled=(_a.Unlock_Enabled==nil)and false or _a.Unlock_Enabled _G.__TitleState=_G.__TitleState or{Selected=nil}_a.Selected_Finisher=_a.Selected_Finisher or false _a.FinisherEquipped=_a.FinisherEquipped or{}local _b=game:GetService(string.char(80,108,97,121,101,114,115))local _c=game:GetService(string.char(85,115,101,114,73,110,112,117,116,83,101,114,118,105,99,101))local _d=game:GetService(string.char(82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101))local _e=game:GetService(string.char(82,117,110,83,101,114,118,105,99,101))local _f=game:GetService(string.char(68,101,98,114,105,115))local _g=game:GetService(string.char(84,119,101,101,110,83,101,114,118,105,99,101))local _h=game:GetService(string.char(83,116,97,116,115))local _i=_h.Network.ServerStatsItem[string.char(68,97,116,97,32,80,105,110,103)]local _j=0.05 local _k,_l=0.4,0.08 local _m=1.5 local _n,_o,_p,_q=nil,0,0,0 local function _r()local _s=os.clock()if _s-_q<_j then return _p end _q=_s local _t=math.clamp(_i:GetValue(),0,500)if not _n then _n=_t else local _u=_t-_n _n+=_u*(_u>0 and _k or _l)_o+=(math.abs(_u)-_o)*_l end _p=math.clamp(_n+_o*_m,0,500)return _p end local _v=game:GetService(string.char(71,117,105,83,101,114,118,105,99,101))local _w=game:GetService(string.char(76,105,103,104,116,105,110,103))local _x=false local _y=workspace:WaitForChild(string.char(66,97,108,108,115))local _z=workspace:WaitForChild(string.char(65,108,105,118,101))local _A=workspace:WaitForChild(string.char(82,117,110,116,105,109,101))local _B={}local _C=false _B[string.char(71,117,105,83,101,114,118,105,99,101,95,77,101,110,117,79,112,101,110,101,100)]=_v.MenuOpened:Connect(function()_x=true end)_B[string.char(71,117,105,83,101,114,118,105,99,101,95,77,101,110,117,67,108,111,115,101,100)]=_v.MenuClosed:Connect(function()_x=false end)do local _D=Instance.new(string.char(83,99,114,101,101,110,71,117,105))_D.Name=string.char(66,121,116,101,87,97,116,101,114,109,97,114,107)_D.ResetOnSpawn=false _D.IgnoreGuiInset=true _D.DisplayOrder=999 _D.Parent=(typeof(gethui)==string.char(102,117,110,99,116,105,111,110)and gethui())or game:GetService(string.char(67,111,114,101,71,117,105))_D.Enabled=false local _E=Instance.new(string.char(70,114,97,109,101))_E.Size=UDim2.fromOffset(0,32)_E.AutomaticSize=Enum.AutomaticSize.X _E.Position=UDim2.new(0.5,0,0,10)_E.AnchorPoint=Vector2.new(0.5,0)_E.BackgroundColor3=Color3.fromRGB(20,20,20)_E.BackgroundTransparency=0.1 _E.BorderSizePixel=0 _E.Parent=_D local _F=Instance.new(string.char(85,73,76,105,115,116,76,97,121,111,117,116))_F.FillDirection=Enum.FillDirection.Horizontal _F.SortOrder=Enum.SortOrder.LayoutOrder _F.VerticalAlignment=Enum.VerticalAlignment.Center _F.Padding=UDim.new(0,8)_F.Parent=_E local _H=Instance.new(string.char(85,73,80,97,100,100,105,110,103))_H.PaddingLeft=UDim.new(0,10)_H.PaddingRight=UDim.new(0,14)_H.Parent=_E Instance.new(string.char(85,73,67,111,114,110,101,114),_E).CornerRadius=UDim.new(0,6)local _I=Instance.new(string.char(85,73,83,116,114,111,107,101))_I.Color=Color3.fromRGB(50,50,50)_I.Thickness=1 _I.Parent=_E local _J=Instance.new(string.char(73,109,97,103,101,76,97,98,101,108))_J.Size=UDim2.fromOffset(20,20)_J.Position=UDim2.new(0,8,0.5,-10)_J.BackgroundTransparency=1 _J.Image=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,57,53,57,52,51,52,53,54,50,52,54,52,56,51)_J.ScaleType=Enum.ScaleType.Fit _J.Parent=_E local _K=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_K.Size=UDim2.fromOffset(0,32)_K.AutomaticSize=Enum.AutomaticSize.X _K.BackgroundTransparency=1 _K.Text=string.char(66,121,116,101)_K.TextColor3=Color3.new(1,1,1)_K.TextSize=14 _K.Font=Enum.Font.GothamBold _K.TextXAlignment=Enum.TextXAlignment.Left _K.LayoutOrder=2 _K.Parent=_E local _L=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_L.Size=UDim2.fromOffset(0,32)_L.AutomaticSize=Enum.AutomaticSize.X _L.BackgroundTransparency=1 _L.TextColor3=Color3.fromRGB(220,220,220)_L.TextSize=13 _L.Font=Enum.Font.Gotham _L.TextXAlignment=Enum.TextXAlignment.Left _L.LayoutOrder=3 _L.Parent=_E local _M,_N=0,tick()local _O=string.char(76,111,97,100,105,110,103,46,46,46)task.spawn(function()local function _P()local _Q=_b.LocalPlayer:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))if _Q then for _R,_S in ipairs(_Q:GetDescendants())do if _S:IsA(string.char(84,101,120,116,76,97,98,101,108))and _S.Text:find(string.char(83,101,114,118,101,114,32,82,101,103,105,111,110,58))then return string.gsub(_S.Text,string.char(83,101,114,118,101,114,32,82,101,103,105,111,110,58,37,115,42),"")end end end local _T=game:GetService(string.char(67,111,114,101,71,117,105))if _T then for _U,_V in ipairs(_T:GetDescendants())do if _V:IsA(string.char(84,101,120,116,76,97,98,101,108))and _V.Text:find(string.char(83,101,114,118,101,114,32,82,101,103,105,111,110,58))then return string.gsub(_V.Text,string.char(83,101,114,118,101,114,32,82,101,103,105,111,110,58,37,115,42),"")end end end local _W=game.JobId if _W and#_W>0 then return string.upper(string.sub(_W,1,4))end return string.char(85,110,107,110,111,119,110)end _O=_P()end)_B[string.char(87,97,116,101,114,109,97,114,107,95,70,80,83)]=_e.RenderStepped:Connect(function()_M=_M+1 local _X=tick()if _X-_N>=1 then local _Y=0 local _Z=_h.Network.ServerStatsItem:FindFirstChild(string.char(68,97,116,97,32,80,105,110,103))if _Z then _Y=math.floor(_Z:GetValue())end _L.Text=string.format(string.char(37,115,32,124,32,37,100,32,70,80,83,32,124,32,37,100,32,77,83,32,124,32,37,115),os.date(string.char(37,72,58,37,77,58,37,83)),math.floor(_M/(_X-_N)),_Y,_O)_M=0 _N=_X end end)local _ba,_bb,_bc _B[string.char(87,97,116,101,114,109,97,114,107,95,68,114,97,103,83,116,97,114,116)]=_E.InputBegan:Connect(function(_bd)if _bd.UserInputType==Enum.UserInputType.MouseButton1 or _bd.UserInputType==Enum.UserInputType.Touch then _ba,_bb,_bc=true,_bd.Position,_E.Position end end)_B[string.char(87,97,116,101,114,109,97,114,107,95,68,114,97,103,77,111,118,101)]=_c.InputChanged:Connect(function(_be)if _ba and(_be.UserInputType==Enum.UserInputType.MouseMovement or _be.UserInputType==Enum.UserInputType.Touch)then local _bf=_be.Position-_bb _E.Position=UDim2.new(_bc.X.Scale,_bc.X.Offset+_bf.X,_bc.Y.Scale,_bc.Y.Offset+_bf.Y)end end)_B[string.char(87,97,116,101,114,109,97,114,107,95,68,114,97,103,69,110,100)]=_c.InputEnded:Connect(function(_bg)if _bg.UserInputType==Enum.UserInputType.MouseButton1 or _bg.UserInputType==Enum.UserInputType.Touch then _ba=false end end)_a._WatermarkGui=_D end local _bh=string.char(82,101,109,111,116,101)local _bi=0.06 local _bj=0 local _bk=_b.LocalPlayer local _bl=setmetatable({},{__mode=string.char(107)})local _bm=nil local _bn=nil local _bo=nil local _bp=nil local _bq={}do local _br=require(_d.Controllers.AnimationController)local _bs=require(_d.Shared.SwordAPI)local _bt=require(_d.Shared.ReplicatedInstances.Swords)_bq.Parry_Animation=function()local _bu=_bk.Character local _bv=_bu and _bu:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))local _bw=_bv and _bv:FindFirstChildOfClass(string.char(65,110,105,109,97,116,111,114))if not _bw then return end local _bx=_bu:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100))or _bk:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100))if not _bx then return end local _by=_bt:GetSword(_bx)if not _by or _bu~=_bk.Character then return end local _bz={}for _bA,_bB in _bs:GetAnimations(_bu,{string.char(80,97,114,114,121),string.char(71,114,97,98,80,97,114,114,121)},_by.AnimationType,_by.SwordType)do _bz[#_bz+1]=_br:LoadAnimation(_bw,_bB,true)end for _bC,_bD in _br:GetPlayingAnimationTracks(_bw)do local _bE=_bD.Name if _bE==string.char(71,114,97,98,80,97,114,114,121)or _bE==string.char(71,114,97,98)or _bE==string.char(83,117,99,99,101,115,115,80,97,114,114,121)or _bE==string.char(83,117,99,99,101,115,115)then _bD:Stop(_bD:GetAttribute(string.char(83,116,111,112,70,97,100,101,84,105,109,101))or 0.1)end end for _bF,_bG in ipairs(_bz)do local _bH=_bG:GetAttribute(string.char(80,108,97,121,83,112,101,101,100))or 1 _bG.Priority=Enum.AnimationPriority.Action4 _bG.Looped=false _bG:Play(_bG:GetAttribute(string.char(80,108,97,121,70,97,100,101,84,105,109,101))or 0,_bG:GetAttribute(string.char(80,108,97,121,87,101,105,103,104,116))or 1,_bH)_bG.TimePosition=0 _bu:SetAttribute(string.char(80,97,114,114,121,84,105,109,101),math.max(_bu:GetAttribute(string.char(80,97,114,114,121,84,105,109,101))or 0,_bG.Length==0 and 1 or(_bG.Length-_bG.TimePosition)*_bH))end end _B[string.char(80,97,114,114,121,32,65,110,105,109,97,116,105,111,110,32,83,117,99,99,101,115,115)]=_d.Remotes.ParrySuccess.OnClientEvent:Connect(function()if _C then return end local _bI=_bk.Character local _bJ=_bI and _bI:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))local _bK=_bJ and _bJ:FindFirstChildOfClass(string.char(65,110,105,109,97,116,111,114))if not _bK then return end for _bL,_bM in _bK:GetPlayingAnimationTracks()do if _bM.Name==string.char(71,114,97,98,80,97,114,114,121)or _bM.Name==string.char(71,114,97,98)or _bM.Name==string.char(80,97,114,114,121)then _bM:Stop(_bM:GetAttribute(string.char(83,116,111,112,70,97,100,101,84,105,109,101))or 0.1)end end end)end local function _bN(_bO,_bP)return _bO:WaitForChild(_bP,10)end local _bQ=((debug and debug.getupvalues)or getupvalues)(require(_bN(_bN(_bN(_d,string.char(67,111,110,116,114,111,108,108,101,114,115)),string.char(83,119,111,114,100,115,67,111,110,116,114,111,108,108,101,114,32,12)),string.char(80,82,89))))local _bR,_bS,_bT=_bQ[3][3],_bQ[8],game.JobId if _bS:find(string.char(80,65,82,82,89,95,72,65,83,72,95,70,65,75,69),1,true)then _bS=nil end local _bU=table.create(#_bQ[7])for _bV=1,#_bQ[7]do _bU[_bV]=string.char((_bQ[7]:byte(_bV)-32+_bT:byte((_bV-1)%#_bT+1))%95+32)end local _bW=_bN(_bN(_bN(_bN(_bN(_d,string.char(80,97,99,107,97,103,101,115)),string.char(95,73,110,100,101,120)),string.char(115,108,101,105,116,110,105,99,107,95,110,101,116,64,48,46,49,46,48)),string.char(110,101,116)),string.char(82,69,47)..crypt.hash(table.concat(_bU)..string.char(98,100,57,51,97,102,102,102,45,56,97,98,97,45,52,48,57,100,45,57,57,52,54,45,97,56,55,53,102,54,99,51,51,48,56,55).._bT,string.char(115,104,97,50,53,54)))local function _bX()local _bY=_bQ[4](_bR,string.char(84,73,77,69))local _bZ=tostring(math.floor(workspace:GetServerTimeNow()*100))local _ca={}for _cb=1,#_bZ do _ca[_cb]=string.char(bit32.bxor((string.byte(_bZ,_cb)+_cb)%256,string.byte(_bY,(_cb-1)%#_bY+1)))end return table.concat(_ca)end task.spawn(function()local _cc _cc=_d.Packages._Index[string.char(115,108,101,105,116,110,105,99,107,95,110,101,116,64,48,46,49,46,48)].net if not _cc then return end for _cd,_ce in _cc:GetChildren()do if _ce:IsA(string.char(85,110,114,101,108,105,97,98,108,101,82,101,109,111,116,101,69,118,101,110,116))and _ce.Name~=string.char(85,82,69,47,82,101,112,108,105,99,97,116,101,66,97,108,108,80,111,115,105,116,105,111,110)then _B[string.char(82,101,97,108,32,66,97,108,108,32,80,111,115,105,116,105,111,110,32,45,32).._ce.Name]=_ce.OnClientEvent:Connect(function(_cf,_cg)if typeof(_cf)~=string.char(73,110,115,116,97,110,99,101)then return end if not _cf.Parent then _bl[_cf]=nil return end if typeof(_cg)==string.char(86,101,99,116,111,114,51)then _bl[_cf]=_cg end end)end end end)local function _ch(_ci)return _bl[_ci]or _ci.Position end function _bq.Get_Balls(_cj)local _ck={}local _cl=_y if not _cl or _cl.Parent~=workspace then _cl=workspace:FindFirstChild(string.char(66,97,108,108,115))_y=_cl end if not _cl then if _cj then return nil end return _ck end for _cm,_cn in ipairs(_cl:GetChildren())do if _cn:IsA(string.char(66,97,115,101,80,97,114,116))and _cn:GetAttribute(string.char(114,101,97,108,66,97,108,108))==true then if _cj then return _cn end _ck[#_ck+1]=_cn end end if _cj then return nil end return _ck end local _co=nil function _bq.Get_Targeting_Balls()return _co end local _cp=0.5 function _bq.Is_Curved(_cq,_cr,_cs)if _cs:Dot(_cq)<0 then return true end local _ct=_cr.Magnitude if _ct<0.001 then return true end local _cu=_cq.Magnitude if _cu<0.001 then return false end return _cq:Dot(_cr)/(_cu*_ct)<_cp end local _cv=_bk.Name local _cw=nil local _cx=_c.TouchEnabled if _cx then _bh=string.char(82,101,109,111,116,101)end local _cy=Random.new()function _bq.Parry_Data(_cz)local _cA=workspace.CurrentCamera local _cB=_cA.ViewportSize local _cC,_cD if _cx then _cC=_cB.X*0.5 _cD=_cB.Y*0.5 else local _cE=_c:GetMouseLocation()_cC=_cE.X _cD=_cE.Y end _cw={_cC,_cD}local _cF={}local _cG=_bk.Character local _cH=_cG and _cG.PrimaryPart local _cI=_cA.CFrame.Position if not _cH then return{0,CFrame.new(_cI,_cI+_cA.CFrame.LookVector),_cF,_cw}end local _cJ=_cH.Position local _cK=_bk.Name local _cL=nil local _cM=nil local _cN=-math.huge local _cO=_cz==string.char(82,97,110,100,111,109,84,97,114,103,101,116)and{}or nil if _cz==string.char(68,111,116)or _cz==string.char(73,110,115,116,97,68,111,116)then local _cP=_cA:ScreenPointToRay(_cC,_cD)_cL=_cP.Direction end for _cQ,_cR in _z:GetChildren()do local _cS=_cR.PrimaryPart if _cS then local _cT=_cS.Position _cF[_cR.Name]=_cA:WorldToScreenPoint(_cT)if _cR.Name~=_cK then if _cz==string.char(68,111,116)or _cz==string.char(73,110,115,116,97,68,111,116)then local _cU=(_cT-_cI).Unit local _cV=_cL:Dot(_cU)if _cV>_cN then _cN=_cV _cM=_cR end elseif _cz==string.char(82,97,110,100,111,109,84,97,114,103,101,116)then local _cW,_cX=_cA:WorldToScreenPoint(_cT)if _cX then _cO[#_cO+1]={_cR,_cW}end end end end end if _cz==string.char(67,97,109,101,114,97)then return{0,CFrame.new(_cI,_cI+_cA.CFrame.LookVector),_cF,_cw}end if _cz==string.char(66,97,99,107,119,97,114,100)then local _cY=-_cA.CFrame.LookVector*10000 _cY=Vector3.new(_cY.X,0,_cY.Z)return{0,CFrame.new(_cI,_cI+_cY),_cF,_cw}end if _cz==string.char(82,97,110,100,111,109)then return{0,CFrame.new(_cI,Vector3.new(math.random(-3000,3000),math.random(-3000,3000),math.random(-3000,3000))),_cF,_cw}end if _cz==string.char(68,111,116)then local _cZ=(_cM and _cM.PrimaryPart)and _cM.PrimaryPart.Position or(_cJ+_cA.CFrame.LookVector*1000)local _da=CFrame.lookAt(_cJ,_cZ+Vector3.new(0,2,0))return{0,_da,_cF,_cw}end if _cz==string.char(73,110,115,116,97,68,111,116)then local _db=(_cM and _cM.PrimaryPart)and _cM.PrimaryPart.Position or(_cJ+_cA.CFrame.LookVector*1000)local _dc=CFrame.lookAt(_cJ,_db)local _dd=_cA:WorldToScreenPoint(_db)return{0,_dc,_cF,{_dd.X,_dd.Y}}end if _cz==string.char(82,97,110,100,111,109,84,97,114,103,101,116)then local _de if _cO and#_cO>0 then _de=_cO[_cy:NextInteger(1,#_cO)][1]end if _de then local _df=_de.PrimaryPart.Position+Vector3.new(_cy:NextNumber(-1.8,1.8),_cy:NextNumber(-0.6,1.8),_cy:NextNumber(-1.8,1.8))local _dg=_cA:WorldToScreenPoint(_df)return{0,CFrame.new(_cJ,_df),_cF,{_dg.X+_cy:NextNumber(-45,45),_dg.Y+_cy:NextNumber(-45,45)},}end local _dh=Vector3.new(_cy:NextNumber(-3000,3000),_cy:NextNumber(-3000,3000),_cy:NextNumber(-3000,3000))return{0,CFrame.new(_cI,_cI+_dh),_cF,{_cA.ViewportSize.X/2+_cy:NextNumber(-80,80),_cA.ViewportSize.Y/2+_cy:NextNumber(-80,80),},}end return{0,CFrame.new(_cI,_cI+_cA.CFrame.LookVector),_cF,_cw}end local _di={string.char(67,97,108,109,105,110,103,32,68,101,102,108,101,99,116,105,111,110),string.char(82,97,103,105,110,103,32,68,101,102,108,101,99,116,105,111,110),string.char(82,97,112,116,117,114,101),string.char(65,101,114,111,100,121,110,97,109,105,99,32,83,108,97,115,104),string.char(83,108,97,115,104,101,115,32,111,102,32,70,117,114,121),string.char(83,105,110,103,117,108,97,114,105,116,121)}local _dj={string.char(67,97,108,109,105,110,103,32,68,101,102,108,101,99,116,105,111,110),string.char(82,97,103,105,110,103,32,68,101,102,108,101,99,116,105,111,110),string.char(82,97,112,116,117,114,101),string.char(65,101,114,111,100,121,110,97,109,105,99,32,83,108,97,115,104),string.char(70,111,114,99,101,102,105,101,108,100),string.char(83,105,110,103,117,108,97,114,105,116,121),string.char(73,110,118,105,115,105,98,105,108,105,116,121),string.char(84,101,108,101,107,105,110,101,115,105,115),string.char(78,105,110,106,97,32,68,97,115,104),string.char(67,111,110,116,105,110,117,105,116,121,32,90,101,114,111),string.char(73,110,102,105,110,105,116,121),string.char(84,105,109,101,32,72,111,108,101),string.char(68,114,105,98,98,108,101),string.char(83,108,97,115,104,101,115,32,111,102,32,70,117,114,121),string.char(80,104,97,110,116,111,109),string.char(68,114,97,103,111,110,32,83,112,105,114,105,116),string.char(81,117,97,110,116,117,109,32,65,114,101,110,97)}local _dk=_d.Remotes.AbilityButtonPress local function _dl(_dm)local _dn=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))local _do=_dn and _dn:FindFirstChild(string.char(72,111,116,98,97,114))local _dp=_do and _do:FindFirstChild(_dm)return _dp and _dp:FindFirstChildOfClass(string.char(85,73,71,114,97,100,105,101,110,116))end local _dq=false local _dr=0 local _ds=0 local function _dt()for _du,_dv in _y:GetChildren()do if _dv:GetAttribute(string.char(114,101,97,108,66,97,108,108))and _dv:GetAttribute(string.char(116,97,114,103,101,116))==_cv then return _dv end end end local function _dw(_dx)if _dx==_co then _dq=false end _co=_dt()end local _dy={}local _dz=1 local function _dA(_dB)_dy[#_dy+1]=_dB while _dy[1]and _dB-_dy[1]>_dz do table.remove(_dy,1)end end local function _dC(_dD,_dE)local _dF=0 for _dG=#_dy,1,-1 do if _dD-_dy[_dG]>_dE then break end _dF+=1 end return _dF end local _dH=setmetatable({},{__mode=string.char(107)})local function _dI(_dJ)local _dK,_dL=os.clock(),_dJ:GetAttribute(string.char(116,97,114,103,101,116))if not _dL or _dL==''then return end local _dM=_dH[_dJ]if not _dM then _dH[_dJ]={Time=_dK,Target=_dL}return end _dM.Previous,_dM.Time,_dM.Target=_dM.Target,_dK,_dL end local _dN={}_B[string.char(84,97,114,103,101,116,95,66,97,108,108,95,87,97,116,99,104)]=_dN local function _dO(_dP)_dN[_dP]=_dP:GetAttributeChangedSignal(string.char(116,97,114,103,101,116)):Connect(function()_dI(_dP)_dw(_dP)end)_dI(_dP)_dw(_dP)end for _dQ,_dR in _y:GetChildren()do _dO(_dR)end _B[string.char(84,97,114,103,101,116,95,66,97,108,108,95,65,100,100,101,100)]=_y.ChildAdded:Connect(_dO)_B[string.char(84,97,114,103,101,116,95,66,97,108,108,95,82,101,109,111,118,101,100)]=_y.ChildRemoved:Connect(function(_dS)if _dN[_dS]then _dN[_dS]:Disconnect();_dN[_dS]=nil end _dH[_dS]=nil _dw(_dS)end)function _bq.Parry(_dT,_dU)if _bh==string.char(75,101,121,112,114,101,115,115)then local _dV=os.clock()if(_dV-_bj)<_bi then return false end _bj=_dV if not isrbxactive()or _x then _bh=string.char(82,101,109,111,116,101)_bq.Parry(_dT)_bh=string.char(75,101,121,112,114,101,115,115)return true end keypress(0x46)keyrelease(0x46)if _a.Cooldown_Protection and(_dV-_dr)>0.5 then task.delay(0.15,function()if _dq then return end local _dW=_bk.Character local _dX=_dW and _dW:FindFirstChild(string.char(65,98,105,108,105,116,105,101,115))if not _dX then return end for _dY,_dZ in _dj do if _dX:FindFirstChild(_dZ)and _dX[_dZ].Enabled then _dk:Fire()break end end end)end return true end local _ea=_bq.Parry_Data(_dT)_bW:FireServer(_bS,_bR,_bX(),_ea[1],_ea[2],_ea[3],_ea[4],false)if not _dU and not _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]then _bq.Parry_Animation()end if _ds>=7 then return false end _ds+=1 task.delay(0.05,function()if _ds>0 then _ds-=1 end end)end local _eb={Enabled=false,LifetimeMul=1.4,MinLifetime=0.3,LightEmission=1,LightInfluence=0,Color=ColorSequence.new(Color3.new(1,1,1)),Transparency=NumberSequence.new(0)}local _ec={}local _ed={}local _ee={clash=true,Runtime=true}local _ef=setmetatable({},{__mode=string.char(107)})local function _eg(_eh,_ei)if _ei:GetAttribute(string.char(71,108,111,119,66,111,111,115,116,101,100))then return end local _ej={Lifetime=_ei.Lifetime,LightEmission=_ei.LightEmission,LightInfluence=_ei.LightInfluence,Color=_ei.Color,Transparency=_ei.Transparency,}_ei.Lifetime=math.max(_eb.MinLifetime,_ej.Lifetime)*_eb.LifetimeMul _ei.LightEmission=_eb.LightEmission _ei.LightInfluence=_eb.LightInfluence _ei.Color=_eb.Color _ei.Transparency=_eb.Transparency _ei:SetAttribute(string.char(71,108,111,119,66,111,111,115,116,101,100),true)local _ek=_ef[_eh]or{}_ek[_ei]=_ej _ef[_eh]=_ek end local function _el(_em)if not _eb.Enabled then return end if not _em or not _em:IsA(string.char(66,97,115,101,80,97,114,116))then return end if _ec[_em]then return end _ec[_em]=true for _en,_eo in ipairs(_em:GetDescendants())do if _eo:IsA(string.char(84,114,97,105,108))then _eg(_em,_eo)end end if _ed[_em]then _ed[_em]:Disconnect()end _ed[_em]=_em.DescendantAdded:Connect(function(_ep)if _ep:IsA(string.char(84,114,97,105,108))then _eg(_em,_ep)end end)end local function _eq(_er)local _es=_ef[_er]if not _es then return end for _et,_eu in pairs(_es)do if _et and _et.Parent then _et.Lifetime=_eu.Lifetime _et.LightEmission=_eu.LightEmission _et.LightInfluence=_eu.LightInfluence _et.Color=_eu.Color _et.Transparency=_eu.Transparency _et:SetAttribute(string.char(71,108,111,119,66,111,111,115,116,101,100),nil)end end _ef[_er]=nil end local function _ev(_ew)if not _ew then return end if _ed[_ew]then _ed[_ew]:Disconnect()_ed[_ew]=nil end _eq(_ew)for _ex,_ey in ipairs(_ew:GetDescendants())do if(_ey:IsA(string.char(84,114,97,105,108))or _ey:IsA(string.char(66,101,97,109))or _ey:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114)))and _ey:GetAttribute(string.char(67,108,105,101,110,116,71,108,111,119,68,105,115,97,98,108,101,100))then _ey.Enabled=true _ey:SetAttribute(string.char(67,108,105,101,110,116,71,108,111,119,68,105,115,97,98,108,101,100),nil)end end _ec[_ew]=nil end local function _ez()task.spawn(function()local _eA=1500 local _eB=0 for _eC,_eD in ipairs(workspace:GetDescendants())do _eB+=1 if(_eB%_eA)==0 then task.wait()end if not _eb.Enabled then return end if not _eD:GetAttribute(string.char(67,108,105,101,110,116,71,108,111,119,68,105,115,97,98,108,101,100))then local _eE=_eD.Parent local _eF=false while _eE and _eE~=workspace do if _eE.Name==string.char(99,108,97,115,104)or _eE.Name==string.char(82,117,110,116,105,109,101)then _eF=true;break end _eE=_eE.Parent end if _eF then local _eG=pcall(function()_eD.Enabled=false end)if _eG then _eD:SetAttribute(string.char(67,108,105,101,110,116,71,108,111,119,68,105,115,97,98,108,101,100),true)if _eD:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114))then pcall(function()_eD:Clear()end)end end end end end end)end local function _eH()for _eI,_eJ in ipairs({string.char(71,108,111,119,95,68,101,115,99,101,110,100,97,110,116,65,100,100,101,100),string.char(71,108,111,119,95,66,97,108,108,82,101,109,111,118,101,100),string.char(71,108,111,119,95,66,97,108,108,65,100,100,101,100)})do local _eK=_B[_eJ]if _eK then _eK:Disconnect()_B[_eJ]=nil end end end local function _eL()if not _B[string.char(71,108,111,119,95,68,101,115,99,101,110,100,97,110,116,65,100,100,101,100)]then _B[string.char(71,108,111,119,95,68,101,115,99,101,110,100,97,110,116,65,100,100,101,100)]=workspace.DescendantAdded:Connect(function(_eM)if not _eb.Enabled then return end if not _eM:IsA(string.char(84,114,97,105,108))and not _eM:IsA(string.char(66,101,97,109))and not _eM:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114))then return end task.defer(function()if not _eM.Parent then return end local _eN=_eM.Parent while _eN and _eN~=workspace do if _ee[_eN.Name]then _eM.Enabled=false _eM:SetAttribute(string.char(67,108,105,101,110,116,71,108,111,119,68,105,115,97,98,108,101,100),true)if _eM:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114))then _eM:Clear()end return end _eN=_eN.Parent end end)end)end if not _B[string.char(71,108,111,119,95,66,97,108,108,82,101,109,111,118,101,100)]then _B[string.char(71,108,111,119,95,66,97,108,108,82,101,109,111,118,101,100)]=_y.ChildRemoved:Connect(function(_eO)_ev(_eO)end)end if not _B[string.char(71,108,111,119,95,66,97,108,108,65,100,100,101,100)]then _B[string.char(71,108,111,119,95,66,97,108,108,65,100,100,101,100)]=_y.ChildAdded:Connect(function(_eP)task.wait(0.05)_el(_eP)end)end end local function _eQ(_eR)_eb.Enabled=_eR for _eS in pairs(_ec)do _ev(_eS)end if _eR then _eL()for _eT,_eU in ipairs(_y:GetChildren())do _el(_eU)end _ez()else _eH()end end local _eV={}local _eW={}local _eX=Instance.new(string.char(70,111,108,100,101,114))local _eY=Instance.new(string.char(70,111,108,100,101,114))local _fd={Current_User_ID=nil,Cache_User_ID=nil,Default_Description=nil,Original_Captured=false,Applied_Characters={},Preset_Skins={[string.char(72,101,97,100,108,101,115,115)]={Name=string.char(72,101,97,100,108,101,115,115),Description='',Apply=function(_eZ)_eV.SetHeadlessState(_eZ,true)end,Restore=function(_fa)_eV.SetHeadlessState(_fa,false)end},[string.char(75,111,114,98,108,111,120)]={Name=string.char(75,111,114,98,108,111,120,32,68,101,97,116,104,115,112,101,97,107,101,114),Description='',Apply=function(_fb)_eV.SetKorbloxState(_fb,true)end,Restore=function(_fc)_eV.SetKorbloxState(_fc,false)end}},Active_Presets={}}local function _fe(_ff,_fg)if not _ff or not _fg then return false end local _fh={{name=string.char(65,112,112,108,121,68,101,115,99,114,105,112,116,105,111,110),args=function()return{_fg}end},{name=string.char(65,112,112,108,121,68,101,115,99,114,105,112,116,105,111,110,67,108,105,101,110,116,83,101,114,118,101,114),args=function()return{_fg}end},}for _fi,_fj in ipairs(_fh)do local _fk=false _fk=typeof(_ff[_fj.name])==string.char(102,117,110,99,116,105,111,110)if _fk then local _fl=true,(function()_ff[_fj.name](_ff,table.unpack(_fj.args()))end)()if _fl then return true end end end return false end local function _fm(_fn,_fo)for _fp,_fq in pairs(_fn:GetChildren())do if _fq:IsA(string.char(66,97,115,101,80,97,114,116))then local _fr=_fq:FindFirstChild(_fo)if _fr and _fr:IsA(string.char(65,116,116,97,99,104,109,101,110,116))then return _fr end end end return nil end local function _fs(_ft,_fu)local _fv=_fu:FindFirstChild(string.char(72,97,110,100,108,101))if not _fv then _fu.Parent=_ft;return end for _fw,_fx in pairs(_fv:GetChildren())do if _fx:IsA(string.char(87,101,108,100))or _fx:IsA(string.char(77,111,116,111,114,54,68))or _fx:IsA(string.char(87,101,108,100,67,111,110,115,116,114,97,105,110,116))then _fx:Destroy()end end local _fy=_fv:FindFirstChildOfClass(string.char(65,116,116,97,99,104,109,101,110,116))local _fz=_fy and _fm(_ft,_fy.Name)local _fA,_fB,_fC if _fz then _fA=_fz.Parent _fB=_fy.CFrame _fC=_fz.CFrame else _fA=_ft:FindFirstChild(string.char(72,101,97,100))or _ft:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))_fB=CFrame.new()_fC=CFrame.new(0,0.5,0)end if not _fA then _fu.Parent=_ft;return end _fv.Anchored=false _fv.CanCollide=false _fv.Massless=true local _fD=Instance.new(string.char(87,101,108,100))_fD.Name=string.char(83,107,105,110,87,101,108,100)_fD.Part0=_fv _fD.Part1=_fA _fD.C0=_fB _fD.C1=_fC _fD.Parent=_fv _fu.Parent=_ft end local _fE={string.char(72,101,97,100),string.char(84,111,114,115,111),string.char(76,101,102,116,32,65,114,109),string.char(82,105,103,104,116,32,65,114,109),string.char(76,101,102,116,32,76,101,103),string.char(82,105,103,104,116,32,76,101,103)}local function _fF(_fG)return _fG:IsA(string.char(65,99,99,101,115,115,111,114,121))or _fG:IsA(string.char(83,104,105,114,116))or _fG:IsA(string.char(80,97,110,116,115))or _fG:IsA(string.char(83,104,105,114,116,71,114,97,112,104,105,99))or _fG:IsA(string.char(67,104,97,114,97,99,116,101,114,77,101,115,104))or _fG:IsA(string.char(66,111,100,121,67,111,108,111,114,115))end local function _fH(_fI,_fJ)if _fI:IsA(string.char(68,97,116,97,77,111,100,101,108,77,101,115,104))then return true end return _fJ and(_fI:IsA(string.char(68,101,99,97,108))or _fI:IsA(string.char(83,117,114,102,97,99,101,65,112,112,101,97,114,97,110,99,101))or _fI:IsA(string.char(70,97,99,101,67,111,110,116,114,111,108,115)))end local function _fK(_fL)for _fM,_fN in pairs(_fL:GetChildren())do if _fF(_fN)then _fN:Destroy()end end for _fO,_fP in ipairs(_fE)do local _fQ=_fL:FindFirstChild(_fP)if _fQ then for _fR,_fS in pairs(_fQ:GetChildren())do if _fH(_fS,_fP==string.char(72,101,97,100))then _fS:Destroy()end end end end end local function _fT(_fU)local _fV do local _fW=_b:GetHumanoidDescriptionFromUserId(_fU)_fW.DepthScale,_fW.HeadScale,_fW.HeightScale=1,1,1 _fW.ProportionScale,_fW.WidthScale=1,1 _fV=_b:CreateHumanoidModelFromDescription(_fW,Enum.HumanoidRigType.R6)end return _fV end local function _fX(_fY,_fZ,_ga)for _gb,_gc in pairs(_fY:GetChildren())do _gc:Destroy()end local function _gd(_ge,_gf)_ge.Archivable=true local _gg=_ge:Clone()if not _gg then return end if _ga then _gg:SetAttribute(_ga,true)end _gg.Parent=_gf end local _gh={}local function _gi(_gj)if not _gh[_gj]then _gh[_gj]=Instance.new(string.char(70,111,108,100,101,114))_gh[_gj].Name=_gj _gh[_gj].Parent=_fY end return _gh[_gj]end local _gk=_fZ:GetChildren()local _gl=_fZ:FindFirstChild(string.char(82,54))if _gl then for _gm,_gn in pairs(_gl:GetChildren())do table.insert(_gk,_gn)end end for _go,_gp in pairs(_gk)do if _fF(_gp)then _gd(_gp,_fY)elseif _gp:IsA(string.char(68,101,99,97,108))or _gp:IsA(string.char(83,112,101,99,105,97,108,77,101,115,104))then _gd(_gp,_gi(string.char(72,101,97,100)))end end for _gq,_gr in ipairs(_fE)do local _gs=_fZ:FindFirstChild(_gr)if _gs and _gs:IsA(string.char(66,97,115,101,80,97,114,116))then local _gt=_gi(_gr)_gt:SetAttribute(string.char(67,111,108,111,114),_gs.Color)for _gu,_gv in pairs(_gs:GetChildren())do if _fH(_gv,_gr==string.char(72,101,97,100))and _gv.Name~=string.char(75,111,114,98,108,111,120,77,101,115,104)then _gd(_gv,_gt)end end end end end local function _gw(_gx,_gy,_gz)_fK(_gx)for _gA,_gB in pairs(_gy:GetChildren())do if _gB:IsA(string.char(70,111,108,100,101,114))then local _gC=_gx:FindFirstChild(_gB.Name)if _gC and _gC:IsA(string.char(66,97,115,101,80,97,114,116))then local _gD=_gB:GetAttribute(string.char(67,111,108,111,114))if _gD then _gC.Color=_gD end for _gE,_gF in pairs(_gB:GetChildren())do _gF:Clone().Parent=_gC end end else local _gG=_gB:Clone()if _gG:IsA(string.char(65,99,99,101,115,115,111,114,121))then _fs(_gx,_gG)else _gG.Parent=_gx end end end local _gH=_fd.Active_Presets[_gz or _gx]if _gH then for _gI in pairs(_gH)do local _gJ=_fd.Preset_Skins[_gI]if _gJ and _gJ.Apply then _gJ.Apply(_gx)end end end end function _eV.ApplyCustomAvatar(_gK,_gL)if not _gK or not _gL then return false end local _gM=_gK:WaitForChild(string.char(72,117,109,97,110,111,105,100),5)if not _gM then return false end if _gK:GetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100))==_gL then return true end if _gK:GetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100))==nil then _fd.Original_Captured=true,_fX(_eY,_gK)end _gK:SetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100),_gL)if not _fd.Default_Description then local _gN,_gO=true,_gM:GetAppliedDescription()if _gN and _gO then _fd.Default_Description=_gO end end local _gP=_fT(_gL)if not _gP then local _gQ,_gR=true,_b:GetCharacterAppearanceAsync(_gL)if _gQ and _gR and#_gR:GetChildren()>0 then _gP=_gR end end if _gK:GetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100))~=_gL then if _gP then _gP:Destroy()end return false end if _gP then _fd.Cache_User_ID=nil local _gS=true,_fX(_eX,_gP,string.char(95,83,107,105,110,65,118,97,116,97,114))_gP:Destroy()if _gS then _fd.Cache_User_ID=_gL _gw(_gK,_eX)_fd.Applied_Characters[_gK]=_gL return true end end local _gT,_gU=true,_b:GetHumanoidDescriptionFromUserId(_gL)if _gT and _gU then local _gV=false for _gW=1,6 do if _fe(_gM,_gU)then _gV=true break end task.wait()end if _gV then _fd.Applied_Characters[_gK]=_gL return true end end _gK:SetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100),nil)return false end function _eV.RestoreDefaultAvatar(_gX)if not _gX then return end local _gY=_gX:FindFirstChild(string.char(72,117,109,97,110,111,105,100))if not _gY then return end local _gZ=_gX:GetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100))~=nil _gX:SetAttribute(string.char(83,107,105,110,67,104,97,110,103,101,114,95,65,112,112,108,105,101,100),nil)_fd.Applied_Characters[_gX]=nil if not _gZ then return end if _fd.Original_Captured then _gw(_gX,_eY)return end end function _eV.SetHeadlessState(_ha,_hb)if not _ha then return end local _hc=_hb and 1 or 0 local _hd=_ha:FindFirstChild(string.char(72,101,97,100))if _hd then _hd.Transparency=_hc local _he=_hd:FindFirstChildOfClass(string.char(68,101,99,97,108))if _he then _he.Transparency=_hc end end end function _eV.SetKorbloxState(_hf,_hg)if not _hf then return end local _hh=_hf:FindFirstChild(string.char(82,105,103,104,116,32,76,101,103))if not _hh then return end for _hi,_hj in ipairs(_hh:GetChildren())do if _hj:IsA(string.char(83,112,101,99,105,97,108,77,101,115,104))then _hj:Destroy()end end if _hg then local _hk=Instance.new(string.char(83,112,101,99,105,97,108,77,101,115,104))_hk.Name=string.char(75,111,114,98,108,111,120,77,101,115,104)_hk.MeshId=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,57,48,50,57,52,50,48,57,54)_hk.TextureId=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,57,48,50,56,52,51,51,57,56)_hk.Offset=Vector3.new(0,0.7,0)_hk.Parent=_hh end end function _eV.SetPreset(_hl,_hm,_hn)local _ho=_fd.Preset_Skins[_hm]if not _ho then return end _fd.Active_Presets[_hl]=_fd.Active_Presets[_hl]or{}if _hn then if _ho.Apply then _ho.Apply(_hl)_fd.Active_Presets[_hl][_hm]=true end else if _ho.Restore then _ho.Restore(_hl)_fd.Active_Presets[_hl][_hm]=nil if next(_fd.Active_Presets[_hl])==nil then _fd.Active_Presets[_hl]=nil end end end end function _eV.RemoveAllPresets(_hp)local _hq=_fd.Active_Presets[_hp]if _hq then for _hr,_hs in pairs(_hq)do _eV.SetPreset(_hp,_hr,false)end end end function _eV.CreateBillboard(_ht,_hu)if _ht==_bk then return end _hu=_hu or _ht.Character or _ht.CharacterAdded:Wait()local _hv=os.clock()while not _hu:FindFirstChild(string.char(72,101,97,100))and(os.clock()-_hv)<5 do task.wait(0.1)end local _hw=_hu:FindFirstChild(string.char(72,101,97,100))if not _hw then return end if _eW[_ht]then local _hx=_eW[_ht].Parent if _hx then _hx:Destroy()end end local _hy=Instance.new(string.char(66,105,108,108,98,111,97,114,100,71,117,105))_hy.Name=string.char(65,98,105,108,105,116,121,69,83,80)_hy:SetAttribute(string.char(78,111,82,101,110,100,101,114,95,73,103,110,111,114,101),true)_hy.Adornee=_hw _hy.Size=UDim2.new(0,60,0,80)_hy.StudsOffset=Vector3.new(0,3,0)_hy.AlwaysOnTop=true _hy.MaxDistance=600 _hy.Parent=_hw local _hz=Instance.new(string.char(73,109,97,103,101,76,97,98,101,108))_hz.Name=string.char(73,99,111,110)_hz.AnchorPoint=Vector2.new(0.5,0)_hz.Position=UDim2.new(0.5,0,0,0)_hz.Size=UDim2.new(1,0,0.6,0)_hz.BackgroundTransparency=1 _hz.ScaleType=Enum.ScaleType.Fit _hz.Image=''_hz.Visible=false _hz.Parent=_hy local _hA=Instance.new(string.char(85,73,65,115,112,101,99,116,82,97,116,105,111,67,111,110,115,116,114,97,105,110,116))_hA.AspectRatio=1 _hA.DominantAxis=Enum.DominantAxis.Height _hA.Parent=_hz Instance.new(string.char(85,73,67,111,114,110,101,114),_hz).CornerRadius=UDim.new(0,8)local _hB=Instance.new(string.char(70,114,97,109,101))_hB.Name=string.char(86,101,114,115,105,111,110,66,97,100,103,101)_hB.AnchorPoint=Vector2.new(1,0)_hB.Position=UDim2.new(1,5,0,-5)_hB.Size=UDim2.new(0.58,0,0.34,0)_hB.BackgroundColor3=Color3.new(1,1,1)_hB.BorderSizePixel=0 _hB.Visible=false _hB.ZIndex=3 _hB.Parent=_hz Instance.new(string.char(85,73,67,111,114,110,101,114),_hB).CornerRadius=UDim.new(1,0)local _hC=Instance.new(string.char(85,73,71,114,97,100,105,101,110,116))_hC.Rotation=90 _hC.Parent=_hB local _hD=Instance.new(string.char(85,73,83,116,114,111,107,101))_hD.Thickness=1.5 _hD.ApplyStrokeMode=Enum.ApplyStrokeMode.Border _hD.Parent=_hB local _hE=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_hE.Name=string.char(76,97,98,101,108)_hE.AnchorPoint=Vector2.new(0.5,0.5)_hE.Position=UDim2.new(0.5,0,0.5,0)_hE.Size=UDim2.new(0.82,0,0.78,0)_hE.BackgroundTransparency=1 _hE.Text=''_hE.TextColor3=Color3.new(1,1,1)_hE.TextStrokeColor3=Color3.new(0,0,0)_hE.TextStrokeTransparency=0.55 _hE.TextScaled=true _hE.Font=Enum.Font.GothamBlack _hE.ZIndex=4 _hE.Parent=_hB local _hF=Instance.new(string.char(85,73,84,101,120,116,83,105,122,101,67,111,110,115,116,114,97,105,110,116))_hF.MaxTextSize=13 _hF.Parent=_hE local _hG=Instance.new(string.char(70,114,97,109,101))_hG.Name=string.char(66,97,114)_hG.AnchorPoint=Vector2.new(0.5,0)_hG.Position=UDim2.new(0.5,0,0.64,0)_hG.Size=UDim2.new(0.85,0,0.08,0)_hG.BackgroundColor3=Color3.fromRGB(15,15,15)_hG.BackgroundTransparency=0.35 _hG.BorderSizePixel=0 _hG.Visible=false _hG.Parent=_hy Instance.new(string.char(85,73,67,111,114,110,101,114),_hG).CornerRadius=UDim.new(1,0)local _hH=Instance.new(string.char(70,114,97,109,101))_hH.Name=string.char(70,105,108,108)_hH.Size=UDim2.new(1,0,1,0)_hH.BackgroundColor3=Color3.fromRGB(100,220,120)_hH.BorderSizePixel=0 _hH.Parent=_hG Instance.new(string.char(85,73,67,111,114,110,101,114),_hH).CornerRadius=UDim.new(1,0)local _hI=Instance.new(string.char(85,73,71,114,97,100,105,101,110,116))_hI.Rotation=90 _hI.Color=ColorSequence.new(Color3.new(1,1,1),Color3.fromRGB(185,185,185))_hI.Parent=_hH local _hJ=Instance.new(string.char(85,73,83,116,114,111,107,101))_hJ.Name=string.char(71,108,111,119)_hJ.Color=_hH.BackgroundColor3 _hJ.Thickness=1.5 _hJ.Transparency=0.45 _hJ.ApplyStrokeMode=Enum.ApplyStrokeMode.Border _hJ.Parent=_hH local _hK=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_hK.Name=string.char(73,110,102,111)_hK.AnchorPoint=Vector2.new(0.5,0)_hK.Position=UDim2.new(0.5,0,0.76,0)_hK.Size=UDim2.new(1,0,0.22,0)_hK.BackgroundTransparency=1 _hK.Text=''_hK.TextColor3=Color3.fromRGB(255,255,255)_hK.TextStrokeTransparency=0.4 _hK.TextScaled=true _hK.Font=Enum.Font.GothamBold _hK.TextXAlignment=Enum.TextXAlignment.Center _hK.TextYAlignment=Enum.TextYAlignment.Center _hK.Visible=false _hK.Parent=_hy local _hL=Instance.new(string.char(85,73,84,101,120,116,83,105,122,101,67,111,110,115,116,114,97,105,110,116))_hL.MaxTextSize=18 _hL.Parent=_hK _eW[_ht]=_hz end function _eV.SetCustomAvatar(_hM)_fd.Current_User_ID=_hM end function _eV.RestoreCharacter(_hN)_eV.RestoreDefaultAvatar(_hN)_eV.RemoveAllPresets(_hN)end function _eV.Cleanup()for _hO,_hP in pairs(_fd.Applied_Characters)do if _hO and _hO.Parent then _eV.RestoreCharacter(_hO)end end _fd.Applied_Characters={}_fd.Active_Presets={}end local _hQ={Timers=setmetatable({},{__mode=string.char(107)}),Uses=setmetatable({},{__mode=string.char(107)}),}local _hR=35 function _hQ.ClearTimer(_hS)local _hT=_hQ.Timers[_hS]if not _hT then return end _hQ.Timers[_hS]=nil if _hT.Tween then pcall(function()_hT.Tween:Cancel()end)end if _hT.Gui then pcall(function()_hT.Gui:Destroy()end)end end function _hQ.Clear(_hU)local _hV=_hQ.Uses[_hU]if not _hV then return end _hQ.Uses[_hU]=nil if _hV.TimerId then _hQ.ClearTimer(_hV.TimerId)end if _hV.Counter then pcall(function()_hV.Counter:Destroy()end)end if _hV.ScaleTween then pcall(function()_hV.ScaleTween:Cancel()end)end if _hV.PosTween then pcall(function()_hV.PosTween:Cancel()end)end end function _hQ.UpdateTimer(_hW,_hX,_hY)if not _hX or _hX<=0 then _hQ.ClearTimer(_hW)return false end local _hZ for _ia,_ib in ipairs(_y:GetChildren())do if _ib.Name==_hW and not _ib:GetAttribute(string.char(114,101,97,108,66,97,108,108))then _hZ=_ib;break end end if not _hZ then return false end local _ic=_hQ.Timers[_hW]if _ic and _ic.Gui.Adornee~=_hZ then _hQ.ClearTimer(_hW);_ic=nil end if not _ic then local _id=Instance.new(string.char(66,105,108,108,98,111,97,114,100,71,117,105))_id.Name=string.char(70,117,114,121,67,104,97,114,103,101)_id:SetAttribute(string.char(78,111,82,101,110,100,101,114,95,73,103,110,111,114,101),true)_id.AlwaysOnTop=true local _ie=math.max(_hZ.Size.X,_hZ.Size.Y,_hZ.Size.Z)*2.5 _id.Size=UDim2.fromScale(_ie,_ie*0.12)_id.StudsOffset=Vector3.new(0,-_hZ.Size.Y/2-0.5,0)_id.ZIndexBehavior=Enum.ZIndexBehavior.Sibling _id.AlwaysOnTop=true _id.Adornee=_hZ _id.Parent=_hZ local _if=Instance.new(string.char(70,114,97,109,101))_if.Name=string.char(84,114,97,99,107)_if.AnchorPoint=Vector2.new(0.5,0.5)_if.Position=UDim2.fromScale(0.5,0.5)_if.Size=UDim2.fromScale(0.88,1)_if.BackgroundColor3=Color3.fromRGB(15,15,15)_if.BackgroundTransparency=0.35 _if.BorderSizePixel=0 _if.Parent=_id Instance.new(string.char(85,73,67,111,114,110,101,114),_if).CornerRadius=UDim.new(1,0)local _ig=Instance.new(string.char(70,114,97,109,101))_ig.Name=string.char(70,105,108,108)_ig.Size=UDim2.fromScale(1,1)_ig.BackgroundColor3=Color3.fromRGB(255,90,90)_ig.BorderSizePixel=0 _ig.Parent=_if Instance.new(string.char(85,73,67,111,114,110,101,114),_ig).CornerRadius=UDim.new(1,0)local _ih=Instance.new(string.char(85,73,71,114,97,100,105,101,110,116))_ih.Rotation=90 _ih.Color=ColorSequence.new(Color3.new(1,1,1),Color3.fromRGB(185,185,185))_ih.Parent=_ig _ic={Gui=_id,Fill=_ig,Tween=nil}_hQ.Timers[_hW]=_ic end if _ic.Tween then _ic.Tween:Cancel();_ic.Tween=nil end _ic.Fill.Size=UDim2.fromScale(math.clamp(_hX/(_hY or _hX),0,1),1)local _ii=_g:Create(_ic.Fill,TweenInfo.new(_hX,Enum.EasingStyle.Linear),{Size=UDim2.fromScale(0,1)})_ic.Tween=_ii _ii.Completed:Once(function()if _hQ.Timers[_hW]==_ic and _ic.Tween==_ii then _hQ.ClearTimer(_hW)end end)_ii:Play()return true end function _hQ.UpdateCount(_ij,_ik)local _il=_hQ.Uses[_ik]if not _il then return end if _il.Counter and _il.Counter.Adornee~=_ij then _il.Counter:Destroy();_il.Counter=nil end if not _il.Counter then local _im=Instance.new(string.char(66,105,108,108,98,111,97,114,100,71,117,105))_im.Name=string.char(83,79,70,95,67,111,109,98,111,67,111,117,110,116,101,114)_im:SetAttribute(string.char(78,111,82,101,110,100,101,114,95,73,103,110,111,114,101),true)_im.AlwaysOnTop=true _im.Size=UDim2.fromOffset(120,60)_im.StudsOffset=Vector3.new(0,4,0)_im.AlwaysOnTop=true _im.Adornee=_ij _im.Parent=_ij local _in=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_in.Name=string.char(84,101,120,116,76,97,98,101,108)_in.Size=UDim2.fromScale(1,1)_in.BackgroundTransparency=1 _in.Font=Enum.Font.GothamBlack _in.TextScaled=true _in.TextStrokeTransparency=0.2 _in.TextStrokeColor3=Color3.new(0,0,0)_in.TextColor3=Color3.new(1,1,1)_in.Text=string.char(48)_in.Parent=_im local _io=Instance.new(string.char(85,73,83,99,97,108,101))_io.Name=string.char(85,73,83,99,97,108,101)_io.Scale=1 _io.Parent=_in _il.Counter=_im end local _ip=_il.Counter:FindFirstChild(string.char(84,101,120,116,76,97,98,101,108))local _iq=_ip and _ip:FindFirstChild(string.char(85,73,83,99,97,108,101))if not(_ip and _iq)then return end _iq.Scale=1.2 _ip.Text=tostring(_il.Uses)_ip.TextColor3=Color3.new(1,1,1):Lerp(Color3.fromHSV((1-math.min(_il.Uses/_hR,1))*0.16666,1,1),math.min(_il.Uses/5,1))_il.Counter.StudsOffset=Vector3.new(0,4,0)if _il.ScaleTween then _il.ScaleTween:Cancel()end if _il.PosTween then _il.PosTween:Cancel()end _il.ScaleTween=_g:Create(_iq,TweenInfo.new(0.333,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),{Scale=0.6})_il.PosTween=_g:Create(_il.Counter,TweenInfo.new(0.666,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),{StudsOffset=Vector3.new(0,3,0)})_il.ScaleTween:Play()_il.PosTween:Play()end function _hQ.Sync(_ir,_is,_it,_iu,_iv)if not _is or not _it then _hQ.Clear(_ir)return end local _iw=_hQ.Uses[_ir]local _ix=_ir.Character if not _iw or _iw.Character~=_ix then if _iw then _hQ.Clear(_ir)end _iw={Character=_ix,Uses=0,Ball=_iu}_hQ.Uses[_ir]=_iw end _iw.Ball=_iu or _iw.Ball if _it>(_iw.Uses or 0)then _iw.Uses=math.min(_it,_hR)if _iw.Ball and _iw.Ball.Parent then _hQ.UpdateCount(_iw.Ball,_ir)end elseif _it<(_iw.Uses or 0)then _iw.Uses=math.min(_it,_hR)end if _iw.Ball and _iw.Ball.Parent and _iw.Uses>0 and not _iw.TimerId then local _iy=tonumber(_ix and _ix:GetAttribute(string.char(65,98,105,108,105,116,121,68,117,114,97,116,105,111,110)))or 0 local _iz=tonumber(_ix and _ix:GetAttribute(string.char(65,98,105,108,105,116,121,68,117,114,97,116,105,111,110,83,116,97,114,116)))or _iv local _iA=_iy-(_iv-_iz)if _iA>0 and _hQ.UpdateTimer(_iw.Ball.Name,_iA,_hR)then _iw.TimerId=_iw.Ball.Name end end end local _iB=string.char(67,97,109,101,114,97)local _iC=1.1 local _iD=0 local _iE=2 local _iF=8 local _iG=12 local _iH=0.4 local _iI=4 local function _iJ(_iK,_iL,_iM,_iN,_iO)local _iP=_iL.Magnitude local _iQ=_iP>0.001 and math.max(_iK:Dot(_iL/_iP),0)or _iK.Magnitude local _iR=_iQ/(_iE*_iN)if _iR<_iG then _iR=_iG end local _iS=_iQ*_iM/2000 local _iT=(_iF+_iR+_iO)*_iH+_iS if _iT<_iI then _iT=_iI end return _iT end local _iU={}do local _iV=false local _iW,_iX,_iY,_iZ=nil,nil,nil,nil local _ja=nil local _jb=5 local _jc=Vector3.zero local _jd=Vector3.zero local _je=0 local _jf={}local _jg=0 local _jh={PlayerFloor=true,FLOOR=true,INVISIBLE_FLOOR=true}local function _ji(_jj,_jk)if not _jj:IsA(string.char(66,97,115,101,80,97,114,116))then return end if _jk then local _jl=_jf[_jj]if _jl then _jj.CanTouch,_jj.CanQuery,_jj.CanCollide=_jl.CanTouch,_jl.CanQuery,_jl.CanCollide _jf[_jj]=nil else _jj.CanTouch,_jj.CanQuery,_jj.CanCollide=true,true,true end else if not _jf[_jj]then _jf[_jj]={CanTouch=_jj.CanTouch,CanQuery=_jj.CanQuery,CanCollide=_jj.CanCollide}end _jj.CanTouch,_jj.CanQuery,_jj.CanCollide=false,false,false end end local function _jm(_jn,_jo)if not _jn then return false end if _jh[_jn.Name]then return true end local _jp=_jn while _jp and _jp~=workspace do if _jp.Name==string.char(77,97,112)then return true end _jp=_jp.Parent end return _jn:IsA(string.char(66,97,115,101,80,97,114,116))and _jn.CanCollide and math.abs(_jo)>0.7 end local function _jq(_jr,_js)local _jt=RaycastParams.new()_jt.FilterDescendantsInstances={_jr}_jt.FilterType=Enum.RaycastFilterType.Exclude local _ju=workspace:Raycast(_js+Vector3.new(0,10,0),Vector3.new(0,-100,0),_jt)if not _ju or _ju.Distance>60 then return false end return _jm(_ju.Instance,_ju.Normal.Y)end function _iU.Start()if _iV then return end if _a.WantImmortality==false then return end _iV=true _ja,_jc,_jd,_je=nil,Vector3.zero,Vector3.zero,0 pcall(function()setsimulationradius(1e9,1e9)end)local _jv=_bk.Character if _jv then for _jw,_jx in ipairs(_jv:GetDescendants())do _ji(_jx,false)end _iZ=_jv.DescendantAdded:Connect(function(_jy)if _iV then _ji(_jy,false)end end)end _iW=_e.PreSimulation:Connect(function(_jz)if not _iV then return end local _jA=_bk.Character local _jB=_jA and _jA.PrimaryPart if not _jB then return end if not _ja then _ja=_jB.CFrame end local _jC=os.clock()if _jC-_je>=_jg then _je=_jC local _jD=math.random()*math.pi*2 local _jE=_jb*(0.5+0.5*math.random())local _jF=Vector3.new(_jE*math.cos(_jD),0,_jE*math.sin(_jD))_jc=_jq(_jA,_ja.Position+_jF)and _jF or Vector3.zero end _jB.CFrame=CFrame.new(_ja.Position+_jc)*_ja.Rotation end)_iX=_e.Heartbeat:Connect(function()if not _iV then return end local _jG=_bk.Character if not _jG or _jG.Parent~=_z then _iU.Stop();return end local _jH=_jG:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if _jH and _jH.Health<=0 then _iU.Stop();return end local _jI=_jG.PrimaryPart if not _jI then return end if not _ja then _ja,_jc,_jd=_jI.CFrame,Vector3.zero,Vector3.zero return end if _jI.Position.Y<-50 then if _ja.Position.Y>-50 then _jI.CFrame=_ja _jI.AssemblyLinearVelocity=Vector3.zero else _ja=CFrame.new(0,50,0)_jI.CFrame=_ja end return end for _jJ,_jK in ipairs(_jG:GetDescendants())do _ji(_jK,false)end local _jL=_ja.Position+_jc _ja=CFrame.new(_ja.Position+(_jI.Position-_jL))*_jI.CFrame.Rotation end)_iY=_e:BindToRenderStep(string.char(67,97,109,70,105,120),Enum.RenderPriority.Camera.Value-1,function()if not _iV or not _ja then return end local _jM=_bk.Character local _jN=_jM and _jM.PrimaryPart if _jN then _jN.CFrame=_ja end end)end function _iU.Stop()_iV=false if _iW then _iW:Disconnect();_iW=nil end if _iX then _iX:Disconnect();_iX=nil end if _iZ then _iZ:Disconnect();_iZ=nil end pcall(function()_e:UnbindFromRenderStep(string.char(67,97,109,70,105,120))end)local _jO=_bk.Character if _jO then pcall(function()for _jP,_jQ in ipairs(_jO:GetDescendants())do _ji(_jQ,true)end local _jR,_jS=_jO.PrimaryPart,_jO:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if _jR and _ja and _jR.Parent then local _jT=RaycastParams.new()_jT.FilterDescendantsInstances={_jO}_jT.FilterType=Enum.RaycastFilterType.Exclude local _jU=workspace:Raycast(_ja.Position+Vector3.new(0,10,0),Vector3.new(0,-100,0),_jT)if _jU then _ja=CFrame.new(_ja.Position.X,_jU.Position.Y+3,_ja.Position.Z)*_ja.Rotation end _jR.CFrame=_ja _jR.AssemblyLinearVelocity=Vector3.zero _jR.AssemblyAngularVelocity=Vector3.zero end if _jS then _jS:ChangeState(Enum.HumanoidStateType.Running)end end)end _ja,_jc,_jd,_je=nil,Vector3.zero,Vector3.zero,0 table.clear(_jf)end function _iU.SetBaseRadius(_jV)_jb=_jV end function _iU.SetMaxRadius(_jW)end function _iU.SetBaseSpeed(_jX)end function _iU.SetMaxSpeed(_jY)end function _iU.IsEnabled()return _iV end end local _jZ=nil local _ka=string.char(84,80,32,116,111,32,66,97,108,108)local _kb=false local _kc=0 local _kd=5 do local function _ke(_kf)return _kf.Name==string.char(116,114,97,110,115,109,105,115,115,105,111,110,112,97,114,116)or _kf.Name==string.char(109,97,120,84,114,97,110,115,109,105,115,115,105,111,110)end local function _kg(_kh)local _ki=_kh:FindFirstChild(string.char(87,101,108,100,67,111,110,115,116,114,97,105,110,116))if not _ki then return nil end local _kj=_ki.Part1 if not _kj then return nil end local _kk=_kj.Parent if _kk and _kk:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))then return _kk end return nil end _B[string.char(80,104,97,110,116,111,109,95,68,101,116,101,99,116,105,111,110)]=_A.ChildAdded:Connect(function(_kl)if _C then return end if not _ke(_kl)then return end task.defer(function()if not _kl.Parent then return end local _km=_kg(_kl)if not _km then return end local _kn=_bk.Character if not _kn or _km~=_kn then return end _kb=true _kc=os.clock()+_kd if _a.Phantom_Detection and _ka==string.char(84,80,32,116,111,32,66,97,108,108)then local _ko=_bq.Get_Targeting_Balls()if not _ko then _ko=_bq.Get_Balls(true)end if _ko then local _kp=_kn and _kn.PrimaryPart if _kp then local _kq=_ch(_ko)local _kr=(_kp.Position-_kq)if _kr.Magnitude>1 then _kr=_kr.Unit*8 else _kr=Vector3.new(0,0,8)end _kp.CFrame=CFrame.new(_kq+_kr,_kq)end end end task.delay(_kd+0.5,function()if os.clock()>=_kc then _kb=false end end)end)end)end do _B[string.char(65,110,116,105,95,80,117,108,108)]=_A.ChildAdded:Connect(function(_ks)if _C then return end if _ks.Name~=string.char(80,117,108,108)and _ks.Name~=string.char(77,97,120,80,117,108,108)then return end _dq=false end)local function _kt()local _ku=_bk.Character if not _ku then return false end return _ku:FindFirstChild(string.char(70,117,114,121,72,105,103,104,108,105,103,104,116))~=nil end _B[string.char(65,110,116,105,95,70,117,114,121)]=_z.DescendantAdded:Connect(function(_kv)if _C then return end if _kv.Name~=string.char(70,117,114,121,72,105,103,104,108,105,103,104,116)or not _kv:IsA(string.char(72,105,103,104,108,105,103,104,116))then return end local _kw=_bk.Character if not _kw or _kv.Parent~=_kw then return end _dq=false end)_bq.Is_Fury_Target=_kt end local _kx={string.char(73,110,102,105,110,105,116,121),string.char(84,105,109,101,32,72,111,108,101),string.char(68,101,97,116,104,32,83,108,97,115,104),string.char(83,108,97,115,104,101,115,32,111,102,32,70,117,114,121),string.char(83,105,110,103,117,108,97,114,105,116,121),string.char(70,111,114,99,101,102,105,101,108,100),string.char(73,110,118,105,115,105,98,105,108,105,116,121),}local _ky=false _B[string.char(68,101,97,116,104,66,97,108,108)]=_d.Remotes.DeathBall.OnClientEvent:Connect(function(_kz,_kA)if _C then return end _ky=_kA or false end)function _bq.Player_Has_Immortality()local _kB=_bk.Character if not _kB then return false,nil end local _kC=_kB.PrimaryPart if _kC and _kC:FindFirstChild(string.char(83,105,110,103,117,108,97,114,105,116,121,67,97,112,101))then return true,string.char(83,105,110,103,117,108,97,114,105,116,121)end if _ky then return true,string.char(68,101,97,116,104,83,108,97,115,104)end if _kB:GetAttribute(string.char(73,115,73,110,118,105,115,105,98,108,101))then return true,string.char(73,110,118,105,115,105,98,105,108,105,116,121)end local _kD=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))and _bk.PlayerGui:FindFirstChild(string.char(72,111,116,98,97,114))local _kE=_kD and _kD:FindFirstChild(string.char(65,98,105,108,105,116,121))local _kF=_kE and _kE:FindFirstChild(string.char(68,117,114,97,116,105,111,110))local _kG=_kF and _kF:FindFirstChild(string.char(70,105,108,108))local _kH=_kG and _kG:FindFirstChildOfClass(string.char(85,73,71,114,97,100,105,101,110,116))if not _kH then return false,nil end local _kI=_kF.Visible and _kH.Offset.Y<0.920 if not _kI then return false,nil end if _kC and _kC:FindFirstChild(string.char(77,97,120,83,104,105,101,108,100))then return true,string.char(70,111,114,99,101,102,105,101,108,100)end local _kJ=_kB:FindFirstChild(string.char(65,98,105,108,105,116,105,101,115))if _kJ then for _kK,_kL in ipairs(_kx)do local _kM=_kJ:FindFirstChild(_kL)if _kM and _kM.Enabled then return true,_kL end end end return false,nil end local function _kN(_kO)if typeof(_kO)==string.char(82,66,88,83,99,114,105,112,116,67,111,110,110,101,99,116,105,111,110)then _kO:Disconnect()elseif type(_kO)==string.char(116,97,98,108,101)then for _kP,_kQ in pairs(_kO)do _kN(_kQ)end end end function DisconnectAllConnections()for _kR,_kS in pairs(_B)do _kN(_kS)end table.clear(_B)for _kT,_kU in pairs(_ed)do _kN(_kU)end table.clear(_ed)end function Clear_Ball_States()table.clear(_bl)table.clear(_ec)end function UnloadScript()if _a.Visual_Unload==UnloadScript then _a.Visual_Unload=nil end _C=true _a.Parry_On_Fire=nil if _a._WatermarkGui then pcall(function()if _B[string.char(87,97,116,101,114,109,97,114,107,95,70,80,83)]then _B[string.char(87,97,116,101,114,109,97,114,107,95,70,80,83)]:Disconnect()_B[string.char(87,97,116,101,114,109,97,114,107,95,70,80,83)]=nil end _a._WatermarkGui:Destroy()_a._WatermarkGui=nil end)end do if _a._Unlock_RunReverters then _a._Unlock_RunReverters()end end do if _a._Restore_FOV then _a._Restore_FOV()end end do if _a._Destroy_Mobile_Spam then _a._Destroy_Mobile_Spam()end end do if _a._Destroy_Mobile_Triggerbot then _a._Destroy_Mobile_Triggerbot()end end do if _a._DeviceSpoofUnload then _a._DeviceSpoofUnload()end end do if _a._TB_Stop then _a._TB_Stop()_a._TB_Stop=nil end end do if _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,77,111,98,105,108,101)]then pcall(function()_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,77,111,98,105,108,101)]:Disconnect()end)_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,77,111,98,105,108,101)]=nil end end do if _a._NoRender_Stop then pcall(_a._NoRender_Stop)end end do for _kV,_kW in ipairs(workspace:GetChildren())do local _kX,_kY=pcall(function()return _kW:GetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100))end)if _kX and _kY then pcall(function()_kW:SetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100),nil)_kW.Parent=workspace end)end end end do if _a._AntiLag_Stop then _a._AntiLag_Stop()_a._AntiLag_Stop=nil end end local _kZ={string.char(65,117,116,111,95,80,97,114,114,121,95,84,111,103,103,108,101),string.char(65,117,116,111,95,83,112,97,109,95,84,111,103,103,108,101),string.char(77,97,110,117,97,108,95,83,112,97,109,95,84,111,103,103,108,101),string.char(87,97,116,101,114,109,97,114,107,95,84,111,103,103,108,101),string.char(65,110,105,109,97,116,105,111,110,95,70,105,120,95,84,111,103,103,108,101),string.char(67,111,111,108,100,111,119,110,95,80,114,111,116,101,99,116,105,111,110,95,84,111,103,103,108,101),string.char(65,117,116,111,95,65,98,105,108,105,116,121,95,84,111,103,103,108,101),string.char(80,104,97,110,116,111,109,95,68,101,116,101,99,116,105,111,110,95,84,111,103,103,108,101),string.char(70,111,114,99,101,102,105,101,108,100,95,84,111,103,103,108,101),string.char(78,111,95,82,101,110,100,101,114,95,84,111,103,103,108,101),string.char(80,101,114,102,111,114,109,97,110,99,101,95,77,111,100,101,95,84,111,103,103,108,101),string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110,95,84,111,103,103,108,101),string.char(86,105,115,117,97,108,105,122,101,114,95,84,111,103,103,108,101),string.char(66,97,108,108,95,71,108,111,119,95,84,111,103,103,108,101),string.char(72,101,97,100,108,101,115,115,95,79,110,108,121,95,84,111,103,103,108,101),string.char(75,111,114,98,108,111,120,95,79,110,108,121,95,84,111,103,103,108,101),string.char(65,118,97,116,97,114,95,67,104,97,110,103,101,114,95,84,111,103,103,108,101),string.char(85,110,108,111,99,107,95,69,110,97,98,108,101,100,95,84,111,103,103,108,101),string.char(65,98,105,108,105,116,121,95,69,83,80,95,84,111,103,103,108,101),string.char(67,97,109,101,114,97,95,85,110,108,111,99,107,95,84,111,103,103,108,101),string.char(70,79,86,95,84,111,103,103,108,101),string.char(83,104,105,101,108,100,70,88,95,82,97,105,110,98,111,119),string.char(83,104,105,101,108,100,70,88,95,84,111,103,103,108,101),string.char(83,108,97,115,104,70,88,95,82,97,105,110,98,111,119),string.char(83,108,97,115,104,70,88,95,84,111,103,103,108,101),string.char(83,104,111,119,95,87,105,110,115,95,84,111,103,103,108,101),string.char(83,104,111,119,95,75,105,108,108,115,95,84,111,103,103,108,101),string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,84,111,103,103,108,101),string.char(68,97,115,104,95,78,111,67,68,95,84,111,103,103,108,101),string.char(73,109,109,111,114,116,97,108,105,116,121,95,84,111,103,103,108,101),string.char(84,114,105,103,103,101,114,98,111,116,95,84,111,103,103,108,101),string.char(84,114,105,103,103,101,114,98,111,116,95,85,73,95,84,111,103,103,108,101),string.char(77,97,110,117,97,108,95,83,112,97,109,95,85,73,95,84,111,103,103,108,101),}if _bm then for _la,_lb in ipairs(_kZ)do local _lc=(_bm.Toggles and _bm.Toggles[_lb])or(_bm.Options and _bm.Options[_lb])if _lc and _lc.SetValue then _lc:SetValue(false)end end end if _iU and _iU.IsEnabled()then _iU.Stop()end for _ld in pairs(_hQ.Timers)do _hQ.ClearTimer(_ld)end for _le in pairs(_hQ.Uses)do _hQ.Clear(_le)end DisconnectAllConnections()_dq=false Clear_Ball_States()_dr=0 _ds=0 _kb=false _eV.Cleanup()_kc=0 _a.Phantom_Detection=nil for _lf,_lg in pairs(_eW)do local _lh=_lg and _lg.Parent if _lh then _lh:Destroy()end _eW[_lf]=nil end if ClearAbilityESPPlayer then for _li in pairs(AbilityTrackingContext)do ClearAbilityESPPlayer(_li)end end if _a._SOF_Cleanup then pcall(_a._SOF_Cleanup)_a._SOF_Cleanup=nil end if _a._Reveal_Cleanup then pcall(_a._Reveal_Cleanup)_a._Reveal_Cleanup=nil end if _bm then _bm:Unload()_bm=nil end if _bp then _bp:Destroy()_bp=nil end _a.Cooldown_Protection=nil _a.Auto_Ability=nil _a.Animation_Fix=nil _a.ThunderDash_NoCD=nil _a.WantImmortality=nil if _a._PreclickDB_State then _a._PreclickDB_State.Enabled=false _a._PreclickDB_State=nil end if _a._Quasar_State then for _lj,_lk in pairs(_B)do if type(_lj)==string.char(115,116,114,105,110,103)and _lj:sub(1,6)==string.char(81,117,97,115,97,114)then pcall(function()_lk:Disconnect()end)_B[_lj]=nil end end _a._Quasar_State.Enabled_Blind=false _a._Quasar_State.Enabled_Disorient=false _a._Quasar_State=nil end _a.Dash_NoCD=nil end _a.Visual_Unload=UnloadScript local _ll=string.char(104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,118,105,115,101,97,109,110,47,86,105,115,117,97,108,47,109,97,105,110,47)_bm=loadstring(game:HttpGet(_ll..string.char(76,105,98,114,97,114,121,46,108,117,97)))()_bn=loadstring(game:HttpGet(_ll..string.char(84,104,101,109,101,77,97,110,97,103,101,114,46,108,117,97)))()_bo=loadstring(game:HttpGet(_ll..string.char(83,97,118,101,77,97,110,97,103,101,114,46,108,117,97)))()_bp=_bm:CreateWindow({Title=string.char(48,49,49,56),Size=Vector2.new(700,480),Layout=string.char(66,111,116,116,111,109,32,98,97,114),MenuKey=Enum.KeyCode.RightAlt,})local _lm={Main=_bp:AddTab(string.char(77,97,105,110),string.char(104,111,117,115,101)),Client=_bp:AddTab(string.char(86,105,115,117,97,108,115),string.char(101,121,101)),Sword=_bp:AddTab(string.char(83,119,111,114,100,115),string.char(115,119,111,114,100)),UISettings=_bp:CreateSettingsTab(string.char(83,101,116,116,105,110,103,115))}local _ln=_lm.Main:AddLeftGroupbox(string.char(65,117,116,111,32,80,97,114,114,121),string.char(115,104,105,101,108,100))local _lR=_ln:AddToggle(string.char(65,117,116,111,95,80,97,114,114,121,95,84,111,103,103,108,101),{Text=string.char(65,117,116,111,32,80,97,114,114,121),Default=false,Notify=false,Callback=function(_lo)if _lo then _B[string.char(65,117,116,111,32,80,97,114,114,121)]=_e.PreSimulation:Connect(function()local _lp=_bk.Character if not _lp or _lp.Parent~=_z then return end local _lq=_lp.PrimaryPart if not _lq then return end local _lr=_bq.Get_Targeting_Balls()if not _lr then return end local _ls=_lr:FindFirstChild(string.char(122,111,111,109,105,101,115))if not _ls then return end if _dq then return end local _lt=_a._PreclickDB_State and _a._PreclickDB_State.Enabled and _a._PreclickDB_State.On_Player and os.clock()<_a._PreclickDB_State.End_Time local _lu=_ls.VectorVelocity local _lv=_lu-_lq.AssemblyLinearVelocity local _lw=os.clock()-_dr _a.Time_View=_lw local _lx=_lq.Position local _ly=_ch(_lr)local _lz=_lq.Position-_ly local _lA=_lz.Magnitude local _lB=_r()local _lC=_iJ(_lv,_lz,_lB,_iC,_iD)local _lD=_dl(string.char(66,108,111,99,107))local _lE=_dl(string.char(65,98,105,108,105,116,121))if _A:FindFirstChild(string.char(84,111,114,110,97,100,111))then if not _jZ then _jZ=os.clock()end local _lF=(_A.Tornado:GetAttribute(string.char(84,111,114,110,97,100,111,84,105,109,101))or 1)+0.314159 if(os.clock()-_jZ)<_lF then return end _f:AddItem(_A.Tornado,0)_jZ=nil end if _bq.Player_Has_Immortality()then _ds=0 return end local _lG=_lp:FindFirstChild(string.char(65,98,105,108,105,116,105,101,115))local _lH=false local _lI=_a.Phantom_Detection and _kb and _ka==string.char(78,111,114,109,97,108)if(_a.Cooldown_Protection or _lI)and _lD and _lw>0.5 and _lD.Offset.Y<=0.4 and _lA<=_lC then for _lJ,_lK in _dj do local _lL=_lG and _lG:FindFirstChild(_lK)if _lL and _lL.Enabled then _dk:Fire()_lH=true break end end end if not _lH and _a.Auto_Ability and _lE and _lw>0.5 and _lE.Offset.Y==0.5 and _lA<=_lC then for _lM,_lN in _di do local _lO=_lG and _lG:FindFirstChild(_lN)if _lO and _lO.Enabled then _dk:Fire()_lH=true break end end end if _lH then _dq=true task.delay(0.6,function()_dq=false end)return end local _lP=_bq.Is_Fury_Target()or _lt if _lA<=_lC and(_lP or not _bq.Is_Curved(_lz,_lv,_lu))then _bq.Parry(_iB)_dr=os.clock()_dA(_dr)_dq=true task.spawn(function()local _lQ=os.clock()repeat _e.PreSimulation:Wait()until(os.clock()-_lQ)>=0.6 or not _dq _dq=false end)end end)else if _B[string.char(65,117,116,111,32,80,97,114,114,121)]then _B[string.char(65,117,116,111,32,80,97,114,114,121)]:Disconnect()_B[string.char(65,117,116,111,32,80,97,114,114,121)]=nil end end end})_lR:AddKeyPicker(string.char(65,117,116,111,95,80,97,114,114,121,95,75,101,121,98,105,110,100),{Text=string.char(65,117,116,111,32,80,97,114,114,121),Mode=string.char(84,111,103,103,108,101),})_ln:AddDropdown(string.char(80,97,114,114,121,95,77,101,116,104,111,100,95,68,114,111,112,100,111,119,110),{Text=string.char(80,97,114,114,121,32,77,101,116,104,111,100),Values={string.char(82,101,109,111,116,101),string.char(75,101,121,112,114,101,115,115)},Multi=false,Default=1,Callback=function(_lS)if _cx and _lS==string.char(75,101,121,112,114,101,115,115)then _bh=string.char(82,101,109,111,116,101)return end _bh=_lS end})_ln:AddDropdown(string.char(80,97,114,114,121,95,84,121,112,101,95,68,114,111,112,100,111,119,110),{Text=string.char(80,97,114,114,121,32,84,121,112,101),Values={string.char(67,97,109,101,114,97),string.char(68,111,116),string.char(73,110,115,116,97,32,68,111,116),string.char(66,97,99,107,119,97,114,100),string.char(82,97,110,100,111,109),string.char(82,97,110,100,111,109,32,84,97,114,103,101,116)},Multi=false,Default=1,Callback=function(_lT)_iB=(_lT==string.char(82,97,110,100,111,109,32,84,97,114,103,101,116))and string.char(82,97,110,100,111,109,84,97,114,103,101,116)or(_lT==string.char(73,110,115,116,97,32,68,111,116))and string.char(73,110,115,116,97,68,111,116)or _lT if _lR.Notify then _bp:Notify({Title=string.char(80,97,114,114,121,32,84,121,112,101),Content=_lT,Duration=1})end end})_ln:AddSlider(string.char(80,97,114,114,121,95,65,99,99,117,114,97,99,121),{Text=string.char(80,97,114,114,121,32,65,99,99,117,114,97,99,121),Default=100,Min=1,Max=100,Increment=1,Callback=function(_lU)local _lV=(_lU-1)/99 _iH=2.2-_lV*1.8 _iC=0.75+_lV*0.25 end})_ln:AddSlider(string.char(80,97,114,114,121,95,82,97,110,103,101),{Text=string.char(80,97,114,114,121,32,82,97,110,103,101),Default=0,Min=0,Max=10,Increment=1,Callback=function(_lW)_iD=_lW end})do local _lX={Enabled=false,Delay=0,Ignore_Spawn=false,Fired=setmetatable({},{__mode=string.char(107)}),ArmedAt=setmetatable({},{__mode=string.char(107)}),AP_Was_On=false,}local _lY=_lm.Main:AddLeftGroupbox(string.char(84,114,105,103,103,101,114,66,111,116),string.char(99,114,111,115,115,104,97,105,114))local _lZ=0 local _ma=0.003 local _mb=0 local function _mc(_md)local _me=_bk.Character if not _me or _me.Parent~=_z then return false end if not _me.PrimaryPart then return false end if _bq.Player_Has_Immortality()then return false end local _mf=os.clock()if _mf-_lZ<_ma then return false end _lZ=_mf local _mg=_bq.Parry_Data(_iB)_bW:FireServer(_bS,_bR,_bX(),_mg[1],_mg[2],_mg[3],_mg[4],false)if _mf-_mb>=0.05 then _mb=_mf pcall(_bq.Parry_Animation)end if _ds>=15 then return false end _ds+=1 task.delay(0.04,function()if _ds>0 then _ds-=1 end end)return true end local function _mh()if not _lX.Enabled then return end if not _bk.Character or _bk.Character.Parent~=_z then return end local _mi=_lX.Fired local _mj=_lX.ArmedAt local _mk=os.clock()for _ml,_mm in ipairs(_y:GetChildren())do if _mm:IsA(string.char(66,97,115,101,80,97,114,116))then if _mm:GetAttribute(string.char(114,101,97,108,66,97,108,108))then local _mn=_mm:GetAttribute(string.char(116,97,114,103,101,116))if _mn==_cv then if not _mi[_mm]then if not _mj[_mm]then _mj[_mm]=_mk end local _mo=(_lX.Delay<=0)or((_mk-_mj[_mm])>=(_lX.Delay/1000))if _mo then if _lX.Ignore_Spawn then local _mp=_mm:GetAttribute(string.char(102,114,111,109))if _mp and _mp~=''then if _mc(_mm)then _mi[_mm]=true end end else if _mc(_mm)then _mi[_mm]=true end end end end else _mi[_mm]=nil _mj[_mm]=nil end else _mi[_mm]=nil _mj[_mm]=nil end end end if next(_mi)then for _mq in _mi do if not _mq.Parent then _mi[_mq]=nil _mj[_mq]=nil end end end end local _mr=setmetatable({},{__mode=string.char(107)})local function _ms(_mt)if not _lX.Enabled then return end if not _mt or not _mt.Parent or not _mt:IsA(string.char(66,97,115,101,80,97,114,116))then return end if not _mt:GetAttribute(string.char(114,101,97,108,66,97,108,108))then return end if _mt:GetAttribute(string.char(116,97,114,103,101,116))~=_cv then return end if _lX.Fired[_mt]then return end if not _lX.ArmedAt[_mt]then _lX.ArmedAt[_mt]=os.clock()end local _mu=(_lX.Delay<=0)or((os.clock()-_lX.ArmedAt[_mt])>=(_lX.Delay/1000))if not _mu then return end if _lX.Ignore_Spawn then local _mv=_mt:GetAttribute(string.char(102,114,111,109))if not _mv or _mv==''then return end end if _mc(_mt)then _lX.Fired[_mt]=true end end local function _mw(_mx)if not _mx:IsA(string.char(66,97,115,101,80,97,114,116))then return end if _mr[_mx]then return end _mr[_mx]=_mx:GetAttributeChangedSignal(string.char(116,97,114,103,101,116)):Connect(function()_ms(_mx)end)_ms(_mx)end local function _my(_mz)if _mr[_mz]then pcall(function()_mr[_mz]:Disconnect()end)_mr[_mz]=nil end _lX.Fired[_mz]=nil _lX.ArmedAt[_mz]=nil end local function _mA()if _B[string.char(84,114,105,103,103,101,114,98,111,116,95,83,119,101,101,112)]then return end table.clear(_lX.Fired)table.clear(_lX.ArmedAt)_lZ=0 _mb=0 _B[string.char(84,114,105,103,103,101,114,98,111,116,95,83,119,101,101,112)]=_e.RenderStepped:Connect(_mh)_B[string.char(84,114,105,103,103,101,114,98,111,116,95,80,114,101,83,105,109)]=_e.PreSimulation:Connect(_mh)for _mB,_mC in ipairs(_y:GetChildren())do _mw(_mC)end _B[string.char(84,114,105,103,103,101,114,98,111,116,95,66,97,108,108,65,100,100,101,100)]=_y.ChildAdded:Connect(_mw)_B[string.char(84,114,105,103,103,101,114,98,111,116,95,66,97,108,108,82,101,109,111,118,101,100)]=_y.ChildRemoved:Connect(_my)end local function _mD()for _mE,_mF in ipairs({string.char(84,114,105,103,103,101,114,98,111,116,95,83,119,101,101,112),string.char(84,114,105,103,103,101,114,98,111,116,95,80,114,101,83,105,109),string.char(84,114,105,103,103,101,114,98,111,116,95,66,97,108,108,65,100,100,101,100),string.char(84,114,105,103,103,101,114,98,111,116,95,66,97,108,108,82,101,109,111,118,101,100)})do local _mG=_B[_mF]if _mG then pcall(function()_mG:Disconnect()end);_B[_mF]=nil end end for _mH in pairs(_mr)do pcall(function()_mr[_mH]:Disconnect()end)end table.clear(_mr)table.clear(_lX.Fired)table.clear(_lX.ArmedAt)_lZ=0 _mb=0 end _lY:AddToggle(string.char(84,114,105,103,103,101,114,98,111,116,95,84,111,103,103,108,101),{Text=string.char(84,114,105,103,103,101,114,66,111,116),Default=false,Notify=false,Callback=function(_mI)_lX.Enabled=_mI if _mI then _lX.AP_Was_On=_bm.Toggles.Auto_Parry_Toggle and _bm.Toggles.Auto_Parry_Toggle.Value or false if _lX.AP_Was_On then _bm.Toggles.Auto_Parry_Toggle:SetValue(false)end _mA()else _mD()if _lX.AP_Was_On and _bm.Toggles.Auto_Parry_Toggle then _bm.Toggles.Auto_Parry_Toggle:SetValue(true)end _lX.AP_Was_On=false end end}):AddKeyPicker(string.char(84,114,105,103,103,101,114,98,111,116,95,75,101,121,98,105,110,100),{Text=string.char(84,114,105,103,103,101,114,66,111,116),Mode=string.char(84,111,103,103,108,101)})_lY:AddSlider(string.char(84,114,105,103,103,101,114,98,111,116,95,68,101,108,97,121,95,83,108,105,100,101,114),{Text=string.char(68,101,108,97,121,32,40,109,115,41),Default=0,Min=0,Max=200,Increment=1,Callback=function(_mJ)_lX.Delay=_mJ end})_lY:AddToggle(string.char(84,114,105,103,103,101,114,98,111,116,95,73,103,110,111,114,101,95,83,112,97,119,110,95,84,111,103,103,108,101),{Text=string.char(68,111,110,39,116,32,80,97,114,114,121,32,111,110,32,66,97,108,108,32,83,112,97,119,110),Default=false,Callback=function(_mK)_lX.Ignore_Spawn=_mK end})do local _mL=10 local _mM=Instance.new(string.char(83,99,114,101,101,110,71,117,105))_mM.Name=string.char(77,111,98,105,108,101,84,114,105,103,103,101,114,66,111,116,66,117,116,116,111,110)_mM.ResetOnSpawn=false _mM.IgnoreGuiInset=true _mM.DisplayOrder=100 _mM.Enabled=false _mM.Parent=(typeof(gethui)==string.char(102,117,110,99,116,105,111,110)and gethui())or game:GetService(string.char(67,111,114,101,71,117,105))local _mN=Instance.new(string.char(84,101,120,116,66,117,116,116,111,110))_mN.Name=string.char(84,114,105,103,103,101,114,66,111,116)local _mO=math.clamp((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y or 1080)/1080,0.7,1.2)_mN.AnchorPoint=Vector2.new(0.5,0.5)_mN.Position=UDim2.new(1,-140,0.5,-100)_mN.Size=UDim2.fromOffset(180*_mO,80*_mO)_mN.BackgroundColor3=Color3.new(0,0,0)_mN.BackgroundTransparency=0.3 _mN.AutoButtonColor=false _mN.Font=Enum.Font.GothamMedium _mN.TextSize=math.floor(26*_mO)_mN.TextColor3=Color3.new(1,1,1)_mN.Parent=_mM Instance.new(string.char(85,73,67,111,114,110,101,114),_mN).CornerRadius=UDim.new(0,12)local _mP=Instance.new(string.char(85,73,83,116,114,111,107,101))_mP.Thickness=2 _mP.Color=Color3.fromRGB(80,20,20)_mP.ApplyStrokeMode=Enum.ApplyStrokeMode.Border _mP.Parent=_mN local _mQ=0 local _mR=nil local function _mS()task.defer(function()pcall(function()_mN.Text=_lX.Enabled and string.char(79,110)or string.char(79,102,102)if _lX.Enabled then _mN.BackgroundColor3=Color3.fromRGB(30,120,40)_mN.BackgroundTransparency=0.15 _mP.Thickness=2.5 if not _mR then _mR=_e.RenderStepped:Connect(function(_mT)_mQ=(_mQ+_mT*0.5)%1 _mP.Color=Color3.fromHSV(_mQ,0.8,1)end)end else _mN.BackgroundColor3=Color3.fromRGB(100,25,25)_mN.BackgroundTransparency=0.3 _mP.Thickness=2 _mP.Color=Color3.fromRGB(80,20,20)if _mR then _mR:Disconnect()_mR=nil end end end)end)end _mS()_lY:AddToggle(string.char(84,114,105,103,103,101,114,98,111,116,95,85,73,95,84,111,103,103,108,101),{Text=string.char(85,73,32,102,111,114,32,77,111,98,105,108,101),Default=false,Tooltip=string.char(83,104,111,119,115,32,97,32,100,114,97,103,103,97,98,108,101,32,98,117,116,116,111,110,32,116,111,32,116,111,103,103,108,101,32,84,114,105,103,103,101,114,66,111,116),Callback=function(_mU)_mM.Enabled=_mU _mS()end})local _mV,_mW,_mX,_mY=nil,nil,nil,false _B[string.char(77,111,98,105,108,101,95,84,66,95,73,110,112,117,116)]=_mN.InputBegan:Connect(function(_mZ)if _mZ.UserInputType~=Enum.UserInputType.Touch and _mZ.UserInputType~=Enum.UserInputType.MouseButton1 then return end _mV,_mW,_mX,_mY=_mZ,_mZ.Position,_mN.Position,false end)_B[string.char(77,111,98,105,108,101,95,84,66,95,68,114,97,103)]=_c.InputChanged:Connect(function(_na)if not _mV then return end if _na~=_mV and _na.UserInputType~=Enum.UserInputType.MouseMovement then return end local _nb=_na.Position-_mW if not _mY and _nb.Magnitude<_mL then return end _mY=true _mN.Position=UDim2.new(_mX.X.Scale,_mX.X.Offset+_nb.X,_mX.Y.Scale,_mX.Y.Offset+_nb.Y)end)_B[string.char(77,111,98,105,108,101,95,84,66,95,82,101,108,101,97,115,101)]=_c.InputEnded:Connect(function(_nc)if _nc~=_mV then return end _mV=nil if not _mY then _lX.Enabled=not _lX.Enabled if _lX.Enabled then _mA()else _mD()end if _bm.Toggles.Triggerbot_Toggle then _bm.Toggles.Triggerbot_Toggle:SetValue(_lX.Enabled)end _mS()end end)_a._Destroy_Mobile_Triggerbot=function()if _mR then _mR:Disconnect();_mR=nil end for _nd,_ne in ipairs({string.char(77,111,98,105,108,101,95,84,66,95,73,110,112,117,116),string.char(77,111,98,105,108,101,95,84,66,95,68,114,97,103),string.char(77,111,98,105,108,101,95,84,66,95,82,101,108,101,97,115,101)})do if _B[_ne]then _B[_ne]:Disconnect()_B[_ne]=nil end end _mM:Destroy()_a._Destroy_Mobile_Triggerbot=nil end end _a._TB_Stop=_mD end do local _nf={Enabled=false,On_Player=false,End_Time=0,Ball_Reset=0,Chance=0.5,Watch=nil,Rng=Random.new(),Balls=_y,Alive=_z,}local function _ng()local _nh=_cv local _ni=_nf.Balls if not _ni then return nil end local _nj,_nk={},0 for _nl,_nm in ipairs(_ni:GetChildren())do if _nm:GetAttribute(string.char(114,101,97,108,66,97,108,108))and _nm:GetAttribute(string.char(116,97,114,103,101,116))==_nh then local _nn=_nm:FindFirstChild(string.char(122,111,111,109,105,101,115))if _nn and _nn.VectorVelocity.Magnitude>30 then _nj[_nm]=_ch(_nm)_nk+=1 end end end return _nk>0 and _nj or nil end local function _no(_np,_nq)if not _np then return false end for _nr,_ns in pairs(_np)do if _nr.Parent and(_ch(_nr)-_ns).Magnitude>_nq then return true end end return false end local function _nt()local _nu=_bk.Character if not _nu then return false end local _nv=_nu:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))or _nu.PrimaryPart if not _nv then return false end local _nw=_cv local _nx=_nf.Balls if not _nx then return false end local _ny=_nv.Position local _nz=_b:GetPlayers()for _nA,_nB in ipairs(_nx:GetChildren())do if _nB:GetAttribute(string.char(114,101,97,108,66,97,108,108))and _nB:GetAttribute(string.char(116,97,114,103,101,116))==_nw then local _nC=_nB:FindFirstChild(string.char(122,111,111,109,105,101,115))if _nC then local _nD=_nC.VectorVelocity if _nD.Magnitude>30 then local _nE=_ch(_nB)local _nF=_ny-_nE if _nF.Magnitude>0.5 and _nD.Unit:Dot(_nF.Unit)>0.3 then return true end local _nG=false for _nH,_nI in ipairs(_nz)do if _nI~=_bk and _nI.Character then local _nJ=_nI.Character:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _nJ and(_nJ.Position-_nE).Magnitude<6 then _nG=true break end end end if not _nG then return true end end end end end return false end local function _nK()local _nL=os.clock()-_dr if _nL>0.5 then pcall(_bq.Parry_Animation)end _bq.Parry(_iB)_dr=os.clock()end local function _nM(_nN)if not _nf.Enabled or _nN.Name~=string.char(70,65,75,69,95,72,73,71,72,76,73,71,72,84)then return end if _nf.On_Player and os.clock()<_nf.End_Time then return end if _nt()then return end if os.clock()-_nf.Ball_Reset<0.3 then return end if _nf.Rng:NextNumber()>=_nf.Chance then return end local _nO=_ng()task.delay(0.03,function()if not _nf.Enabled or not _nN.Parent then return end if _no(_nO,4)then return end _nf.On_Player=true _nf.End_Time=math.max(_nf.End_Time,os.clock()+2)_nK()end)end local function _nP(_nQ)if _nf.Watch then _nf.Watch:Disconnect();_nf.Watch=nil end if not _nQ then return end _nf.Watch=_nQ.ChildAdded:Connect(_nM)local _nR=_nQ:FindFirstChild(string.char(70,65,75,69,95,72,73,71,72,76,73,71,72,84))if _nR then task.spawn(_nM,_nR)end end local function _nS()if _nf.Enabled then return end _nf.Enabled=true _nP(_bk.Character)_B[string.char(80,114,101,99,108,105,99,107,68,66,95,67,104,97,114)]=_bk.CharacterAdded:Connect(_nP)_B[string.char(80,114,101,99,108,105,99,107,68,66,95,66,97,108,108,65,100,100)]=_y.ChildAdded:Connect(function(_nT)_nf.Ball_Reset=os.clock()_B[string.char(80,114,101,99,108,105,99,107,68,66,95).._nT.Name..tostring(_nT:GetDebugId())]=_nT:GetAttributeChangedSignal(string.char(116,97,114,103,101,116)):Connect(function()_nf.Ball_Reset=os.clock()end)end)for _nU,_nV in ipairs(_y:GetChildren())do _nf.Ball_Reset=os.clock()end end local function _nW()_nf.Enabled=false _nf.On_Player=false _nf.End_Time=0 if _nf.Watch then _nf.Watch:Disconnect();_nf.Watch=nil end for _nX,_nY in pairs(_B)do if type(_nX)==string.char(115,116,114,105,110,103)and _nX:sub(1,11)==string.char(80,114,101,99,108,105,99,107,68,66,95)then pcall(function()_nY:Disconnect()end)_B[_nX]=nil end end end _a._PreclickDB_State=_nf local _nZ=_lm.Main:AddLeftGroupbox(string.char(80,114,101,99,108,105,99,107,32,68,114,105,98,98,108,101),string.char(104,97,110,100))local _ob=_nZ:AddToggle(string.char(80,114,101,99,108,105,99,107,95,68,66,95,84,111,103,103,108,101),{Text=string.char(80,114,101,99,108,105,99,107,32,68,114,105,98,98,108,101),Default=false,Notify=false,Callback=function(_oa)if _oa then _nS()else _nW()end end,})_ob:AddKeyPicker(string.char(80,114,101,99,108,105,99,107,95,68,66,95,75,101,121,98,105,110,100),{Text=string.char(80,114,101,99,108,105,99,107,32,68,114,105,98,98,108,101),Mode=string.char(84,111,103,103,108,101)})_nZ:AddSlider(string.char(80,114,101,99,108,105,99,107,95,68,66,95,67,104,97,110,99,101),{Text=string.char(67,104,97,110,99,101,32,40,37,41),Default=50,Min=0,Max=100,Increment=5,Callback=function(_oc)_nf.Chance=_oc/100 end,})_nZ:AddSlider(string.char(80,114,101,99,108,105,99,107,95,68,66,95,68,101,108,97,121),{Text=string.char(67,111,110,102,105,114,109,32,68,101,108,97,121,32,40,109,115,41),Default=30,Min=10,Max=120,Increment=5,Callback=function(_od)_nf.ConfirmDelay=_od/1000 end,})end local _oe=_lm.Main:AddRightGroupbox(string.char(67,108,97,115,104,105,110,103),string.char(115,113,117,97,114,101,45,109,111,117,115,101,45,112,111,105,110,116,101,114))local _of,_og=8,40 local _oh=0.12 local _oi=3 local _oj={{Window=0.6,Lead=0.12},{Window=0.5,Lead=0.10},{Window=0.4,Lead=0.08},}local _ok=_oj[2]local _ol,_om=0,0 local _on=nil local _oo=0.7 local function _op(_oq,_or,_os,_ot,_ou,_ov,_ow)if not _or or _oq.Parent~=_y or not _oq:GetAttribute(string.char(114,101,97,108,66,97,108,108))then return string.char(108,101,97,118,101)end local _ox=_ok if _ow then if _ov-_or.Time>_ox.Window then return string.char(108,101,97,118,101)end elseif _dC(_ov,_ox.Window)<_oi then return string.char(108,101,97,118,101)end if _or.Target~=_cv and _or.Previous~=_cv then return string.char(108,101,97,118,101)end local _oy=_oq:FindFirstChild(string.char(122,111,111,109,105,101,115))if not _oy then return string.char(108,101,97,118,101)end local _oz=_oy.VectorVelocity local _oA=_os.Position-_ch(_oq)local _oB=Vector3.new(_oA.X,0,_oA.Z)if _oB.Magnitude>0.001 and _ot:Dot(_oB.Unit)>_oo then return string.char(108,101,97,118,101)end if _or.Target==_cv and _bq.Is_Curved(_oA,_oz-_os.AssemblyLinearVelocity,_oz)then return string.char(112,97,117,115,101)end local _oC=math.min(_of+_oz.Magnitude*(_ou/2000+_ox.Lead),_og)return _oA.Magnitude<=_oC and string.char(115,112,97,109)or string.char(105,100,108,101)end local _oO=_oe:AddToggle(string.char(65,117,116,111,95,83,112,97,109,95,84,111,103,103,108,101),{Text=string.char(65,117,116,111,32,83,112,97,109),Default=false,Notify=false,Callback=function(_oD)_kN(_B[string.char(65,117,116,111,32,83,112,97,109)])_B[string.char(65,117,116,111,32,83,112,97,109)]=nil _ol,_on=0,nil if not _oD then return end local function _oE()local _oF=_bk.Character if not _oF or _oF.Parent~=_z then return end local _oG=_oF.PrimaryPart if not _oG then return end if _bq.Player_Has_Immortality()then _ds=0 _ol,_on=0,nil return end local _oH,_oI=os.clock(),_r()local _oJ=_oF:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))local _oK=_oJ and _oJ.MoveDirection or Vector3.zero if _on then local _oL=_op(_on,_dH[_on],_oG,_oK,_oI,_oH,true)if _oL==string.char(115,112,97,109)then _ol=_oH+_oh elseif _oL==string.char(112,97,117,115,101)then _ol=0 elseif _oL==string.char(108,101,97,118,101)then _ol,_on=0,nil table.clear(_dy)return end end if not _on then for _oM,_oN in _dH do if _op(_oM,_oN,_oG,_oK,_oI,_oH,false)==string.char(115,112,97,109)then _on,_ol=_oM,_oH+_oh break end end end if _oH>=_ol then return end _bq.Parry(_iB,_oH-_om<_oh)_om=_oH if _a.Animation_Fix and _bh~=string.char(75,101,121,112,114,101,115,115)and not _cx then pcall(function()keypress(0x46)keyrelease(0x46)end)end end _B[string.char(65,117,116,111,32,83,112,97,109)]={_e.PreSimulation:Connect(_oE),_e.PostSimulation:Connect(_oE),}end})_oO:AddKeyPicker(string.char(65,117,116,111,95,83,112,97,109,95,75,101,121,98,105,110,100),{Text=string.char(65,117,116,111,32,83,112,97,109),Mode=string.char(84,111,103,103,108,101),})_oe:AddSlider(string.char(65,117,116,111,95,83,112,97,109,95,84,104,114,101,115,104,111,108,100,95,83,108,105,100,101,114),{Text=string.char(84,104,114,101,115,104,111,108,100),Tooltip=string.char(49,32,61,32,102,97,115,116,44,32,50,32,61,32,109,105,100,44,32,51,32,61,32,115,108,111,119),Min=1,Max=3,Default=2,Increment=1,Callback=function(_oP)_ok=_oj[_oP]or _oj[2]end,})local _oQ do local _oR=10 local _oS=Instance.new(string.char(83,99,114,101,101,110,71,117,105))_oS.Name=string.char(77,111,98,105,108,101,83,112,97,109,66,117,116,116,111,110)_oS.ResetOnSpawn=false _oS.IgnoreGuiInset=true _oS.DisplayOrder=100 _oS.Enabled=false _oS.Parent=(typeof(gethui)==string.char(102,117,110,99,116,105,111,110)and gethui())or game:GetService(string.char(67,111,114,101,71,117,105))local _oT=Instance.new(string.char(84,101,120,116,66,117,116,116,111,110))_oT.Name=string.char(83,112,97,109)local _oU=math.clamp((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y or 1080)/1080,0.7,1.2)_oT.AnchorPoint=Vector2.new(0.5,0.5)_oT.Position=UDim2.new(1,-140,0.5,0)_oT.Size=UDim2.fromOffset(180*_oU,80*_oU)_oT.BackgroundColor3=Color3.new(0,0,0)_oT.BackgroundTransparency=0.3 _oT.AutoButtonColor=false _oT.Font=Enum.Font.GothamMedium _oT.TextSize=math.floor(26*_oU)_oT.TextColor3=Color3.new(1,1,1)_oT.Parent=_oS Instance.new(string.char(85,73,67,111,114,110,101,114),_oT).CornerRadius=UDim.new(0,12)local _oV=Instance.new(string.char(85,73,83,116,114,111,107,101))_oV.Thickness=2 _oV.Color=Color3.fromRGB(80,20,20)_oV.ApplyStrokeMode=Enum.ApplyStrokeMode.Border _oV.Parent=_oT local _oW=0 local _oX=nil local function _oY()local _oZ=false if _bm and _bm.Toggles and _bm.Toggles.Manual_Spam_Toggle then _oZ=_bm.Toggles.Manual_Spam_Toggle.Value==true else _oZ=_B[string.char(77,97,110,117,97,108,32,83,112,97,109)]~=nil end task.defer(function()pcall(function()_oT.Text=_oZ and string.char(79,110)or string.char(79,102,102)if _oZ then _oT.BackgroundColor3=Color3.fromRGB(30,120,40)_oT.BackgroundTransparency=0.15 _oV.Thickness=2.5 if not _oX then _oX=_e.RenderStepped:Connect(function(_pa)_oW=(_oW+_pa*0.5)%1 _oV.Color=Color3.fromHSV(_oW,0.8,1)end)end else _oT.BackgroundColor3=Color3.fromRGB(100,25,25)_oT.BackgroundTransparency=0.3 _oV.Thickness=2 _oV.Color=Color3.fromRGB(80,20,20)if _oX then _oX:Disconnect()_oX=nil end end end)end)end local function _pb()if _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]then return end _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]=_e.PreRender:Connect(function()local _pc=_bk.Character if not _pc or _pc.Parent~=_z then return end local _pd=_bq.Get_Balls(true)if not _pd or not _pd:FindFirstChild(string.char(122,111,111,109,105,101,115))then return end _bq.Parry(_iB)if _a.Animation_Fix and _bh~=string.char(75,101,121,112,114,101,115,115)and not _cx then pcall(function()keypress(0x46)keyrelease(0x46)end)end end)_oY()end local function _pe()if _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]then _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]:Disconnect()_B[string.char(77,97,110,117,97,108,32,83,112,97,109)]=nil end _oY()end _oY()_oQ=_oe:AddToggle(string.char(77,97,110,117,97,108,95,83,112,97,109,95,84,111,103,103,108,101),{Text=string.char(77,97,110,117,97,108,32,83,112,97,109),Default=false,Notify=false,Tooltip=string.char(79,110,32,109,111,98,105,108,101,32,116,104,105,115,32,115,104,111,119,115,32,116,104,101,32,115,112,97,109,32,98,117,116,116,111,110,32,105,110,115,116,101,97,100,32,111,102,32,115,112,97,109,109,105,110,103),Callback=function(_pf)if _pf then _pb()else _pe()end _oY()end})_oQ:AddKeyPicker(string.char(77,97,110,117,97,108,95,83,112,97,109,95,75,101,121,98,105,110,100),{Text=string.char(77,97,110,117,97,108,32,83,112,97,109),Mode=string.char(84,111,103,103,108,101),})_oe:AddToggle(string.char(77,97,110,117,97,108,95,83,112,97,109,95,85,73,95,84,111,103,103,108,101),{Text=string.char(77,97,110,117,97,108,32,83,112,97,109,32,85,73,32,102,111,114,32,77,111,98,105,108,101),Default=false,Tooltip=string.char(83,104,111,119,115,32,97,32,100,114,97,103,103,97,98,108,101,32,98,117,116,116,111,110,32,116,111,32,116,111,103,103,108,101,32,77,97,110,117,97,108,32,83,112,97,109),Callback=function(_pg)_oS.Enabled=_pg _oY()end})local _ph,_pi,_pj,_pk=nil,nil,nil,false _oT.InputBegan:Connect(function(_pl)if _pl.UserInputType~=Enum.UserInputType.Touch and _pl.UserInputType~=Enum.UserInputType.MouseButton1 then return end _ph,_pi,_pj,_pk=_pl,_pl.Position,_oT.Position,false end)_B[string.char(77,111,98,105,108,101,95,83,112,97,109,95,68,114,97,103)]=_c.InputChanged:Connect(function(_pm)if not _ph then return end if _pm~=_ph and _pm.UserInputType~=Enum.UserInputType.MouseMovement then return end local _pn=_pm.Position-_pi if not _pk and _pn.Magnitude<_oR then return end _pk=true _oT.Position=UDim2.new(_pj.X.Scale,_pj.X.Offset+_pn.X,_pj.Y.Scale,_pj.Y.Offset+_pn.Y)end)_B[string.char(77,111,98,105,108,101,95,83,112,97,109,95,82,101,108,101,97,115,101)]=_c.InputEnded:Connect(function(_po)if _po~=_ph then return end _ph=nil if not _pk then if _bm.Toggles.Manual_Spam_Toggle then _bm.Toggles.Manual_Spam_Toggle:SetValue(not _bm.Toggles.Manual_Spam_Toggle.Value)elseif _B[string.char(77,97,110,117,97,108,32,83,112,97,109)]then _pe()else _pb()end end end)_a._Destroy_Mobile_Spam=function()if _oX then _oX:Disconnect();_oX=nil end _oS:Destroy()_a._Destroy_Mobile_Spam=nil end end _oe:AddDivider()local _pq=_oe:AddToggle(string.char(65,110,105,109,97,116,105,111,110,95,70,105,120,95,84,111,103,103,108,101),{Text=string.char(65,110,105,109,97,116,105,111,110,32,70,105,120),Default=false,Callback=function(_pp)_a.Animation_Fix=_pp end})local _pr=_lm.Main:AddRightGroupbox(string.char(80,104,97,110,116,111,109,32,68,101,116,101,99,116,105,111,110),string.char(103,104,111,115,116))_pr:AddToggle(string.char(80,104,97,110,116,111,109,95,68,101,116,101,99,116,105,111,110,95,84,111,103,103,108,101),{Text=string.char(80,104,97,110,116,111,109,32,68,101,116,101,99,116,105,111,110),Default=false,Notify=false,Callback=function(_ps)_a.Phantom_Detection=_ps end})_pr:AddDropdown(string.char(80,104,97,110,116,111,109,95,68,101,116,101,99,116,105,111,110,95,77,111,100,101,95,68,114,111,112,100,111,119,110),{Text=string.char(80,104,97,110,116,111,109,32,77,111,100,101),Values={string.char(84,80,32,116,111,32,66,97,108,108),string.char(78,111,114,109,97,108)},Multi=false,Default=1,Callback=function(_pt)if _pt and _pt~=''then _ka=_pt end end})local _pu=_lm.Main:AddRightGroupbox(string.char(65,98,105,108,105,116,105,101,115),string.char(115,104,105,101,108,100,45,97,108,101,114,116))local _pw=_pu:AddToggle(string.char(65,117,116,111,95,65,98,105,108,105,116,121,95,84,111,103,103,108,101),{Text=string.char(65,117,116,111,32,65,98,105,108,105,116,105,101,115),Default=false,Notify=false,Callback=function(_pv)_a.Auto_Ability=_pv end})_pw:AddKeyPicker(string.char(65,117,116,111,95,65,98,105,108,105,116,121,95,75,101,121,98,105,110,100),{Text=string.char(65,117,116,111,32,65,98,105,108,105,116,105,101,115),Mode=string.char(84,111,103,103,108,101),})local _py=_pu:AddToggle(string.char(67,111,111,108,100,111,119,110,95,80,114,111,116,101,99,116,105,111,110,95,84,111,103,103,108,101),{Text=string.char(67,111,111,108,100,111,119,110,32,80,114,111,116,101,99,116,105,111,110),Default=false,Notify=false,Callback=function(_px)_a.Cooldown_Protection=_px end})_py:AddKeyPicker(string.char(67,111,111,108,100,111,119,110,95,80,114,111,116,101,99,116,105,111,110,95,75,101,121,98,105,110,100),{Text=string.char(67,111,111,108,100,111,119,110,32,80,114,111,116,101,99,116,105,111,110),Mode=string.char(84,111,103,103,108,101),})_pu:AddToggle(string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,84,111,103,103,108,101),{Text=string.char(84,104,117,110,100,101,114,32,68,97,115,104,32,78,111,45,67,68),Default=false,Callback=function(_pz)_a.ThunderDash_NoCD=_pz if _pz then pcall(function()local _pA=require(_d.Shared.Abilities)local _pB=_pA.All[string.char(84,104,117,110,100,101,114,32,68,97,115,104)]if _pB then _a._TD_OrigCD=_pB.cooldown _a._TD_OrigReduction=_pB.cooldownReductionPerUpgrade _pB.cooldown=0.1 _pB.cooldownReductionPerUpgrade=0 end if _pA.getAbilityCooldown and not _a._TD_OrigGetCD then _a._TD_OrigGetCD=_pA.getAbilityCooldown _pA.getAbilityCooldown=function(_pC,_pD,_pE)if _a.ThunderDash_NoCD and _pD==string.char(84,104,117,110,100,101,114,32,68,97,115,104)then return 0.1 end if _a.Dash_NoCD and _pD==string.char(68,97,115,104)then return 0.1 end return _a._TD_OrigGetCD(_pC,_pD,_pE)end end end)_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68)]=_e.Heartbeat:Connect(function()if not _a.ThunderDash_NoCD then return end local _pF=_bk.Character if not _pF then return end pcall(function()_pF:SetAttribute(string.char(67,111,111,108,100,111,119,110,69,120,112,105,114,97,116,105,111,110),0)end)pcall(function()local _pG=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))and _bk.PlayerGui:FindFirstChild(string.char(72,111,116,98,97,114))local _pH=_pG and _pG:FindFirstChild(string.char(65,98,105,108,105,116,121))if _pH then local _pI=_pH:FindFirstChild(string.char(82,101,100))if _pI then _pI.Visible=false end end end)end)local _pJ pcall(function()local _pK=_d.Shared:FindFirstChild(string.char(80,108,97,99,101,71,104,111,115,116))if _pK then _pJ=require(_pK)end end)_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,73,110,112,117,116)]=_c.InputBegan:Connect(function(_pL,_pM)if _pM then return end if not _a.ThunderDash_NoCD then return end local _pN=false pcall(function()local _pO=_d:FindFirstChild(string.char(67,111,110,116,114,111,108,108,101,114,115))if _pO then local _pP,_pQ=pcall(require,_pO:FindFirstChild(string.char(83,101,116,116,105,110,103,115,67,111,110,116,114,111,108,108,101,114)))if _pP and _pQ and _pQ.UseBind then local _pR,_pS=pcall(_pQ.UseBind,_pQ,_pL,string.char(65,98,105,108,105,116,121))if _pR and _pS then _pN=true end end end end)if not _pN and _pL.KeyCode==Enum.KeyCode.Q then _pN=true end if not _pN then return end local _pT=_bk.Character if not _pT or _pT.Parent~=_z then return end local _pU=_pT:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))local _pV=_pT:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if not _pU or not _pV then return end if _pV.MoveDirection==Vector3.zero then return end local _pW=0 pcall(function()local _pX=require(_d.Shared.AbilityUtils)_pW=_pX.getAbilityUpgrade(_bk,string.char(84,104,117,110,100,101,114,32,68,97,115,104))or 0 end)local _pY=_pU.Position local _pZ=_pW<2 and Color3.fromRGB(255,246,120)or Color3.fromRGB(179,0,255)if _pJ then pcall(_pJ,_pT,{lifetime=1,animationDelay=0.5,color=_pZ})end task.spawn(function()task.wait(0.05)local _qa=_pU.Position if(_qa-_pY).Magnitude<2 then return end pcall(function()local _qb=_d.Shared.Abilities:FindFirstChild(string.char(84,104,117,110,100,101,114,32,68,97,115,104))if not _qb then return end local _qc=_qb:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104))if _qc then local _qd=_qc:Clone()_qd.Anchored=true _qd.Position=_qa pcall(function()_qd.WeldConstraint:Destroy()end)_qd.Parent=_A if _pW>=2 then _qd.Attachment.L1.Color=ColorSequence.new(Color3.fromRGB(179,0,255))end _qd.Attachment.L1:Emit(10)_qd.sound1:Play()if _pW>=2 then _qd.sound2.PlaybackSpeed=1.5 end _qd.sound2:Play()_f:AddItem(_qd,3)end local _qe=_qb:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104,65,100,100,111,110))if _qe then local _qf=_qe:Clone()_qf.Position=_pY _qf.Anchored=true _qf.Parent=_A if _pW>=2 then _qf.Attachment.L1.Color=ColorSequence.new(Color3.fromRGB(179,0,255))end _qf.Attachment.L1:Emit(10)_f:AddItem(_qf,3)end end)if _pJ then task.wait(0.05)pcall(_pJ,_pT,{lifetime=1,animationDelay=0.5,color=_pZ})end end)end)else if _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68)]then _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68)]:Disconnect()_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68)]=nil end if _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,73,110,112,117,116)]then _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,73,110,112,117,116)]:Disconnect()_B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,73,110,112,117,116)]=nil end pcall(function()local _qg=require(_d.Shared.Abilities)local _qh=_qg.All[string.char(84,104,117,110,100,101,114,32,68,97,115,104)]if _qh then if _a._TD_OrigCD~=nil then _qh.cooldown=_a._TD_OrigCD;_a._TD_OrigCD=nil end if _a._TD_OrigReduction~=nil then _qh.cooldownReductionPerUpgrade=_a._TD_OrigReduction;_a._TD_OrigReduction=nil end end if _a._TD_OrigGetCD then _qg.getAbilityCooldown=_a._TD_OrigGetCD _a._TD_OrigGetCD=nil end end)end end})_pu:AddToggle(string.char(68,97,115,104,95,78,111,67,68,95,84,111,103,103,108,101),{Text=string.char(68,97,115,104,32,78,111,45,67,68),Default=false,Callback=function(_qi)_a.Dash_NoCD=_qi if _qi then pcall(function()local _qj=require(_d.Shared.Abilities)local _qk=_qj.All[string.char(68,97,115,104)]if _qk then _a._D_OrigCD=_qk.cooldown _a._D_OrigReduction=_qk.cooldownReductionPerUpgrade _qk.cooldown=0.1 _qk.cooldownReductionPerUpgrade=0 end if _qj.getAbilityCooldown and not _a._D_OrigGetCD then _a._D_OrigGetCD=_qj.getAbilityCooldown _qj.getAbilityCooldown=function(_ql,_qm,_qn)if _a.Dash_NoCD and _qm==string.char(68,97,115,104)then return 0.1 end if _a.ThunderDash_NoCD and _qm==string.char(84,104,117,110,100,101,114,32,68,97,115,104)then return 0.1 end return _a._D_OrigGetCD(_ql,_qm,_qn)end end end)local _qo=nil pcall(function()_qo=require(_d.Shared.AbilityTimelineHandler)end)_B[string.char(68,97,115,104,95,78,111,67,68)]=_e.Heartbeat:Connect(function()if not _a.Dash_NoCD then return end local _qp=_bk.Character if not _qp then return end pcall(function()_qp:SetAttribute(string.char(67,111,111,108,100,111,119,110,69,120,112,105,114,97,116,105,111,110),0)end)pcall(function()local _qq=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))and _bk.PlayerGui:FindFirstChild(string.char(72,111,116,98,97,114))local _qr=_qq and _qq:FindFirstChild(string.char(65,98,105,108,105,116,121))if _qr then local _qs=_qr:FindFirstChild(string.char(82,101,100))if _qs then _qs.Visible=false end end end)end)else if _B[string.char(68,97,115,104,95,78,111,67,68)]then _B[string.char(68,97,115,104,95,78,111,67,68)]:Disconnect()_B[string.char(68,97,115,104,95,78,111,67,68)]=nil end pcall(function()local _qt=require(_d.Shared.Abilities)local _qu=_qt.All[string.char(68,97,115,104)]if _qu then if _a._D_OrigCD~=nil then _qu.cooldown=_a._D_OrigCD;_a._D_OrigCD=nil end if _a._D_OrigReduction~=nil then _qu.cooldownReductionPerUpgrade=_a._D_OrigReduction;_a._D_OrigReduction=nil end end if _a._D_OrigGetCD then _qt.getAbilityCooldown=_a._D_OrigGetCD _a._D_OrigGetCD=nil end end)end end})do local _qv=0 local function _qw(_qx)if not _a.Dash_NoCD then return end local _qy=tick()if(_qy-_qv)<0.12 then return end _qv=_qy pcall(function()local _qz=_d.Shared.Abilities:FindFirstChild(string.char(68,97,115,104))if not _qz then return end local _qA=_qz:FindFirstChild(string.char(68,97,115,104))if not _qA then return end local _qB=_qA:Clone()_qB.Name=string.char(100,97,115,104)_qB.CFrame=_qx.CFrame local _qC=_qB:FindFirstChild(string.char(87,101,108,100,67,111,110,115,116,114,97,105,110,116))if _qC then _qC.Part0=_qB;_qC.Part1=_qx end local _qD=_qB:FindFirstChild(string.char(112,97,114,116))if _qD then local _qE=_qD:FindFirstChild(string.char(87,101,108,100,67,111,110,115,116,114,97,105,110,116))if _qE then _qE.Part0=_qD;_qE.Part1=_qB end _qD.CFrame=_qx.CFrame*CFrame.new(0,0,-3.5)end _qB.Parent=_A local _qF=_qB:FindFirstChild(string.char(65,116,116,97,99,104,109,101,110,116))if _qF then local _qG=_qF:FindFirstChild(string.char(100,117,115,116))if _qG then _qG.Enabled=true end end local _qH=_qB:FindFirstChild(string.char(83,119,111,111,115,104))if _qH then _qH:Play()end local _qI=_qB:FindFirstChild(string.char(109,97,120,115,119,111,115))if _qI then _qI:Play()end task.delay(0.16,function()pcall(function()if _qF then local _qJ=_qF:FindFirstChild(string.char(100,117,115,116))if _qJ then _qJ.Enabled=false end end end)end)_f:AddItem(_qB,1.5)end)local _qK pcall(function()_qK=require(_d.Shared.ShockwaveEffect)end)if _qK then for _qL=0,2 do task.delay(_qL*0.1,function()pcall(function()_qK({cframe=CFrame.new(_qx.Position),diameter=20,duration=0.25,color=Color3.fromRGB(255,255,255),orientation=string.char(86,101,114,116,105,99,97,108),targetTransparency=1,})end)end)end end end local _qM=nil local function _qN(_qO)if _qM then _qM:Disconnect();_qM=nil end if not _qO then return end local _qP=_qO:WaitForChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116),5)if not _qP then return end _qM=_qP.ChildAdded:Connect(function(_qQ)if not _a.Dash_NoCD then return end if _qQ.ClassName~=string.char(65,116,116,97,99,104,109,101,110,116)then return end local _qR=_qQ:FindFirstChild(string.char(68,97,115,104))if not _qR then task.wait();_qR=_qQ:FindFirstChild(string.char(68,97,115,104))end if not _qR or not _qR:IsA(string.char(76,105,110,101,97,114,86,101,108,111,99,105,116,121))then return end if _qO:GetAttribute(string.char(65,98,105,108,105,116,121,65,99,116,105,118,101))then return end _qw(_qP)end)end _qN(_bk.Character)_B[string.char(68,97,115,104,95,78,111,67,68,95,67,104,97,114,65,100,100,101,100)]=_bk.CharacterAdded:Connect(function(_qS)task.wait(0.1)_qN(_qS)end)end if _cx then task.spawn(function()local _qT=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))or _bk:WaitForChild(string.char(80,108,97,121,101,114,71,117,105),10)local _qU=_qT and(_qT:FindFirstChild(string.char(72,111,116,98,97,114))or _qT:WaitForChild(string.char(72,111,116,98,97,114),10))local _qV=_qU and(_qU:FindFirstChild(string.char(65,98,105,108,105,116,121))or _qU:WaitForChild(string.char(65,98,105,108,105,116,121),10))if _qV and _qV:IsA(string.char(71,117,105,66,117,116,116,111,110))then _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,77,111,98,105,108,101)]=_qV.Activated:Connect(function()if _C or not _a.ThunderDash_NoCD then return end local _qW=_bk.Character if not _qW or _qW.Parent~=_z then return end local _qX=_qW:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))local _qY=_qW:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if not _qX or not _qY or _qY.MoveDirection==Vector3.zero then return end pcall(function()local _qZ=_d.Shared.Abilities:FindFirstChild(string.char(84,104,117,110,100,101,114,32,68,97,115,104))if not _qZ then return end local _ra=_qZ:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104))if not _ra then return end local _rb=_qX.Position task.spawn(function()task.wait(0.05)local _rc=_qX.Position if(_rc-_rb).Magnitude<2 then return end local _rd=_ra:Clone()_rd.Anchored=true _rd.Position=_rc pcall(function()_rd.WeldConstraint:Destroy()end)_rd.Parent=workspace if _rd.Attachment and _rd.Attachment.L1 then _rd.Attachment.L1:Emit(10)end pcall(function()_rd.sound1:Play()end)pcall(function()_rd.sound2:Play()end)_f:AddItem(_rd,3)end)end)end)end end)end _B[string.char(84,104,117,110,100,101,114,68,97,115,104,95,78,111,67,68,95,73,110,112,117,116,95,84,111,112,76,101,118,101,108)]=_c.InputBegan:Connect(function(_re,_rf)if _rf then return end if not _a.ThunderDash_NoCD then return end local _rg=false pcall(function()local _rh=_d:FindFirstChild(string.char(67,111,110,116,114,111,108,108,101,114,115))if _rh then local _ri,_rj=pcall(require,_rh:FindFirstChild(string.char(83,101,116,116,105,110,103,115,67,111,110,116,114,111,108,108,101,114)))if _ri and _rj and _rj.UseBind then local _rk,_rl=pcall(_rj.UseBind,_rj,_re,string.char(65,98,105,108,105,116,121))if _rk and _rl then _rg=true end end end end)if not _rg and _re.KeyCode==Enum.KeyCode.Q then _rg=true end if not _rg then return end local _rm=_bk.Character if not _rm or _rm.Parent~=_z then return end local _rn=_rm:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))local _ro=_rm:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if not _rn or not _ro then return end if _ro.MoveDirection==Vector3.zero then return end local _rp=0 pcall(function()local _rq=require(_d.Shared.AbilityUtils)_rp=_rq.getAbilityUpgrade(_bk,string.char(84,104,117,110,100,101,114,32,68,97,115,104))or 0 end)local _rr=_rn.Position local _rs pcall(function()local _rt=_d.Shared:FindFirstChild(string.char(80,108,97,99,101,71,104,111,115,116))if _rt then _rs=require(_rt)end end)local _ru=_rp<2 and Color3.fromRGB(255,246,120)or Color3.fromRGB(179,0,255)if _rs then pcall(_rs,_rm,{lifetime=1,animationDelay=0.5,color=_ru})end pcall(function()local _rv=_d.Shared.Abilities:FindFirstChild(string.char(84,104,117,110,100,101,114,32,68,97,115,104))if not _rv then return end local _rw=_rv:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104,65,100,100,111,110))if not _rw then return end local _rx=_rw:Clone()_rx.Position=_rr _rx.Anchored=true _rx.Parent=workspace if _rp>=2 then _rx.Attachment.L1.Color=ColorSequence.new(Color3.fromRGB(179,0,255))end _rx.Attachment.L1.Transparency=NumberSequence.new(0)_rx.Attachment.L1.Size=NumberSequence.new(6)_rx.Attachment.L1.Brightness=3 _rx.Attachment.L1.Lifetime=NumberRange.new(0.3,0.6)_rx.Attachment.L1:Emit(10)_f:AddItem(_rx,3)end)pcall(function()local _ry=_d.Shared.Abilities:FindFirstChild(string.char(84,104,117,110,100,101,114,32,68,97,115,104))if not _ry then return end local _rz=_ry:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104))if not _rz then return end local _rA=_rz:FindFirstChild(string.char(115,111,117,110,100,49))local _rB=_rz:FindFirstChild(string.char(115,111,117,110,100,50))if _rA then local _rC=_rA:Clone();_rC.Parent=_rn;_rC:Play()_f:AddItem(_rC,2)end if _rB then local _rD=_rB:Clone()if _rp>=2 then _rD.PlaybackSpeed=1.5 end _rD.Parent=_rn;_rD:Play()_f:AddItem(_rD,2)end end)task.spawn(function()task.wait(0.05)local _rE=_rn.Position if(_rE-_rr).Magnitude<2 then return end pcall(function()local _rF=_d.Shared.Abilities:FindFirstChild(string.char(84,104,117,110,100,101,114,32,68,97,115,104))if not _rF then return end local _rG=_rF:FindFirstChild(string.char(84,104,117,110,100,101,114,68,97,115,104))if not _rG then return end local _rH=_rG:Clone()_rH.Anchored=true _rH.Position=_rE pcall(function()_rH.WeldConstraint:Destroy()end)pcall(function()_rH.sound1:Destroy()end)pcall(function()_rH.sound2:Destroy()end)_rH.Parent=workspace if _rp>=2 then _rH.Attachment.L1.Color=ColorSequence.new(Color3.fromRGB(179,0,255))end _rH.Attachment.L1.Transparency=NumberSequence.new(0)_rH.Attachment.L1.Size=NumberSequence.new(6)_rH.Attachment.L1.Brightness=3 _rH.Attachment.L1.Lifetime=NumberRange.new(0.3,0.6)_rH.Attachment.L1:Emit(10)task.wait(0.05)_rH.Attachment.L1:Emit(10)_f:AddItem(_rH,3)end)if _rs then task.wait(0.05)pcall(_rs,_rm,{lifetime=1,animationDelay=0.5,color=_ru})end pcall(function()local _rI=(_rE-_rr)local _rJ=_rI.Magnitude local _rK=math.clamp(math.floor(_rJ/4),5,12)local _rL=Vector3.new(_rI.X,0,_rI.Z)local _rM=_rL.Magnitude>0 and _rL.Unit:Cross(Vector3.new(0,1,0))or Vector3.new(1,0,0)local _rN={}local _rO=ColorSequence.new(Color3.fromRGB(180,0,160))local _rP=1 for _rQ=0,_rK do local _rR=_rQ/_rK local _rS=_rr:Lerp(_rE,_rR)+Vector3.new(0,1,0)if _rQ>0 and _rQ<_rK then local _rT=math.random(15,30)/10 local _rU=math.min(_rR,1-_rR)*2 _rS=_rS+_rM*(_rP*_rT*math.clamp(_rU,0.3,1))+Vector3.new(0,math.random(-3,3)/10,0)_rP=-_rP end table.insert(_rN,_rS)end local _rV=Instance.new(string.char(70,111,108,100,101,114))_rV.Name=string.char(84,104,117,110,100,101,114,66,111,108,116)_rV.Parent=workspace for _rW=1,#_rN-1 do local _rX=Instance.new(string.char(80,97,114,116))_rX.Anchored,_rX.CanCollide,_rX.Transparency=true,false,1 _rX.Size=Vector3.new(0.1,0.1,0.1)_rX.Position=_rN[_rW]_rX.Parent=_rV local _rY=Instance.new(string.char(80,97,114,116))_rY.Anchored,_rY.CanCollide,_rY.Transparency=true,false,1 _rY.Size=Vector3.new(0.1,0.1,0.1)_rY.Position=_rN[_rW+1]_rY.Parent=_rV local _rZ=Instance.new(string.char(65,116,116,97,99,104,109,101,110,116),_rX)local _sa=Instance.new(string.char(65,116,116,97,99,104,109,101,110,116),_rY)local _sb=Instance.new(string.char(66,101,97,109))_sb.Attachment0,_sb.Attachment1=_rZ,_sa _sb.Width0,_sb.Width1=1.4,1.4 _sb.LightEmission,_sb.LightInfluence=1,0 _sb.Brightness=5 _sb.FaceCamera,_sb.Segments=true,1 _sb.Color=_rO _sb.Transparency=NumberSequence.new(0)_sb.Parent=_rX end task.wait(0.15)for _sc,_sd in _rV:GetDescendants()do if _sd:IsA(string.char(66,101,97,109))then _sd.Transparency=NumberSequence.new(0.6)end end task.wait(0.1)for _se,_sf in _rV:GetDescendants()do if _sf:IsA(string.char(66,101,97,109))then _sf.Transparency=NumberSequence.new(0.9)end end task.wait(0.05)_rV:Destroy()end)end)end)local _sg=_lm.Main:AddRightGroupbox({Name=string.char(83,101,109,105,45,73,109,109,111,114,116,97,108,105,116,121),Icon=string.char(115,104,105,101,108,100,45,99,104,101,99,107),})local _sj=_sg:AddToggle(string.char(73,109,109,111,114,116,97,108,105,116,121,95,84,111,103,103,108,101),{Text=string.char(83,101,109,105,45,73,109,109,111,114,116,97,108,105,116,121,32,40,66,69,84,65,41),Default=false,Notify=false,Callback=function(_sh)_a.WantImmortality=_sh if _sh then local _si=_bk.Character if _si and _si.Parent==_z then _iU.Start()end else _iU.Stop()end end})_B[string.char(73,109,109,111,114,116,97,108,105,116,121,95,65,117,116,111,83,116,97,114,116)]=_z.ChildAdded:Connect(function(_sk)if _sk==_bk.Character and _a.WantImmortality then task.wait(1.5)if _a.WantImmortality and _bk.Character==_sk then _iU.Start()end end end)_sj:AddKeyPicker(string.char(73,109,109,111,114,116,97,108,105,116,121,95,75,101,121,98,105,110,100),{Text=string.char(73,109,109,111,114,116,97,108,105,116,121),Mode=string.char(84,111,103,103,108,101),})_sg:AddSlider(string.char(73,109,109,111,114,116,97,108,105,116,121,95,66,97,115,101,82,97,100,105,117,115),{Text=string.char(66,97,115,101,32,82,97,100,105,117,115),Default=5,Min=3,Max=50,Increment=1,Callback=function(_sl)_iU.SetBaseRadius(_sl)end})_sg:AddSlider(string.char(73,109,109,111,114,116,97,108,105,116,121,95,77,97,120,82,97,100,105,117,115),{Text=string.char(77,97,120,32,82,97,100,105,117,115),Default=24,Min=10,Max=100,Increment=1,Callback=function(_sm)_iU.SetMaxRadius(_sm)end})_sg:AddSlider(string.char(73,109,109,111,114,116,97,108,105,116,121,95,77,97,120,83,112,101,101,100),{Text=string.char(77,97,120,32,83,112,105,110,32,83,112,101,101,100),Default=90,Min=30,Max=400,Increment=5,Callback=function(_sn)_iU.SetMaxSpeed(_sn)end})do local _so=false local _sp=75 local function _sq()_bk.CameraMode=Enum.CameraMode.Classic _bk.CameraMinZoomDistance=0.5 _bk.CameraMaxZoomDistance=_so and _sp or 70 end local _sr=_lm.Client:AddLeftGroupbox(string.char(67,97,109,101,114,97),string.char(99,97,109,101,114,97))_sr:AddToggle(string.char(67,97,109,101,114,97,95,85,110,108,111,99,107,95,84,111,103,103,108,101),{Text=string.char(85,110,108,111,99,107,32,67,97,109,101,114,97),Default=true,Callback=function(_ss)_so=_ss _sq()end})_sr:AddSlider(string.char(67,97,109,101,114,97,95,90,111,111,109,95,83,108,105,100,101,114),{Text=string.char(77,97,120,32,90,111,111,109,32,68,105,115,116,97,110,99,101),Default=75,Min=5,Max=200,Increment=1,Callback=function(_st)_sp=_st if _so then _sq()end end})_sq()local _su=1 _sr:AddToggle(string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110,95,84,111,103,103,108,101),{Text=string.char(83,116,114,101,116,99,104,32,83,99,114,101,101,110),Default=false,Callback=function(_sv)if _sv then if not _B[string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110)]then _B[string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110)]=_e.RenderStepped:Connect(function()local _sw=workspace.CurrentCamera if not _sw then return end _sw.CFrame=_sw.CFrame*CFrame.new(0,0,0,1,0,0,0,_su,0,0,0,1)end)end else if _B[string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110)]then _B[string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110)]:Disconnect()_B[string.char(83,116,114,101,116,99,104,95,83,99,114,101,101,110)]=nil end end end})_sr:AddSlider(string.char(83,116,114,101,116,99,104,95,86,97,108,117,101,95,83,108,105,100,101,114),{Text=string.char(83,116,114,101,116,99,104,32,86,97,108,117,101),Default=1,Min=0.1,Max=1,Increment=0.01,Callback=function(_sx)_su=_sx end})local _sy=false local _sz=70 local _sA=nil local function _sB()if _sA~=nil then workspace.CurrentCamera.FieldOfView=_sA _sA=nil end end _a._Restore_FOV=_sB _sr:AddToggle(string.char(70,79,86,95,84,111,103,103,108,101),{Text=string.char(70,79,86),Default=false,Callback=function(_sC)_sy=_sC if _sC then if _sA==nil then _sA=workspace.CurrentCamera.FieldOfView end workspace.CurrentCamera.FieldOfView=_sz else _sB()end end})_sr:AddSlider(string.char(70,79,86,95,83,108,105,100,101,114),{Text=string.char(70,79,86),Default=70,Min=70,Max=120,Increment=1,Callback=function(_sD)_sz=_sD if _sy then workspace.CurrentCamera.FieldOfView=_sD end end})end do local _sE=_lm.Client:AddLeftGroupbox(string.char(86,105,115,117,97,108,105,122,101,114),string.char(119,97,108,108,112,97,112,101,114))local _sF,_sG=false,Color3.new(0,1,0)local _sH=30 local _sI,_sJ=table.create(_sH),nil local _sK,_sL=CFrame.new(),15 local _sM,_sN=table.create(_sH),table.create(_sH)for _sO=1,_sH do local _sP=(_sO/_sH)*math.pi*2 _sM[_sO]=Vector3.new(math.cos(_sP),0,math.sin(_sP))_sN[_sO]=CFrame.Angles(0,-_sP-math.pi/2,0)end local function _sQ()if _sJ then _sJ:Destroy()_sJ=nil end table.clear(_sI)_sK,_sL=CFrame.new(),15 end local function _sR()_sQ()_sJ=Instance.new(string.char(70,111,108,100,101,114))_sJ.Name=string.char(80,97,114,114,121,86,105,122,70,111,108,100,101,114)_sJ:SetAttribute(string.char(78,111,82,101,110,100,101,114,95,73,103,110,111,114,101),true)_sJ.Parent=workspace for _sS=1,_sH do local _sT=Instance.new(string.char(80,97,114,116))_sT.Name,_sT.Material,_sT.Color=string.char(86,105,122,95).._sS,Enum.Material.Neon,_sG _sT.Anchored,_sT.CanCollide,_sT.CanQuery,_sT.CanTouch,_sT.Massless=true,false,false,false,true _sT.Size=Vector3.zero _sT.Parent=_sJ _sI[_sS]=_sT end end local function _sU()local _sV=_bq.Get_Targeting_Balls()or _bq.Get_Balls(true)local _sW=_sV and _sV:FindFirstChild(string.char(122,111,111,109,105,101,115))local _sX=_bk.Character local _sY=_sX and _sX.PrimaryPart if _sW and _sY then return _iJ(_sW.VectorVelocity-_sY.AssemblyLinearVelocity,_sY.Position-_ch(_sV),_r(),_iC,_iD)end return 15 end local function _sZ()if _B[string.char(86,105,115,117,97,108,105,122,101,114)]then _B[string.char(86,105,115,117,97,108,105,122,101,114)]:Disconnect()_B[string.char(86,105,115,117,97,108,105,122,101,114)]=nil end if _B[string.char(86,105,122,95,67,104,97,114,97,99,116,101,114,65,100,100,101,100)]then _B[string.char(86,105,122,95,67,104,97,114,97,99,116,101,114,65,100,100,101,100)]:Disconnect()_B[string.char(86,105,122,95,67,104,97,114,97,99,116,101,114,65,100,100,101,100)]=nil end _sQ()end local function _ta()if not _B[string.char(86,105,122,95,67,104,97,114,97,99,116,101,114,65,100,100,101,100)]then _B[string.char(86,105,122,95,67,104,97,114,97,99,116,101,114,65,100,100,101,100)]=_bk.CharacterAdded:Connect(function(_tb)_sQ()if _sF then _sR()end _tb:WaitForChild(string.char(72,117,109,97,110,111,105,100)).Died:Once(_sQ)end)end if not _B[string.char(86,105,115,117,97,108,105,122,101,114)]then _B[string.char(86,105,115,117,97,108,105,122,101,114)]=_e.RenderStepped:Connect(function(_tc)local _td=_bk.Character and _bk.Character.PrimaryPart if not _td then return end local _te=_sU()if _te>_sL then _sL=_te else _sL=_sL+(_te-_sL)*math.min(1,_tc*8)end _sK=CFrame.new(_td.Position)local _tf=(math.pi*2*_sL)/_sH local _tg=Vector3.new(_tf,0.20,0.4)for _th=1,_sH do local _ti=_sI[_th]if _ti then _ti.Size=_tg _ti.CFrame=_sK*CFrame.new(_sM[_th]*_sL)*_sN[_th]end end end)end end local _tk=_sE:AddToggle(string.char(86,105,115,117,97,108,105,122,101,114,95,84,111,103,103,108,101),{Text=string.char(86,105,115,117,97,108,105,122,101,114),Tooltip=string.char(83,104,111,119,115,32,112,97,114,114,121,32,114,97,110,103,101,32,118,105,115,117,97,108,105,122,97,116,105,111,110),Default=false,Callback=function(_tj)_sF=_tj if _tj then _sR()_ta()else _sZ()end end})_tk:AddColorPicker({SaveId=string.char(86,105,115,117,97,108,105,122,101,114,95,67,111,108,111,114),Name=string.char(86,105,115,117,97,108,105,122,101,114,32,67,111,108,111,114),Default=Color3.new(0,1,0),Callback=function(_tl)_sG=_tl for _tm=1,_sH do if _sI[_tm]then _sI[_tm].Color=_tl end end end})end do do local _tn=_lm.Client:AddRightGroupbox(string.char(86,70,88),string.char(115,112,97,114,107,108,101,115))local _to=false local _tp=0 local _tq={}local _tr={}local _ts={Decoration=true}local _tt=workspace.Terrain local _tu=settings().Rendering local _tv={}local _tw={}local _tx={}local _ty={}local _tz=NumberRange.new(0)_tr[_w]=true _tr[_tt]=true if _tu then _tr[_tu]=true end local _tA={Map=true,LobbySpawnPlate=true,Spawn=true,Leaderboards=true,Drones=true,ZombieCrownClash=true,PixelKillEvent=true,SummerEventBB=true,FriendCrate=true,MapBounds=true,}local _tB={FakeSky=true}local _tC={LobbyTickets=true,LobbyLTMPack=true,LobbyJoinIssue=true,MobileLobbyPrompt=true,ServerBrowser=true,ServerBrowserOld=true,ServerSelection=true,ServerSelectionNew=true,ChooseMap=true,MapSelector=true,RankedQueue=true,RankedSelection=true,MatchFound=true,ChooserUI=true,WaitingScreen=true,TournamentWaiting=true,CutsceneWaiting=true,spawnTut=true,}local _tD={GlobalShadows=false,Brightness=1,ClockTime=14,ExposureCompensation=0,EnvironmentDiffuseScale=0,EnvironmentSpecularScale=0,FogStart=math.huge,FogEnd=math.huge,ShadowSoftness=0,Ambient=Color3.fromRGB(70,70,70),OutdoorAmbient=Color3.fromRGB(70,70,70),}local _tE={string.char(78,82,95,68,101,115,99,101,110,100,97,110,116),string.char(78,82,95,68,101,115,99,68,114,97,105,110),string.char(78,82,95,76,105,103,104,116,105,110,103,67,104,105,108,100),string.char(78,82,95,76,105,103,104,116,105,110,103,80,114,111,112),string.char(78,82,95,82,117,110,116,105,109,101),string.char(78,82,95,77,97,112,68,101,115,99,101,110,100,97,110,116),string.char(78,82,95,71,117,105,65,100,100,101,100),string.char(78,82,95,71,114,97,121,83,107,121,70,111,114,99,101),string.char(78,82,95,77,97,112,67,104,97,110,103,101,100),string.char(78,82,95,77,97,112,82,101,109,111,118,101,100),string.char(78,82,95,77,97,116,99,104,67,104,101,99,107),}local function _tF(_tG)local _tH=_tG while _tH and _tH~=workspace do if _tH==_y or _tH==_z or _tH==_A then return true end _tH=_tH.Parent end return false end local function _tI(_tJ)local _tK=_tJ while _tK and _tK~=workspace do if _tK:GetAttribute(string.char(78,111,82,101,110,100,101,114,95,73,103,110,111,114,101))then return true end _tK=_tK.Parent end return false end local function _tL(_tM)local _tN=_tM.Parent while _tN and _tN~=workspace do if _tA[_tN.Name]then return true end _tN=_tN.Parent end return _tM.Anchored and not _tF(_tM)end local function _tO(_tP,_tQ)return _tP[_tQ]end local function _tR(_tS,_tT,_tU)_tS[_tT]=_tU end local function _tV(_tW,_tX,_tY)local _tZ,_ua=_tO,_tR if _ts[_tX]then _tZ,_ua=gethiddenproperty,sethiddenproperty end if not(_tZ and _ua)then return end local _ub,_uc=true,_tZ(_tW,_tX)if not _ub or _uc==_tY then return end _ua(_tW,_tX,_tY)local _ud=_tq[_tW]if not _ud then _ud={};_tq[_tW]=_ud end if _ud[_tX]==nil then _ud[_tX]=_uc end end local function _ue()for _uf,_ug in pairs(_tq)do if _tr[_uf]or _uf.Parent~=nil then for _uh,_ui in pairs(_ug)do local _uj=_ts[_uh]and sethiddenproperty or _tR if _uj then _uj(_uf,_uh,_ui)end end end end table.clear(_tq)end local function _uk()for _ul in pairs(_tq)do if not _tr[_ul]and _ul.Parent==nil then _tq[_ul]=nil end end end local function _um(_un)_tV(_un,string.char(69,110,97,98,108,101,100),false)end local function _uo(_up)_tV(_up,string.char(84,114,97,110,115,112,97,114,101,110,99,121),1)end local function _uq(_ur)_tV(_ur,string.char(69,110,97,98,108,101,100),false);_ur:Clear()end local _uw={ParticleEmitter=function(_us)_tV(_us,string.char(76,105,102,101,116,105,109,101),_tz);_uq(_us)end,Trail=_uq,Beam=_um,Smoke=_um,Fire=_um,Sparkles=_um,Highlight=_um,Clouds=_um,PointLight=_um,SpotLight=_um,SurfaceLight=_um,BloomEffect=_um,BlurEffect=_um,ColorCorrectionEffect=_um,DepthOfFieldEffect=_um,SunRaysEffect=_um,ColorGradingEffect=_um,Decal=_uo,Texture=_uo,Explosion=function(_ut)_tV(_ut,string.char(86,105,115,105,98,108,101),false)end,Atmosphere=function(_uu)_tV(_uu,string.char(68,101,110,115,105,116,121),0);_tV(_uu,string.char(72,97,122,101),0);_tV(_uu,string.char(71,108,97,114,101),0)end,Sky=function(_uv)_tV(_uv,string.char(67,101,108,101,115,116,105,97,108,66,111,100,105,101,115,83,104,111,119,110),false);_tV(_uv,string.char(83,116,97,114,67,111,117,110,116),0)end,}local function _ux(_uy)if _tI(_uy)then return end local _uz=_uw[_uy.ClassName]if _uz and not _tF(_uy)then _uz(_uy)end end local function _uA(_uB)_tV(_w,_uB,_tD[_uB])local _uC,_uD=true,_tO(_w,_uB)if _uC then _ty[_uB]=_uD end end local function _uE()for _uF in pairs(_tD)do _uA(_uF)end for _uG,_uH in ipairs(_w:GetChildren())do _ux(_uH)end _tV(_tt,string.char(68,101,99,111,114,97,116,105,111,110),false)_tV(_tt,string.char(87,97,116,101,114,87,97,118,101,83,105,122,101),0)_tV(_tt,string.char(87,97,116,101,114,87,97,118,101,83,112,101,101,100),0)_tV(_tt,string.char(87,97,116,101,114,82,101,102,108,101,99,116,97,110,99,101),0)_tV(_tt,string.char(87,97,116,101,114,84,114,97,110,115,112,97,114,101,110,99,121),1)if _tu then _tV(_tu,string.char(81,117,97,108,105,116,121,76,101,118,101,108),Enum.QualityLevel.Level01)end end local function _uI(_uJ)if _tD[_uJ]==nil then return end local _uK,_uL=true,_tO(_w,_uJ)if not _uK or _uL==_ty[_uJ]then return end local _uM=_tq[_w]if _uM then _uM[_uJ]=_uL end _uA(_uJ)end local function _uN(_uO)local _uP=_uO.Name if _uP:find(string.char(80,111,114,116,97,108,70,111,114,95),1,true)or _uP:find(string.char(87,97,121,112,111,105,110,116,70,111,114,95),1,true)then return end _f:AddItem(_uO,0)end local _uQ={}local function _uR()table.clear(_uQ)local _uS=workspace:FindFirstChild(string.char(77,97,112))if not _uS then return false end local _uT=false for _uU,_uV in ipairs(_uS:GetDescendants())do if _uV:IsA(string.char(66,97,115,101,80,97,114,116))and(_uV.Name==string.char(70,76,79,79,82)or _uV.Name==string.char(73,78,86,73,83,73,66,76,69,95,70,76,79,79,82))then _uQ[_uV]=true _uT=true end end return _uT end local function _uW()if not _to then return end table.clear(_uQ)local _uX=workspace:FindFirstChild(string.char(77,97,112))if _uX then for _uY,_uZ in ipairs(_uX:GetDescendants())do if _uZ:IsA(string.char(66,97,115,101,80,97,114,116))and(_uZ.Name==string.char(70,76,79,79,82)or _uZ.Name==string.char(73,78,86,73,83,73,66,76,69,95,70,76,79,79,82))then _uQ[_uZ]=true if _tv[_uZ]~=nil then _uZ.Transparency=_tv[_uZ]_tv[_uZ]=nil end end end end for _va in pairs(_tv)do if _va and _va.Parent==nil then _tv[_va]=nil end end end local _vb=0 local function _vc()_vb+=1 local _vd=_vb task.spawn(function()for _ve=1,60 do if _vd~=_vb or not _to then return end if _uR()then _uW()return end task.wait(0.1)end if _vd==_vb and _to then _uW()end end)end local function _vf(_vg)if not _vg:IsA(string.char(66,97,115,101,80,97,114,116))then return end if _tF(_vg)then return end if _vg.Name==string.char(70,76,79,79,82)or _vg.Name==string.char(73,78,86,73,83,73,66,76,69,95,70,76,79,79,82)then _uQ[_vg]=true return end if _uQ[_vg]then return end if _tv[_vg]~=nil then return end if _vg.Parent==workspace and _tB[_vg.Name]then _tv[_vg]=_vg.Transparency _vg.Transparency=1 return end if not _tL(_vg)then return end _tv[_vg]=_vg.Transparency _vg.Transparency=1 end local function _vh()for _vi,_vj in pairs(_tv)do if _vi and _vi.Parent then _vi.Transparency=_vj end end table.clear(_tv)end local function _vk(_vl)if not(_vl:IsA(string.char(66,105,108,108,98,111,97,114,100,71,117,105))or _vl:IsA(string.char(83,117,114,102,97,99,101,71,117,105))or _vl:IsA(string.char(83,101,108,101,99,116,105,111,110,66,111,120)))then return end if _tF(_vl)or _tI(_vl)then return end if _tw[_vl]~=nil then return end _tw[_vl]=_vl.Enabled _vl.Enabled=false end local function _vm()for _vn,_vo in pairs(_tw)do if _vn and _vn.Parent then _vn.Enabled=_vo end end table.clear(_tw)end local function _vp()local _vq=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))if not _vq then return end for _vr,_vs in ipairs(_vq:GetChildren())do if _tC[_vs.Name]and _vs:IsA(string.char(83,99,114,101,101,110,71,117,105))and _vs.Enabled then _tx[_vs]=true _vs.Enabled=false end end end local function _vt()for _vu in pairs(_tx)do if _vu and _vu.Parent then _vu.Enabled=true end end table.clear(_tx)end local _vv={Spawn=true,Leaderboards=true,LobbySpawnPlate=true,Drones=true,ZombieCrownClash=true,PixelKillEvent=true,SummerEventBB=true,FriendCrate=true,}local _vw={}local _vx=false local function _vy()local _vz=_bk.Character if not _vz or not _vz.Parent then return false end return _vz.Parent==_z end local function _vA()for _vB,_vC in ipairs(workspace:GetChildren())do if _vv[_vC.Name]and not _vC:GetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100))then _vC:SetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100),true)_vw[#_vw+1]=_vC _vC.Parent=nil end end end local function _vD()for _vE,_vF in ipairs(_vw)do if _vF then local _vG,_vH=pcall(function()return _vF:GetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100))end)if _vG and _vH then pcall(function()_vF:SetAttribute(string.char(78,82,95,76,111,98,98,121,68,101,115,116,114,111,121,101,100),nil)_vF.Parent=workspace end)end end end table.clear(_vw)end local function _vI()if not _to then return end local _vJ=_vy()if _vJ and not _vx then _vx=true _vA()elseif not _vJ and _vx then _vx=false _vD()end end local function _vK()local _vL,_vM=pcall(function()return _bk.PlayerGui.Settings.Frame.Frame[string.char(77,105,115,99,47,71,114,97,121,32,83,107,121)].Button.TextLabel.Text==string.char(65,99,116,105,118,101)end)return _vL and _vM end local function _vN()if not _vK()then return end _w.Ambient=Color3.fromRGB(70,70,70)_w.OutdoorAmbient=Color3.fromRGB(70,70,70)_w.Brightness=1 _w.ClockTime=12 _w.FogStart=math.huge _w.FogEnd=math.huge for _vO,_vP in ipairs(_w:GetChildren())do if _vP:IsA(string.char(83,107,121))then _vP.CelestialBodiesShown=true _vP.StarCount=3000 elseif _vP:IsA(string.char(65,116,109,111,115,112,104,101,114,101))then _vP.Density=0;_vP.Haze=0;_vP.Glare=0 elseif _vP:IsA(string.char(66,108,111,111,109,69,102,102,101,99,116))or _vP:IsA(string.char(66,108,117,114,69,102,102,101,99,116))or _vP:IsA(string.char(67,111,108,111,114,67,111,114,114,101,99,116,105,111,110,69,102,102,101,99,116))or _vP:IsA(string.char(83,117,110,82,97,121,115,69,102,102,101,99,116))or _vP:IsA(string.char(68,101,112,116,104,79,102,70,105,101,108,100,69,102,102,101,99,116))then _vP.Enabled=false end end end local function _vQ(_vR)if _tI(_vR)then return end if _vR:IsA(string.char(66,105,108,108,98,111,97,114,100,71,117,105))and _vR.Name==string.char(83,79,70,95,67,111,109,98,111,67,111,117,110,116,101,114)then return end _ux(_vR)_vf(_vR)_vk(_vR)end local function _vS()if _to then return end _to=true _tp+=1 local _vT=_tp local _vU,_vV={},0 local _vW,_vX=0,0 _uE()_vp()_vN()_uR()_B[string.char(78,82,95,77,97,112,67,104,97,110,103,101,100)]=workspace:FindFirstChild(string.char(77,97,112)).ChildAdded:Connect(function(_vY)if not _to then return end if not _vY:IsA(string.char(77,111,100,101,108))then return end task.defer(_vc)end)_B[string.char(78,82,95,77,97,112,82,101,109,111,118,101,100)]=workspace:FindFirstChild(string.char(77,97,112)).ChildRemoved:Connect(function(_vZ)if not _to then return end if not _vZ:IsA(string.char(77,111,100,101,108))then return end task.defer(_uW)end)_B[string.char(78,82,95,71,114,97,121,83,107,121,70,111,114,99,101)]=_w.Changed:Connect(function()if not _to then return end local _wa=os.clock()if _wa-_vX<0.25 then return end _vX=_wa task.defer(_vN)end)_B[string.char(78,82,95,71,117,105,65,100,100,101,100)]=_bk.PlayerGui.ChildAdded:Connect(function(_wb)if not _to then return end if _tC[_wb.Name]and _wb:IsA(string.char(83,99,114,101,101,110,71,117,105))and _wb.Enabled then _tx[_wb]=true _wb.Enabled=false end end)_B[string.char(78,82,95,68,101,115,99,101,110,100,97,110,116)]=workspace.DescendantAdded:Connect(function(_wc)_vU[#_vU+1]=_wc end)_B[string.char(78,82,95,68,101,115,99,68,114,97,105,110)]=_e.Heartbeat:Connect(function()if _vV>=#_vU then if#_vU>0 then table.clear(_vU)_vV=0 end return end local _wd=os.clock()+0.003 while _vV<#_vU and os.clock()<_wd do _vV+=1 local _we=_vU[_vV]if _we and _we.Parent then pcall(_vQ,_we)end end if _vV>=#_vU then table.clear(_vU)_vV=0 end end)_B[string.char(78,82,95,76,105,103,104,116,105,110,103,67,104,105,108,100)]=_w.ChildAdded:Connect(_ux)_B[string.char(78,82,95,76,105,103,104,116,105,110,103,80,114,111,112)]=_w.Changed:Connect(_uI)_B[string.char(78,82,95,82,117,110,116,105,109,101)]=_A.ChildAdded:Connect(_uN)_B[string.char(78,82,95,77,97,112,68,101,115,99,101,110,100,97,110,116)]=nil _B[string.char(78,82,95,77,97,116,99,104,67,104,101,99,107)]=_e.Heartbeat:Connect(function()local _wf=os.clock()if _wf-_vW<0.5 then return end _vW=_wf _vI()end)for _wg,_wh in ipairs(_A:GetChildren())do _uN(_wh)end task.spawn(function()local _wi=workspace:GetDescendants()local _wj=os.clock()+0.004 for _wk=1,#_wi do if _tp~=_vT then return end _vQ(_wi[_wk])if _wk%64==0 and os.clock()>_wj then task.wait()_wj=os.clock()+0.004 end end _wi=nil task.spawn(function()for _wl=1,20 do if _tp~=_vT then return end _uW()task.wait(0.25)end end)while _tp==_vT do task.wait(10)_uk()end end)end local function _wm()if not _to then return end _to=false _tp+=1 for _wn,_wo in ipairs(_tE)do local _wp=_B[_wo]if _wp then _wp:Disconnect();_B[_wo]=nil end end _ue()_vt()_vD()_vh()_vm()_vx=false table.clear(_uQ)table.clear(_ty)end _tn:AddToggle(string.char(78,111,95,82,101,110,100,101,114,95,84,111,103,103,108,101),{Text=string.char(78,111,32,82,101,110,100,101,114),Tooltip=(string.char(68,105,115,97,98,108,101,115,32,97,108,108,32,101,102,102,101,99,116,115,44,32,112,111,115,116,45,112,114,111,99,101,115,115,105,110,103,32,97,110,100,32,108,105,103,104,116,105,110,103,32,100,101,116,97,105,108,44,32,97,110,100,32,100)..string.char(114,111,112,115,32,114,101,110,100,101,114,32,113,117,97,108,105,116,121)),Default=false,Callback=function(_wq)if _wq then _vS()else _wm()end end,})_a._NoRender_Stop=function()pcall(_wm)if _a._NoRender_Stop then _a._NoRender_Stop=nil end end _a._AntiLag_Stop=(function()local _wr=false local _ws={}local _wt={}local _wu={Decoration=true}local _wv=workspace.Terrain local _ww=settings().Rendering local function _wx(_wy,_wz,_wA)local _wB,_wC=_wy[_wz],nil if _wu[_wz]then if not gethiddenproperty or not sethiddenproperty then return end _wB=gethiddenproperty(_wy,_wz)if _wB==_wA then return end sethiddenproperty(_wy,_wz,_wA)else if _wB==_wA then return end _wy[_wz]=_wA end local _wD=_ws[_wy]if not _wD then _wD={};_ws[_wy]=_wD end if _wD[_wz]==nil then _wD[_wz]=_wB end end local function _wE(_wF)_wx(_wF,string.char(69,110,97,98,108,101,100),false)end local function _wG(_wH)local _wI=_wH.ClassName if _wI==string.char(65,116,109,111,115,112,104,101,114,101)then _wx(_wH,string.char(68,101,110,115,105,116,121),0);_wx(_wH,string.char(72,97,122,101),0);_wx(_wH,string.char(71,108,97,114,101),0)elseif _wI==string.char(67,108,111,117,100,115)or _wI==string.char(66,108,111,111,109,69,102,102,101,99,116)or _wI==string.char(66,108,117,114,69,102,102,101,99,116)or _wI==string.char(68,101,112,116,104,79,102,70,105,101,108,100,69,102,102,101,99,116)or _wI==string.char(83,117,110,82,97,121,115,69,102,102,101,99,116)or _wI==string.char(67,111,108,111,114,67,111,114,114,101,99,116,105,111,110,69,102,102,101,99,116)or _wI==string.char(67,111,108,111,114,71,114,97,100,105,110,103,69,102,102,101,99,116)then _wE(_wH)end end local function _wJ(_wK)if not _wr then return end _wG(_wK)if _wK:IsA(string.char(66,108,111,111,109,69,102,102,101,99,116))or _wK:IsA(string.char(66,108,117,114,69,102,102,101,99,116))or _wK:IsA(string.char(68,101,112,116,104,79,102,70,105,101,108,100,69,102,102,101,99,116))or _wK:IsA(string.char(83,117,110,82,97,121,115,69,102,102,101,99,116))or _wK:IsA(string.char(67,111,108,111,114,67,111,114,114,101,99,116,105,111,110,69,102,102,101,99,116))or _wK:IsA(string.char(67,111,108,111,114,71,114,97,100,105,110,103,69,102,102,101,99,116))or _wK:IsA(string.char(67,108,111,117,100,115))then _wt[#_wt+1]=_wK:GetPropertyChangedSignal(string.char(69,110,97,98,108,101,100)):Connect(function()if _wr and _wK.Parent and _wK.Enabled then _wK.Enabled=false end end)end end local function _wL(_wM)if not _wM then return end for _wN,_wO in ipairs(_wM:GetChildren())do _wJ(_wO)end end local function _wP()for _wQ,_wR in pairs(_ws)do if _wQ.Parent~=nil then for _wS,_wT in pairs(_wR)do if _wu[_wS]then if sethiddenproperty then pcall(sethiddenproperty,_wQ,_wS,_wT)end else pcall(function()_wQ[_wS]=_wT end)end end end end table.clear(_ws)end local function _wU()for _wV,_wW in ipairs(_wt)do pcall(function()_wW:Disconnect()end)end table.clear(_wt)end local function _wX()if _wr then return end _wr=true _wx(_ww,string.char(81,117,97,108,105,116,121,76,101,118,101,108),Enum.QualityLevel.Level01)_wx(_w,string.char(71,108,111,98,97,108,83,104,97,100,111,119,115),false)_wx(_w,string.char(69,110,118,105,114,111,110,109,101,110,116,68,105,102,102,117,115,101,83,99,97,108,101),0)_wx(_w,string.char(69,110,118,105,114,111,110,109,101,110,116,83,112,101,99,117,108,97,114,83,99,97,108,101),0)_wx(_wv,string.char(87,97,116,101,114,87,97,118,101,83,105,122,101),0)_wx(_wv,string.char(87,97,116,101,114,87,97,118,101,83,112,101,101,100),0)_wx(_wv,string.char(87,97,116,101,114,82,101,102,108,101,99,116,97,110,99,101),0)_wL(_w)_wL(_wv)_wL(workspace.CurrentCamera)_B[string.char(65,110,116,105,76,97,103,95,76,105,103,104,116,105,110,103,67,104,105,108,100)]=_w.ChildAdded:Connect(_wJ)_B[string.char(65,110,116,105,76,97,103,95,67,97,109,101,114,97,67,104,105,108,100)]=workspace.CurrentCamera.ChildAdded:Connect(_wJ)_B[string.char(65,110,116,105,76,97,103,95,67,97,109,101,114,97,67,104,97,110,103,101,100)]=workspace:GetPropertyChangedSignal(string.char(67,117,114,114,101,110,116,67,97,109,101,114,97)):Connect(function()local _wY=workspace.CurrentCamera if _wY and _wr then _wL(_wY)end end)_B[string.char(65,110,116,105,76,97,103,95,84,101,114,114,97,105,110,67,104,105,108,100)]=_wv.ChildAdded:Connect(_wJ)end local function _wZ()if not _wr then return end _wr=false _wU()for _xa,_xb in ipairs({string.char(65,110,116,105,76,97,103,95,76,105,103,104,116,105,110,103,67,104,105,108,100),string.char(65,110,116,105,76,97,103,95,67,97,109,101,114,97,67,104,105,108,100),string.char(65,110,116,105,76,97,103,95,67,97,109,101,114,97,67,104,97,110,103,101,100),string.char(65,110,116,105,76,97,103,95,84,101,114,114,97,105,110,67,104,105,108,100)})do local _xc=_B[_xb]if _xc then pcall(function()_xc:Disconnect()end)_B[_xb]=nil end end _wP()end _tn:AddToggle(string.char(80,101,114,102,111,114,109,97,110,99,101,95,77,111,100,101,95,84,111,103,103,108,101),{Text=string.char(80,101,114,102,111,114,109,97,110,99,101,32,77,111,100,101),Tooltip=(string.char(76,111,119,101,114,115,32,114,101,110,100,101,114,32,113,117,97,108,105,116,121,44,32,100,105,115,97,98,108,101,115,32,115,104,97,100,111,119,115,32,97,110,100,32,112,111,115,116,45,112,114,111,99,101,115,115,105,110,103,59,32,102,117,108)..string.char(108,121,32,114,101,118,101,114,115,105,98,108,101)),Default=false,Callback=function(_xd)if _xd then _wX()else _wZ()end end,})return _wZ end)()local _xf=_tn:AddToggle(string.char(66,97,108,108,95,71,108,111,119,95,84,111,103,103,108,101),{Text=string.char(76,111,110,103,32,84,114,97,105,108),Default=false,Callback=function(_xe)_eQ(_xe)end})end local _xg=_lm.Client:AddRightGroupbox(string.char(76,101,97,100,101,114,98,111,97,114,100),string.char(116,114,111,112,104,121))local _xh={Wins={Attribute=string.char(80,108,97,121,101,114,87,105,110,115),Enabled=false},Elims={Attribute=string.char(80,108,97,121,101,114,69,108,105,109,115),Enabled=false},}local _xi=setmetatable({},{__mode=string.char(107)})local _xj=setmetatable({},{__mode=string.char(107)})local _xk=setmetatable({},{__mode=string.char(107)})local _xl={}local function _xm(_xn,_xo)return _xo end local function _xp(_xq,_xr)local _xs=_xq:FindFirstChild(string.char(108,101,97,100,101,114,115,116,97,116,115))local _xt=_xs and _xs:FindFirstChild(_xr)if not(_xt and _xt:IsA(string.char(73,110,116,86,97,108,117,101)))then return end local _xu=_xh[_xr]if _xi[_xt]==nil then _xi[_xt]=_xt.Value end local _xv=_xi[_xt]local _xw=_xq:GetAttribute(_xu.Attribute)if _xu.Enabled and type(_xw)==string.char(110,117,109,98,101,114)then _xv=_xm(_xi[_xt],_xw)end if type(_xv)==string.char(110,117,109,98,101,114)and _xt.Value~=_xv then _xj[_xt]=_xv _xt.Value=_xv end end local function _xx(_xy,_xz)if _xk[_xz]or not _xh[_xz.Name]then return end _xk[_xz]=true table.insert(_xl,_xz.Changed:Connect(function(_xA)if _xA==_xj[_xz]then _xj[_xz]=nil return end _xi[_xz]=_xA _xp(_xy,_xz.Name)end))_xp(_xy,_xz.Name)end local function _xB(_xC)local function _xD(_xE)for _xF,_xG in ipairs(_xE:GetChildren())do _xx(_xC,_xG)end table.insert(_xl,_xE.ChildAdded:Connect(function(_xH)_xx(_xC,_xH)end))end local _xI=_xC:FindFirstChild(string.char(108,101,97,100,101,114,115,116,97,116,115))if _xI then _xD(_xI)end table.insert(_xl,_xC.ChildAdded:Connect(function(_xJ)if _xJ.Name==string.char(108,101,97,100,101,114,115,116,97,116,115)then _xD(_xJ)end end))for _xK,_xL in pairs(_xh)do table.insert(_xl,_xC:GetAttributeChangedSignal(_xL.Attribute):Connect(function()_xp(_xC,_xK)end))end end local function _xM()local _xN=_xh.Wins.Enabled or _xh.Elims.Enabled for _xO,_xP in ipairs(_b:GetPlayers())do for _xQ in pairs(_xh)do _xp(_xP,_xQ)end end if _xN and not _B[string.char(82,101,118,101,97,108,95,83,116,97,116,115)]then for _xR,_xS in ipairs(_b:GetPlayers())do _xB(_xS)end _B[string.char(82,101,118,101,97,108,95,83,116,97,116,115)]=_b.PlayerAdded:Connect(_xB)elseif not _xN and _B[string.char(82,101,118,101,97,108,95,83,116,97,116,115)]then _B[string.char(82,101,118,101,97,108,95,83,116,97,116,115)]:Disconnect()_B[string.char(82,101,118,101,97,108,95,83,116,97,116,115)]=nil for _xT,_xU in ipairs(_xl)do _xU:Disconnect()end table.clear(_xl)table.clear(_xk)table.clear(_xi)table.clear(_xj)end end _xg:AddToggle(string.char(83,104,111,119,95,87,105,110,115,95,84,111,103,103,108,101),{Text=string.char(83,104,111,119,32,87,105,110,115),Default=false,Callback=function(_xV)_xh.Wins.Enabled=_xV _xM()end,})_xg:AddToggle(string.char(83,104,111,119,95,75,105,108,108,115,95,84,111,103,103,108,101),{Text=string.char(83,104,111,119,32,69,108,105,109,115),Default=false,Callback=function(_xW)_xh.Elims.Enabled=_xW _xM()end,})_a._Reveal_Cleanup=function()for _xX,_xY in ipairs(_xl)do pcall(function()_xY:Disconnect()end)end table.clear(_xl)table.clear(_xk)table.clear(_xi)table.clear(_xj)end local _xZ=_lm.Client:AddRightGroupbox(string.char(65,112,112,101,97,114,97,110,99,101),string.char(112,101,114,115,111,110,45,115,116,97,110,100,105,110,103))local function _ya(_yb,_yc,_yd,_ye)_yb:AddToggle(_yc,{Text=_yd,Default=false,Callback=function(_yf)local _yg=string.char(83,107,105,110,95).._ye if _yf then local _yh=_bk.Character if _yh then _eV.SetPreset(_yh,_ye,true)end _B[_yg]=_bk.CharacterAppearanceLoaded:Connect(function(_yi)task.defer(function()_eV.SetPreset(_yi,_ye,true)end)end)else if _B[_yg]then _B[_yg]:Disconnect()_B[_yg]=nil end if _bk.Character then _eV.SetPreset(_bk.Character,_ye,false)end end end,})end _ya(_xZ,string.char(72,101,97,100,108,101,115,115,95,79,110,108,121,95,84,111,103,103,108,101),string.char(72,101,97,100,108,101,115,115),string.char(72,101,97,100,108,101,115,115))_ya(_xZ,string.char(75,111,114,98,108,111,120,95,79,110,108,121,95,84,111,103,103,108,101),string.char(75,111,114,98,108,111,120),string.char(75,111,114,98,108,111,120))local _yj=setmetatable({},{__mode=string.char(107)})local _yk={string.char(72,101,97,100),string.char(84,111,114,115,111),string.char(76,101,102,116,32,65,114,109),string.char(82,105,103,104,116,32,65,114,109),string.char(76,101,102,116,32,76,101,103),string.char(82,105,103,104,116,32,76,101,103)}local function _yl(_ym,_yn)if not _ym then return end _yn=_yn or Color3.fromRGB(0,170,255)for _yo,_yp in ipairs(_yk)do local _yq=_ym:FindFirstChild(_yp)if _yq and _yq:IsA(string.char(66,97,115,101,80,97,114,116))then if not _yj[_yq]then _yj[_yq]={Material=_yq.Material,Color=_yq.Color,Reflectance=_yq.Reflectance,Transparency=_yq.Transparency,}end _yq.Material=Enum.Material.ForceField _yq.Color=_yn _yq.Reflectance=0 _yq.Transparency=_yj[_yq].Transparency end end for _yr,_ys in ipairs(_ym:GetChildren())do if _ys:IsA(string.char(65,99,99,101,115,115,111,114,121))then local _yt=_ys:FindFirstChild(string.char(72,97,110,100,108,101))if _yt and _yt:IsA(string.char(66,97,115,101,80,97,114,116))then if not _yj[_yt]then _yj[_yt]={Material=_yt.Material,Color=_yt.Color,Reflectance=_yt.Reflectance,Transparency=_yt.Transparency,}end _yt.Material=Enum.Material.ForceField _yt.Color=_yn _yt.Reflectance=0 _yt.Transparency=_yj[_yt].Transparency end end end end local function _yu(_yv)if not _yv then return end for _yw,_yx in pairs(_yj)do if _yw and _yw:IsDescendantOf(_yv)then _yw.Material=_yx.Material _yw.Color=_yx.Color _yw.Reflectance=_yx.Reflectance _yw.Transparency=_yx.Transparency _yj[_yw]=nil end end end local _yy=Color3.fromRGB(0,170,255)local _yD=_xZ:AddToggle(string.char(70,111,114,99,101,102,105,101,108,100,95,84,111,103,103,108,101),{Text=string.char(70,111,114,99,101,102,105,101,108,100),Default=false,Callback=function(_yz)local _yA=string.char(70,111,114,99,101,102,105,101,108,100,95,65,112,112,101,97,114,97,110,99,101)if _yz then local _yB=_bk.Character if _yB then _yl(_yB,_yy)end _B[_yA]=_bk.CharacterAppearanceLoaded:Connect(function(_yC)task.defer(function()_yl(_yC,_yy)end)end)else if _B[_yA]then _B[_yA]:Disconnect()_B[_yA]=nil end if _bk.Character then _yu(_bk.Character)end end end,})_yD:AddColorPicker({SaveId=string.char(70,111,114,99,101,102,105,101,108,100,95,67,111,108,111,114),Default=Color3.fromRGB(0,170,255),Name=string.char(70,111,114,99,101,102,105,101,108,100,32,67,111,108,111,114),Transparency=0,Callback=function(_yE)_yy=_yE if _yD.Value then _yl(_bk.Character,_yE)end end,})_xZ:AddDivider()local _yI=_xZ:AddToggle(string.char(65,118,97,116,97,114,95,67,104,97,110,103,101,114,95,84,111,103,103,108,101),{Text=string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114),Default=false,Callback=function(_yF)if _yF then task.spawn(function()local _yG=_bk.Character or _bk.CharacterAdded:Wait()if _yG and _fd.Current_User_ID then _eV.ApplyCustomAvatar(_yG,_fd.Current_User_ID)end end)_B[string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114)]=_bk.CharacterAppearanceLoaded:Connect(function()if _fd.Current_User_ID then local _yH=_bk.Character if _yH then _eV.ApplyCustomAvatar(_yH,_fd.Current_User_ID)end end end)else _eV.RestoreCharacter(_bk.Character)if _B[string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114)]then _B[string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114)]:Disconnect()_B[string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114)]=nil end end end,})_xZ:AddInput(string.char(65,118,97,116,97,114,95,67,104,97,110,103,101,114,95,84,101,120,116,98,111,120),{Text=string.char(65,118,97,116,97,114,32,73,68,47,85,115,101,114,110,97,109,101),Default='',Placeholder=string.char(85,115,101,114,110,97,109,101,32,111,114,32,85,115,101,114,73,68),Numeric=false,Finished=true,Callback=function(_yJ)if not _yJ or _yJ==''then return end task.spawn(function()local _yK=tonumber(_yJ)if not _yK then local _yL,_yM for _yN=1,5 do _yL,_yM=true,_b:GetUserIdFromNameAsync(_yJ)if _yL and _yM then break end task.wait(0.5)end if not(_yL and _yM)then if _bp then _bp:Notify({Title=string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114),Content=string.char(67,111,117,108,100,32,110,111,116,32,102,105,110,100,32,117,115,101,114,58,32)..tostring(_yJ),Duration=2,})end return end _yK=_yM end _eV.SetCustomAvatar(_yK)if _bm.Toggles.Avatar_Changer_Toggle and _bm.Toggles.Avatar_Changer_Toggle.Value then local _yO=_bk.Character or _bk.CharacterAdded:Wait()if _yO then local _yP=_eV.ApplyCustomAvatar(_yO,_yK)if _bp then _bp:Notify({Title=string.char(65,118,97,116,97,114,32,67,104,97,110,103,101,114),Content=_yP and(string.char(65,112,112,108,105,101,100,32,97,118,97,116,97,114,32,40,73,68,32)..tostring(_yK)..string.char(41))or string.char(70,97,105,108,101,100,32,116,111,32,97,112,112,108,121,32,97,118,97,116,97,114),Duration=3,})end end end end)end})end local _yQ={[string.char(81,117,97,100,32,74,117,109,112)]=true,[string.char(76,117,99,107)]=true,[string.char(82,101,97,112,101,114)]=true,[string.char(77,105,115,102,111,114,116,117,110,101)]=true,[string.char(77,97,114,116,121,114,100,111,109)]=true,[string.char(71,111,108,100,101,110,32,66,97,108,108)]=true,[string.char(84,97,99,116)]=true,[string.char(83,99,111,112,111,112,104,111,98,105,97)]=true,[string.char(66,111,117,110,116,121)]=true,[string.char(81,105,45,67,104,97,114,103,101)]=true,[string.char(86,105,114,117,115)]=true,}local _yR={[string.char(71,117,97,114,100,105,97,110,32,65,110,103,101,108)]={ChargeAttr=string.char(71,117,97,114,100,105,97,110,65,110,103,101,108,80,97,114,114,105,101,115,76,101,102,116),MaxCharges=2,MaxChargesByLevel={[0]=1,[1]=2},NextUseAttr=string.char(71,117,97,114,100,105,97,110,65,110,103,101,108,78,101,120,116,85,115,101)},[string.char(81,117,97,110,116,117,109,32,65,114,101,110,97)]={ChargeAttr=string.char(81,117,97,110,116,117,109,65,114,101,110,97,67,104,97,114,103,101),MaxCharges=3,},[string.char(78,101,99,114,111,109,97,110,99,101,114)]={ChargeAttr=string.char(78,101,99,114,111,109,97,110,99,101,114,115,76,101,102,116),MaxChargesAttr=string.char(78,101,99,114,111,109,97,110,99,101,114,115,77,97,120),},}task.spawn(function()local _yS=game:GetService(string.char(84,101,120,116,67,104,97,116,83,101,114,118,105,99,101))local _yT=game:GetService(string.char(72,116,116,112,83,101,114,118,105,99,101))local _yU=_bk:WaitForChild(string.char(80,108,97,121,101,114,71,117,105))local _yV=string.char(86,97,110,97,110,97,47,117,110,108,111,99,107,95,115,97,118,101,46,106,115,111,110)local _yW={FinisherEquipped={},FakeFavorites={},FakeDeleted={},EmoteSlots={}}local _yX=(typeof(writefile)==string.char(102,117,110,99,116,105,111,110))and(typeof(readfile)==string.char(102,117,110,99,116,105,111,110))and(typeof(isfile)==string.char(102,117,110,99,116,105,111,110))local _yY,_yZ={},{}local _za={}local _zb={}local _zc=false local _zd=false local _ze local _zf local _zg=false local _zh=0 local _zi local _zj local function _zk()if typeof(isfolder)==string.char(102,117,110,99,116,105,111,110)and typeof(makefolder)==string.char(102,117,110,99,116,105,111,110)and not isfolder(string.char(86,97,110,97,110,97))then makefolder(string.char(86,97,110,97,110,97))end end local _zl=_yW.FakeFavorites local function _zm()if not _yX then return end _zk()if isfile(_yV)then local _zn,_zo=pcall(_yT.JSONDecode,_yT,readfile(_yV))if _zn and type(_zo)==string.char(116,97,98,108,101)then _yW.FinisherEquipped=_zo.FinisherEquipped or{}local _zp=_zo.FakeFavorites or{}for _zq,_zr in pairs(_zp)do _zl[_zq]=_zr end _yW.FakeFavorites=_zl if _zo.FakeShowAccessoryPerSword then _yW.FakeShowAccessoryPerSword=_zo.FakeShowAccessoryPerSword end if _zo.FakeDeleted then _yW.FakeDeleted=_zo.FakeDeleted end if type(_zo.EmoteSlots)==string.char(116,97,98,108,101)then _yW.EmoteSlots=_zo.EmoteSlots end if _zo.LastSword then _yW.LastSword=_zo.LastSword _zj=_zo.LastSword end if _zo.LastExplosion then _yW.LastExplosion=_zo.LastExplosion end end end for _zs,_zt in pairs(_yW.FinisherEquipped)do _a.FinisherEquipped[_zs]=_zt end end local _zu do local _zv=false _zu=function()if not _yX or _zv then return end _zv=true task.delay(0.3,function()_zv=false _zk()_yW.FinisherEquipped=_a.FinisherEquipped _yW.FakeFavorites=_zl or _yW.FakeFavorites or{}_yW.FakeDeleted=_yW.FakeDeleted or{}if _a.Unlock_Enabled and not _zc then _yW.LastSword=_zj or _yW.LastSword _yW.LastExplosion=_zi or _yW.LastExplosion end writefile(_yV,_yT:JSONEncode(_yW))end)end end _zm()local function _zw(_zx)table.insert(_yY,_zx)end local function _zy(_zz)table.insert(_zb,_zz)end local function _zA(_zB)if _C or _zd then return end if _zB and _zB.Disable then table.insert(_yZ,_zB)if _a.Unlock_Enabled and not _zc then _zB:Disable()end end end local function _zC(_zD,_zE)if _C or _zd then if not _zE and _zD then _zD:Disconnect()end return nil end local _zF=_zD if _zE then _zF=_zD:Connect(function(...)if _C or not _a.Unlock_Enabled or _zc or _zd then return end return _zE(...)end)end if _zF then table.insert(_za,_zF)end return _zF end local function _zG(_zH)for _zI,_zJ in pairs(_zH)do if _zJ and _zJ.Disconnect then _zJ:Disconnect()end end table.clear(_zH)end local function _zK()for _zL,_zM in ipairs(_yZ)do do if _zM.Disable then _zM:Disable()end end end end local function _zN()if _zc then return end _zc=true _zg=true _zh+=1 for _zO,_zP in ipairs(_yZ)do do if _zP.Enable then _zP:Enable()end end end if _zf then _zf()end if _ze then _ze()end for _zQ=#_zb,1,-1 do _zb[_zQ]()end end local function _zR()if _C or _zd then return end _zc=false _zg=false _zK()end local function _zS()if _zd then return end _a.Unlock_Enabled=false _zd=true _zN()_zG(_za)if _a._Unlock_RestoreTextChatHook then _a._Unlock_RestoreTextChatHook()end for _zT=#_yY,1,-1 do _yY[_zT]()end end _a._Unlock_RunReverters=_zS local function _zU(_zV,_zW)if type(_zW)~=string.char(102,117,110,99,116,105,111,110)then return end local _zX,_zY=pcall(_zW)if not _zX then warn(string.char(91,85,110,108,111,99,107,101,114,93,32).._zV..string.char(32,102,97,105,108,101,100,58,32)..tostring(_zY))end end do local _zZ,_Aa,_Ab=nil,0,false local function _Ac()return not _C and not _zd and not _zc and not _Ab and _a.Unlock_Enabled end local function _Ad(_Ae)local _Af=_Ae.Playback _Ae.Playback=nil if not _Af then return end _zG(_Af.Connections)_Af.Trove:Destroy()do if _Af.Character:GetAttribute(string.char(69,109,111,116,105,110,103))==_Af.Name then _Af.Character:SetAttribute(string.char(69,109,111,116,105,110,103),_Af.PreviousEmoting)end end end local function _Ag()_Aa=_Aa+1 local _Ah=_zZ _zZ=nil if not _Ah then return end _Ad(_Ah)_zG(_Ah.Connections)for _Ai,_Aj in ipairs(_Ah.Hooks)do if _Aj.Module[_Aj.Method]==_Aj.Wrapper then _Aj.Module[_Aj.Method]=_Aj.Original end end for _Ak,_Al in pairs(_Ah.OriginalButtons)do if _Ak.Parent then for _Am,_An in ipairs({string.char(69,109,111,116,101,73,100),string.char(69,109,111,116,101,78,97,109,101),string.char(73,99,111,110)})do _Ak:SetAttribute(_An,_Al[_An])end if _Ak:IsA(string.char(73,109,97,103,101,66,117,116,116,111,110))or _Ak:IsA(string.char(73,109,97,103,101,76,97,98,101,108))then _Ak.Image=_Al.Image end local _Ao=_Ak:FindFirstChild(string.char(86,101,99,116,111,114))if _Ao and _Al.VectorImage then _Ao.Image=_Al.VectorImage end local _Ap=_Ak:FindFirstChild(string.char(84,105,116,108,101))if _Ap and _Al.TitleText then _Ap.Text=_Al.TitleText end end end if _Ah.View and type(_Ah.View.Destroy)==string.char(102,117,110,99,116,105,111,110)then _Ah.View:Destroy()end if _Ah.Container then _Ah.Container:Destroy()end if _Ah.Source then _Ah.Source.Visible=_Ah.SourceVisible end for _Aq,_Ar in ipairs({string.char(85,112,100,97,116,101,72,111,108,100,101,114,69,109,111,116,101,115),string.char(85,112,100,97,116,101,77,101,110,117,67,111,110,116,101,110,116,69,109,111,116,101,115),string.char(117,112,100,97,116,101,67,101,110,116,101,114,84,101,120,116)})do if type(_Ah.Wheel[_Ar])==string.char(102,117,110,99,116,105,111,110)then _Ah.Wheel[_Ar](_Ah.Wheel)end end end local function _As()if not _Ac()then return end if _zZ then if _zZ.Gui and _zZ.Gui.Parent then _zZ.Refresh()return end _Ag()end _Aa=_Aa+1 local _At=_Aa local function _Au()if _At~=_Aa or not _Ac()or _zZ then return true end local _Av=_yU:FindFirstChild(string.char(69,109,111,116,101,87,104,101,101,108))local _Aw=_Av and _Av:FindFirstChild(string.char(76,105,115,116))local _Ax=_Aw and _Aw:FindFirstChild(string.char(67,111,110,116,101,110,116))local _Ay=_Ax and _Ax:FindFirstChild(string.char(84,69,77,80,76,65,84,69),true)local _Az=_d:FindFirstChild(string.char(77,105,115,99))local _AA=_Az and _Az:FindFirstChild(string.char(69,109,111,116,101,115))if not _Av or not _Ax or not _AA then return false end local _AB=_d:FindFirstChild(string.char(67,111,110,116,114,111,108,108,101,114,115))local _AC=_d:FindFirstChild(string.char(83,104,97,114,101,100))local _AD=_d:FindFirstChild(string.char(80,97,99,107,97,103,101,115))local _AE=_AB and _AB:FindFirstChild(string.char(69,109,111,116,101,87,104,101,101,108,67,111,110,116,114,111,108,108,101,114))local _AF=_AB and _AB:FindFirstChild(string.char(69,109,111,116,101,67,111,110,116,114,111,108,108,101,114))local _AG=_AC and _AC:FindFirstChild(string.char(69,109,111,116,101,115,83,104,97,114,101,100))local _AH=_AD and _AD:FindFirstChild(string.char(84,114,111,118,101))if not _AE or not _AF or not _AG or not _AH then return false end local _AI=require(_AE)local _AJ=require(_AF)local _AK=require(_AG)local _AL=require(_AH)local _AM=_AC:FindFirstChild(string.char(73,116,101,109,73,110,102,111))local _AN=_AM and require(_AM).Emote or{}if type(_AK.Play)~=string.char(102,117,110,99,116,105,111,110)then return false end if _At~=_Aa or not _Ac()then return true end local _AO={Gui=_Av,Wheel=_AI,Source=_Ax,SourceVisible=_Ax.Visible,Connections={},Hooks={},Catalog={},Cards={},OriginalButtons={},}_zZ=_AO local function _AP()return _zZ==_AO and _At==_Aa and _Ac()end local function _AQ(_AR,_AS)local _AT=_AR:Connect(function(...)if _AP()then return _AS(...)end end)_AO.Connections[#_AO.Connections+1]=_AT end local _AU={}if#_AA:GetChildren()==0 then _zZ=nil return false end for _AV,_AW in ipairs(_AA:GetChildren())do if _AW:IsA(string.char(65,110,105,109,97,116,105,111,110))and _AW.AnimationId~=""and _AW.AnimationId~=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,48)then _AO.Catalog[_AW.Name]=_AW _AU[#_AU+1]=_AW end end if#_AU==0 then _zZ=nil return false end table.sort(_AU,function(_AX,_AY)local _AZ,_Ba=_AX:GetAttribute(string.char(69,109,111,116,101,78,97,109,101))or _AX.Name,_AY:GetAttribute(string.char(69,109,111,116,101,78,97,109,101))or _AY.Name return _AZ==_Ba and _AX.Name<_AY.Name or _AZ<_Ba end)local _Bb={}for _Bc,_Bd in pairs(type(_yW.EmoteSlots)==string.char(116,97,98,108,101)and _yW.EmoteSlots or{})do local _Be=tonumber(_Bc)if _Be and _Be==math.floor(_Be)and _Be>=1 and _Be<=40 and type(_Bd)==string.char(115,116,114,105,110,103)and _AO.Catalog[_Bd]then _Bb[tostring(_Be)]=_Bd end end _yW.EmoteSlots=_Bb local function _Bf(_Bg,_Bh)local _Bi=_AN[_Bh.Name]or{}local _Bj=_Bh:GetAttribute(string.char(69,109,111,116,101,78,97,109,101))or _Bi.DisplayName or _Bh.Name local _Bk=_Bh:GetAttribute(string.char(73,99,111,110))or _Bi.Icon or""_Bg:SetAttribute(string.char(69,109,111,116,101,73,100),_Bh.Name)_Bg:SetAttribute(string.char(69,109,111,116,101,78,97,109,101),_Bj)_Bg:SetAttribute(string.char(73,99,111,110),_Bk)local _Bl=_Bg:FindFirstChild(string.char(86,101,99,116,111,114))if _Bl then _Bl.Image=_Bk elseif _Bg:IsA(string.char(73,109,97,103,101,66,117,116,116,111,110))then _Bg.Image=_Bk end local _Bm=_Bg:FindFirstChild(string.char(73,116,101,109,78,97,109,101))or _Bg:FindFirstChild(string.char(84,105,116,108,101))or _Bg:FindFirstChild(string.char(84,101,120,116))if _Bm and _Bm:IsA(string.char(84,101,120,116,76,97,98,101,108))then _Bm.Text=_Bj end end local function _Bn(_Bo,_Bp)if not _AO.OriginalButtons[_Bo]then local _Bq=_Bo:FindFirstChild(string.char(86,101,99,116,111,114))local _Br=_Bo:FindFirstChild(string.char(84,105,116,108,101))_AO.OriginalButtons[_Bo]={EmoteId=_Bo:GetAttribute(string.char(69,109,111,116,101,73,100)),EmoteName=_Bo:GetAttribute(string.char(69,109,111,116,101,78,97,109,101)),Icon=_Bo:GetAttribute(string.char(73,99,111,110)),Image=(_Bo:IsA(string.char(73,109,97,103,101,66,117,116,116,111,110))or _Bo:IsA(string.char(73,109,97,103,101,76,97,98,101,108)))and _Bo.Image,VectorImage=_Bq and _Bq.Image,TitleText=_Br and _Br.Text,}end _Bf(_Bo,_Bp)end _AO.Refresh=function()if not _AP()then return end local _Bs,_Bt=_Av:FindFirstChild(string.char(87,104,101,101,108)),_Av:FindFirstChild(string.char(77,101,110,117))local _Bu=_Bs and _Bs:FindFirstChild(string.char(72,111,108,100,101,114))local _Bv=_Bt and _Bt:FindFirstChild(string.char(67,111,110,116,101,110,116))local _Bw=math.clamp(math.floor(tonumber(_AI.page)or 1),1,5)for _Bx,_By in pairs(_yW.EmoteSlots)do local _Bz,_BA=tonumber(_Bx),_AO.Catalog[_By]if _Bz and _BA then if _Bu and math.floor((_Bz-1)/8)+1==_Bw then local _BB=_Bu:FindFirstChild(tostring((_Bz-1)%8+1))if _BB then _Bn(_BB,_BA)end end local _BC=_Bv and _Bv:FindFirstChild(tostring(_Bz))if _BC then _Bn(_BC,_BA)end end end end local function _BD(_BE)if not _AP()then return end local _BF,_BG=_bk.Character,_AO.Catalog[_BE]local _BH=_BF and _BF:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if not _BG or not _BH or _BH.Health<=0 or _BH.MoveDirection.Magnitude>0 then return end _Ad(_AO)local _BI={Character=_BF,Trove=_AL.new(),Connections={},Name=_BG:GetAttribute(string.char(69,109,111,116,101,78,97,109,101))or _BE,PreviousEmoting=_BF:GetAttribute(string.char(69,109,111,116,105,110,103)),}_AO.Playback=_BI _BF:SetAttribute(string.char(69,109,111,116,105,110,103),_BI.Name)local function _BJ(_BK,_BL)_BI.Connections[#_BI.Connections+1]=_BK:Connect(_BL)end _BJ(_BH:GetPropertyChangedSignal(string.char(77,111,118,101,68,105,114,101,99,116,105,111,110)),function()if _AO.Playback==_BI and _BH.MoveDirection.Magnitude>0 then _Ad(_AO)end end)_BJ(_BH.Died,function()if _AO.Playback==_BI then _Ad(_AO)end end)_AK:Play(_BF,_BI.Trove,_BE,true,workspace:GetServerTimeNow(),1,nil,false)if _AO.Playback==_BI and(not _AP()or _bk.Character~=_BF)then _Ad(_AO)end end local function _BM(_BN,_BO,_BP)local _BQ=_BN[_BO]if type(_BQ)~=string.char(102,117,110,99,116,105,111,110)then return end local _BR=_BP(_BQ)_AO.Hooks[#_AO.Hooks+1]={Module=_BN,Method=_BO,Original=_BQ,Wrapper=_BR}_BN[_BO]=_BR end local _BS={}for _BT,_BU in ipairs(_Ax:GetChildren())do if _BU:IsA(string.char(71,117,105,79,98,106,101,99,116))then _BS[_BU]=_BU.Archivable _BU.Archivable=false end end for _BV,_BW in ipairs(_Ax:GetDescendants())do if _BW:IsA(string.char(71,117,105,66,117,116,116,111,110))and _BS[_BW]==nil then _BS[_BW]=_BW.Archivable _BW.Archivable=false end end local _BX=_Ax.Archivable _Ax.Archivable=true local _BY=_Ax:Clone()_Ax.Archivable=_BX for _BZ,_Ca in pairs(_BS)do _BZ.Archivable=_Ca end if not _BY then _Ag()return true end _AO.Container=_BY _BY.Name=string.char(85,110,108,111,99,107,65,108,108,69,109,111,116,101,67,111,110,116,101,110,116)local _Cb=_BY:IsA(string.char(83,99,114,111,108,108,105,110,103,70,114,97,109,101))if _Cb then _BY.CanvasPosition=Vector2.zero _BY.AutomaticCanvasSize=Enum.AutomaticSize.None _BY.ScrollingDirection=Enum.ScrollingDirection.Y _BY.ScrollingEnabled=true _BY.ScrollBarThickness=math.max(_Ax.ScrollBarThickness,6)end _BY.Visible=true _BY.Parent=_Ax.Parent _Ax.Visible=false _AQ(_Ax:GetPropertyChangedSignal(string.char(86,105,115,105,98,108,101)),function()if _Ax.Visible then _Ax.Visible=false end end)local _Cc=_BY:FindFirstChildWhichIsA(string.char(85,73,71,114,105,100,76,97,121,111,117,116))if not _Cc then _Cc=Instance.new(string.char(85,73,71,114,105,100,76,97,121,111,117,116))_Cc.CellSize=UDim2.fromOffset(100,100)_Cc.CellPadding=UDim2.fromOffset(8,8)_Cc.SortOrder=Enum.SortOrder.LayoutOrder _Cc.Parent=_BY end local function _Cd()if _Cc and _Cb then _BY.CanvasSize=UDim2.fromOffset(0,_Cc.AbsoluteContentSize.Y+8)end end if _Cc then _AQ(_Cc:GetPropertyChangedSignal(string.char(65,98,115,111,108,117,116,101,67,111,110,116,101,110,116,83,105,122,101)),_Cd)end local _Ce=_Aw:FindFirstChild(string.char(83,101,97,114,99,104,73,110,112,117,116),true)local function _Cf()local _Cg=string.lower(_Ce and _Ce.Text or""):match(string.char(94,37,115,42,40,46,45,41,37,115,42,36))for _Ch,_Ci in ipairs(_AO.Cards)do _Ci.Button.Visible=_Cg==""or string.find(_Ci.Search,_Cg,1,true)~=nil end _Cd()end if _Ce then _AQ(_Ce:GetPropertyChangedSignal(string.char(84,101,120,116)),_Cf)end local _Cj=1 local function _Ck(_Cl)if not _Cl then return end for _Cm,_Cn in ipairs(_Cl:GetChildren())do local _Co=tonumber(_Cn.Name)if _Co and _Cn:IsA(string.char(71,117,105,66,117,116,116,111,110))then _AQ(_Cn.Activated,function()_Cj=_Co end)end end end local _Cp=_Av:FindFirstChild(string.char(87,104,101,101,108))local _Cq=_Av:FindFirstChild(string.char(77,101,110,117))_Ck(_Cp and _Cp:FindFirstChild(string.char(72,111,108,100,101,114)))_Ck(_Cq and _Cq:FindFirstChild(string.char(67,111,110,116,101,110,116)))local function _Cr(_Cs)if not _AP()or not _AO.Catalog[_Cs]then return end local _Ct=math.floor(tonumber(_AI.selected)or _Cj)if _AI.type==string.char(77,101,110,117)then _Ct=math.clamp(_Ct,1,40)else local _Cu=math.clamp(math.floor(tonumber(_AI.page)or 1),1,5)_Ct=math.clamp(_Ct,1,8)+(_Cu-1)*8 end local _Cv=tostring(_Ct)if _yW.EmoteSlots[_Cv]~=_Cs then _yW.EmoteSlots[_Cv]=_Cs _zu()end _AO.Refresh()if type(_AI.updateCenterText)==string.char(102,117,110,99,116,105,111,110)then _AI.updateCenterText(_AI)end end local _Cw=os.clock()+0.002 local function _Cx()if os.clock()>=_Cw then _e.Heartbeat:Wait()_Cw=os.clock()+0.002 end return _AP()end local function _Cy()for _Cz,_CA in ipairs(_AU)do if not _Cx()then return false end local _CB if _Ay and _Ay:IsA(string.char(71,117,105,79,98,106,101,99,116))then local _CC=_Ay.Archivable _Ay.Archivable=true _CB=_Ay:Clone()_Ay.Archivable=_CC else _CB=Instance.new(string.char(73,109,97,103,101,66,117,116,116,111,110))_CB.Size=UDim2.fromOffset(100,100)_CB.BackgroundTransparency=1 local _CD=Instance.new(string.char(84,101,120,116,76,97,98,101,108))_CD.Name=string.char(84,105,116,108,101)_CD.Size=UDim2.new(1,0,0,24)_CD.Position=UDim2.new(0,0,1,-24)_CD.BackgroundTransparency=1 _CD.TextColor3=Color3.new(1,1,1)_CD.TextScaled=true _CD.Parent=_CB end _CB.Name=string.char(85,110,108,111,99,107,69,109,111,116,101,95).._CA.Name _CB.LayoutOrder=_Cz _Bf(_CB,_CA)for _CE,_CF in ipairs({string.char(76,111,99,107),string.char(70,97,118,111,114,105,116,101),string.char(68,101,108,101,116,101)})do local _CG=_CB:FindFirstChild(_CF)if _CG and _CG:IsA(string.char(71,117,105,79,98,106,101,99,116))then _CG.Visible=false end end _CB.Visible=true _CB.Parent=_BY _AO.Cards[#_AO.Cards+1]={Button=_CB,Search=string.lower((_CA:GetAttribute(string.char(69,109,111,116,101,78,97,109,101))or _CA.Name)..string.char(32).._CA.Name),}local _CH=_CB:IsA(string.char(71,117,105,66,117,116,116,111,110))and _CB or _CB:FindFirstChildWhichIsA(string.char(71,117,105,66,117,116,116,111,110),true)if _CH then _AQ(_CH.Activated,function()_Cr(_CA.Name)end)end end return true end _BM(_AJ,string.char(80,108,97,121),function(_CI)return function(_CJ,_CK,...)if _AP()and _AO.Catalog[_CK]then return _BD(_CK)end return _CI(_CJ,_CK,...)end end)for _CL,_CM in ipairs({string.char(85,112,100,97,116,101,72,111,108,100,101,114,69,109,111,116,101,115),string.char(85,112,100,97,116,101,77,101,110,117,67,111,110,116,101,110,116,69,109,111,116,101,115),string.char(117,112,100,97,116,101,80,97,103,101)})do _BM(_AI,_CM,function(_CN)return function(_CO,...)local _CP=table.pack(_CN(_CO,...))_AO.Refresh()return table.unpack(_CP,1,_CP.n)end end)end _AQ(_bk.CharacterAdded,function()_Ad(_AO)end)_AQ(_bk.CharacterAppearanceLoaded,function()_AO.Refresh()end)_AQ(_Av.AncestryChanged,function()if not _Av.Parent then _Ag()end end)local _CQ=_AC:FindFirstChild(string.char(73,110,118,101,110,116,111,114,121))local _CR=_CQ and _CQ:FindFirstChild(string.char(83,104,97,114,101,100))local _CS=_AB:FindFirstChild(string.char(84,114,97,100,105,110,103))local _CT=_CS and _CS:FindFirstChild(string.char(73,110,118,101,110,116,111,114,121,67,111,110,116,114,111,108,108,101,114))if _CQ and _CR and _CT then local _CU=require(_CQ).Client local _CV=require(_CR)local _CW=require(_CT)local _CX=_CU:GetInventory()local _CY=table.clone(_CX.Emote or{})local _CZ={}for _Da,_Db in pairs(_CY)do if type(_Db)==string.char(116,97,98,108,101)and _Db.Name then _CZ[_Db.Name]=true end end local _Dc,_Dd,_De={},{},{}for _Df,_Dg in ipairs(_AU)do if not _CZ[_Dg.Name]then local _Dh={Name=_Dg.Name,Id=string.char(85,110,108,111,99,107,65,108,108,58,69,109,111,116,101,58).._Dg.Name,CreatedAt=0}_Dc[_Dh.Name]=_Dh _Dd[#_Dd+1]=_Dh local _Di=_CV:ItemToKey(string.char(69,109,111,116,101),_Dh,{string.char(73,100)})_De[_Di]=_Dh.Id end end _BM(_CU,string.char(71,101,116,73,110,118,101,110,116,111,114,121),function(_Dj)return function(_Dk,...)local _Dl=_Dj(_Dk,...)if not _AP()then return _Dl end local _Dm=table.clone(_Dl)_Dm.Emote=table.clone(_Dl.Emote or{})for _Dn,_Do in pairs(_Dc)do _Dm.Emote[_Do.Id]=_Do end return _Dm end end)_BM(_CU,string.char(71,101,116,73,116,101,109),function(_Dp)return function(_Dq,_Dr,_Ds,...)local _Dt=_Dr==string.char(69,109,111,116,101)and tostring(_Ds):match(string.char(94,85,110,108,111,99,107,65,108,108,58,69,109,111,116,101,58,40,46,43,41,36))if _AP()and _Dt and _Dc[_Dt]then return _Dc[_Dt]end return _Dp(_Dq,_Dr,_Ds,...)end end)_BM(_CU,string.char(70,105,110,100,73,116,101,109,115,87,105,116,104,75,101,121),function(_Du)return function(_Dv,_Dw,_Dx,...)if _AP()and _Dw==string.char(69,109,111,116,101)and _De[_Dx]then return{_De[_Dx]}end return _Du(_Dv,_Dw,_Dx,...)end end)if type(_CV.CreateFakeReplion)==string.char(102,117,110,99,116,105,111,110)and type(_CW.CreateInventory)==string.char(102,117,110,99,116,105,111,110)and type(_AI.populateEmoteList)==string.char(102,117,110,99,116,105,111,110)then local _Dy=_CV.CreateFakeReplion()_Dy.Data={Inventory={Emote=_CY}}local _Dz={Replion=_Dy}_BM(_CW,string.char(67,114,101,97,116,101,73,110,118,101,110,116,111,114,121),function(_DA)return function(_DB,_DC,...)if not _AP()or _DC.InventoryType~=string.char(69,109,111,116,101)then return _DA(_DB,_DC,...)end if _AO.View then return _AO.View end local _DD=table.clone(_DC)_DD.Caller=_Dz _DD.Container=_BY _DD.WatchOnChange=false _DD.FindItemsWithKey=function(_DE,_DF)local _DG=_DE==string.char(69,109,111,116,101)and _De[_DF]if _DG then return _CY[_DG]and{_DG}or{}end return _CV:FindItemsWithKey(_Dz,_DE,_DF)end local _DH=_DD.OnSlotCreated _DD.OnSlotCreated=function(_DI,_DJ,_DK,_DL,_DM)if _DH then _DH(_DI,_DJ,_DK,_DL,_DM)end if _DJ and _Dc[_DJ.Name]and _DL then if typeof(getconnections)==string.char(102,117,110,99,116,105,111,110)then for _DN,_DO in ipairs(getconnections(_DL.Activated))do _DO:Disconnect()end end _AQ(_DL.Activated,function()_Cr(_DJ.Name)end)end end _AO.View=_DA(_DB,_DD,...)return _AO.View end end)local _DP=_CW.CreateSortOptions if type(_DP)==string.char(102,117,110,99,116,105,111,110)then _CW.CreateSortOptions=function()end end local _DQ=pcall(_AI.populateEmoteList,_AI)_CW.CreateSortOptions=_DP if _DQ and _AO.View then local _DR=_AO.View if type(_DR.TriggerUpdate)==string.char(102,117,110,99,116,105,111,110)then for _DS,_DT in ipairs(_Dd)do if not _Cx()then return true end if not _CY[_DT.Id]then _CY[_DT.Id]=_DT _DR.TriggerUpdate(_DT,string.char(73,110,115,101,114,116))end end end _BY.Visible=true _Ax.Visible=false end end end if not _AO.View then if not _Cy()then return true end _Cf()end _AO.Refresh()return true end local function _DU()local _DV,_DW=pcall(_Au)if _DV then return _DW end warn(string.char(91,85,110,108,111,99,107,101,114,93,32,69,109,111,116,101,32,117,110,108,111,99,107,32,102,97,105,108,101,100,58,32)..tostring(_DW))_Ag()return true end if _DU()then return end task.spawn(function()while _At==_Aa and _Ac()and not _zZ do if _DU()then return end task.wait(0.25)end end)end _a._Unlock_InitializeEmotes=_As _zy(_Ag)_zw(function()_Ab=true _Ag()if _a._Unlock_InitializeEmotes==_As then _a._Unlock_InitializeEmotes=nil end end)_zC(_yU.ChildAdded,function(_DX)if _DX.Name==string.char(69,109,111,116,101,87,104,101,101,108)then task.defer(_As)end end)end local function _DY(_DZ)return type(_DZ)==string.char(115,116,114,105,110,103)and(_DZ==_bk.DisplayName or _DZ==_bk.Name)end local function _Ea()if not _a.Unlock_Enabled then return false end local _Eb=_a.Sword_Name return(_Eb and _a.FinisherEquipped[_Eb])and _Eb or false end local _Ec=require(_d.Controllers.FinishersController)local _Ed=4 local _Ee,_Ef,_Eg=nil,0,false local _Eh,_Ei={},nil local _Ej={}local function _Ek(_El)if _El==_bk then return end if _El.Character then _Ej[_El]=_El.Character end _zC(_El.CharacterAdded,function(_Em)_Ej[_El]=_Em end)end for _En,_Eo in ipairs(_b:GetPlayers())do _Ek(_Eo)end _zC(_b.PlayerAdded,_Ek)_zC(_b.PlayerRemoving,function(_Ep)_Ej[_Ep]=nil end)local function _Eq(_Er)local _Es=_Er:Clone()for _Et,_Eu in ipairs(_Es:GetDescendants())do if _Eu:IsA(string.char(83,99,114,105,112,116))or _Eu:IsA(string.char(76,111,99,97,108,83,99,114,105,112,116))then _Eu:Destroy()end end for _Ev,_Ew in ipairs(_Es:GetChildren())do if _Ew:IsA(string.char(84,111,111,108))then _Ew:Destroy()end end local _Ex=_Es:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if _Ex then _Ex.Health,_Ex.BreakJointsOnDeath=_Ex.MaxHealth,false if not _Ex:FindFirstChildOfClass(string.char(65,110,105,109,97,116,111,114))then Instance.new(string.char(65,110,105,109,97,116,111,114)).Parent=_Ex end end local _Ey=_Es:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _Ey then _Es.PrimaryPart=_Ey end for _Ez,_EA in ipairs(_Es:GetDescendants())do if _EA:IsA(string.char(66,97,115,101,80,97,114,116))then _EA.Anchored,_EA.CanCollide,_EA.Massless=false,false,true end end _Es.Parent=workspace return _Es end local function _EB(_EC,_ED,_EE)local _EF={clone=_EE}_Eh[_EC]=_EF if _ED then _Eh[_ED]=_EF end end local function _EG(_EH)local _EI=_Eh[_EH]if _EI and _EI.clone and _EI.clone.Parent then return end for _EJ,_EK in ipairs(_b:GetPlayers())do if _EK~=_bk and(_EK.Name==_EH or _EK.DisplayName==_EH)then local _EL,_EM=_EK.Character,_EK.Character and _EK.Character:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if _EL and _EM and _EM.Health>0 then if _EI and _EI.clone then _EI.clone:Destroy()end local _EN=_Eq(_EL)local _EO=_EN:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _EO then _EO.Anchored=true _EO.CFrame=CFrame.new(0,-500,0)end _EB(_EK.Name,_EK.DisplayName,_EN)end break end end end _ze=function()for _EP,_EQ in pairs(_Eh)do if _EQ and _EQ.clone then _EQ.clone:Destroy()end _Eh[_EP]=nil end end local function _ER(_ES)local _ET=_Eh[_ES]if not _ET or not _ET.clone or not _ET.clone.Parent then return nil end for _EU,_EV in pairs(_Eh)do if _EV==_ET then _Eh[_EU]=nil end end return _ET.clone end local function _EW(_EX)local _EY=_b:FindFirstChild(_EX)if _EY then return _EY.Character or _Ej[_EY]end for _EZ,_Fa in pairs(_Ej)do if(_EZ.Name==_EX or _EZ.DisplayName==_EX)and _Fa then return _Fa end end end local _Fb={}for _Fc,_Fd in getconnections(_d.Remotes.LocalTeleport.OnClientEvent)do if _Fd and _Fd.Function then table.insert(_Fb,{conn=_Fd,func=_Fd.Function})_zA(_Fd)end end local _Fe=nil local _Ff=nil _zf=function(_Fg,_Fh)if _Fg and _Ff~=_Fg then return false end local _Fi=_Ff _Ff=nil _Eg=false local _Fj=_Fe _Fe=nil if _Fi then do if _Fi.Root and _Fi.Root.Parent then _Fi.Root.CFrame=_Fi.CFrame _Fi.Root.Anchored=_Fi.Anchored end end _Fi.VictimClone:Destroy()_Fi.KillerClone:Destroy()end if _Ee then _Ee:Destroy()end _Ee,_Ei=nil,nil if _Fh~=false and _Fj then for _Fk,_Fl in ipairs(_Fb)do _Fl.func(table.unpack(_Fj,1,_Fj.n))end end return true end _zC(_d.Remotes.LocalTeleport.OnClientEvent,function(...)if _a.Unlock_Enabled and _Eg then _Fe=table.pack(...)return end for _Fm,_Fn in ipairs(_Fb)do _Fn.func(...)end end)_zC(_bk.CharacterAdded,function()_zf(nil,false)_ze()end)local _Fo=_d.Packages._Index[string.char(115,108,101,105,116,110,105,99,107,95,110,101,116,64,48,46,49,46,48)].net[string.char(82,69,47,80,108,97,121,70,105,110,105,115,104,101,114)]local _Fp=false for _Fq,_Fr in getconnections(_Fo.OnClientEvent)do if _Fr and _Fr.Function then local _Fs=_Fr.Function _zA(_Fr)_zC(_Fo.OnClientEvent,function(_Ft,_Fu,_Fv,...)local _Fw=_Ea()if _Fu==_bk and _Fw then _Fp=true _Fs(_Fw,_Fu,_Fv,...)else _Fs(_Ft,_Fu,_Fv,...)end end)break end end _zC(_d.Remotes.Killed.OnClientEvent,function(_Fx)if not _Ea()or _DY(_Fx)then return end _Ei=_Fx _EG(_Fx)local _Fy=_EW(_Fx)if not _Fy then return end local _Fz=_Ee if _Fz then task.delay(0.6,function()if _Fz~=_Ee then _Fz:Destroy()end end)end local _FA=_Eq(_Fy)do local _FB=_FA:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _FB then _FB.Anchored=true _FB.CFrame=CFrame.new(0,-500,0)end end _Ee,_Ef,_Fp=_FA,os.clock(),false end)_zC(_d.Remotes.WinnerText.OnClientEvent,function(_FC)if _Eg then return end if type(_FC)~=string.char(115,116,114,105,110,103)then return end local _FD=string.match(_FC,string.char(94,40,46,45,41,37,115,43,91,87,119,93,105,110,115,63,33,63,36))if not _FD then _FD=(_FC:gsub(string.char(37,115,42,91,87,119,93,105,110,115,63,33,63,37,115,42,36),""))end _FD=_FD and _FD:match(string.char(94,37,115,42,40,46,45,41,37,115,42,36))if not _DY(_FD)then return end local _FE=_Ea()if not _FE then return end if _Fp then _Fp=false return end local _FF=_ER(_Ei)if not _FF then _EG(_Ei)_FF=_ER(_Ei)end if not _FF then for _FG in pairs(_Eh)do _FF=_ER(_FG)if _FF then break end end end if not _FF and not _Ee then return end if not _FF and(os.clock()-_Ef)>_Ed then _Ee:Destroy()_Ee=nil return end local _FH=_bk.Character if not _FH then return end local _FI=_Eq(_FH)local _FJ=_FF or _Ee local _FK=_FJ:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _FK then _FK.Anchored=false end if _FF and _Ee then _Ee:Destroy()end _Ee=nil _Eg=true local _FL local _FM=workspace:FindFirstChild(string.char(66,97,108,108,115))if _FM then local _FN=_FM:FindFirstChildWhichIsA(string.char(66,97,115,101,80,97,114,116),true)if _FN then _FL=CFrame.new(_FN.Position+Vector3.new(0,3,0))end end if not _FL then local _FO=_FH:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))_FL=_FO and CFrame.new(_FO.Position)or CFrame.new(0,50,0)end do local _FP=_FJ:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _FP then _FP.CFrame=_FL end end do local _FQ=_FI:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _FQ then _FQ.CFrame=_FL*CFrame.new(0,0,4)end end local _FR=_FH:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))local _FS={Root=_FR,CFrame=_FR and _FR.CFrame,Anchored=_FR and _FR.Anchored,KillerClone=_FI,VictimClone=_FJ,}_Ff=_FS if _FR then _FR.Anchored=true _FR.CFrame=CFrame.new(0,-500,0)end local _FT=pcall(_Ec.PlayFinisher,_Ec,_FE,_FI,_FJ,_FL,workspace:GetServerTimeNow())if _Ff~=_FS then return end if not _FT or _C or not _a.Unlock_Enabled or _zc or _zd then _zf(_FS)return end task.spawn(function()local _FU=5 do local _FV=_d.Misc.DataFinishers:FindFirstChild(_FE)if _FV then _FU=_FV:GetAttribute(string.char(68,117,114,97,116,105,111,110))or 5 end end task.wait(_FU+0.5)if not _zf(_FS)then return end if _C or not _a.Unlock_Enabled or _zc or _zd then return end if _a.Sword_Name and _bk.Character==_FH then task.defer(function()if _C or not _a.Unlock_Enabled or _zc or _zd then return end local _FW=_bk.Character if _FW~=_FH then return end for _FX,_FY in ipairs(_FW:GetChildren())do if _FY:IsA(string.char(84,111,111,108))then _FY:Destroy()end end task.wait()if _C or not _a.Unlock_Enabled or _zc or _zd or _bk.Character~=_FW then return end local _FZ=require(_d.Shared.ReplicatedInstances.Swords)_FZ:ForceEquipSwordTo(_FW,_a.Sword_Name)if _a._Sword_Function then _a._Sword_Function(_a.Sword_Name)end end)end end)end)local _Ga=false local function _Gb()if _C or _zd or _Ga or not _a.Unlock_Enabled then return end _Ga=true local _Gc=require(_d.Controllers.UI.ShopController)local _Gd=require(_d.Controllers.Trading.InventoryController)local function _Ge(_Gf)local _Gg=_Gc._inventoryPages and _Gc._inventoryPages[_Gf]if not _Gg then return end if _Gg.MarkDirty then _Gg.MarkDirty(nil,true,true)elseif _Gg.Scroll and _Gg.Scroll.Sort then _Gg.Scroll.Sort()end end local _Gh=0 local _Gi=false local function _Gj(_Gk)local _Gl for _Gm,_Gn in getconnections(_Gk)do if _Gn and _Gn.Function then _Gl=_Gl or _Gn.Function if _Gn.Disable then _zA(_Gn)end end end return _Gl end local _Go={Sword=true,Explosion=true}local _Gp={string.char(83,119,111,114,100),string.char(69,120,112,108,111,115,105,111,110)}local _Gq={}local _Gr=require(_d.Shared.Inventory).Client local _Gs={}local function _Gt(_Gu,_Gv)local _Gw=_Gu[_Gv]if type(_Gw)==string.char(116,97,98,108,101)and type(_Gw.Get)==string.char(102,117,110,99,116,105,111,110)then return _Gw:Get()end return _Gw end local function _Gx(_Gy,_Gz,_GA)local _GB=_Gy[_Gz]if type(_GB)==string.char(116,97,98,108,101)and type(_GB.Set)==string.char(102,117,110,99,116,105,111,110)then _GB:Set(_GA)else _Gy[_Gz]=_GA end end local function _GC()for _GD,_GE in ipairs(_Gp)do if not _a.Unlock_Enabled or _zc or _zd then return end local _GF=os.clock()local _GG=_Gc._virtualItems and _Gc._virtualItems[_GE]if not _Gs[_GE]or((not _GG or next(_GG)==nil)and _GF-_Gs[_GE]>=2)then _Gs[_GE]=_GF if type(_Gc._loadInventoryPage)==string.char(102,117,110,99,116,105,111,110)then _Gc._loadInventoryPage(_GE)end end end end local function _GH()for _GI,_GJ in ipairs(_Gp)do local _GK=_Gc._virtualItems and _Gc._virtualItems[_GJ]if not _GK or next(_GK)==nil then return false end end return true end local function _GL()local _GM=0 if not _a.Unlock_Enabled or _zc or _zd then return _GM end for _GN,_GO in ipairs(_Gp)do local _GP=_Gc._virtualItems and _Gc._virtualItems[_GO]if not _GP then continue end local _GQ=_Gc._inventoryPages and _Gc._inventoryPages[_GO]local _GR,_GS={},{}for _GT,_GU in pairs(_GP)do if type(_GU)==string.char(116,97,98,108,101)and not _GS[_GU]then _GS[_GU]=true _GR[#_GR+1]=_GU end end for _GV,_GW in ipairs(_GR)do if _GW.Name==string.char(66,97,115,101,32,83,119,111,114,100)or _GW.Name==string.char(69,120,112,108,111,115,105,111,110,32,78,111,114,109,97,108)then continue end local _GX=_Gt(_GW,string.char(79,119,110,115,73,116,101,109))==true if not _GX or _Gq[_GW]then if _yW.FakeDeleted and _yW.FakeDeleted[_GO]and _yW.FakeDeleted[_GO][_GW.Name]then continue end local _GY=_Gq[_GW]if not _GY then _GY={type=_GO,OwnsItem=_Gt(_GW,string.char(79,119,110,115,73,116,101,109)),Section=_Gt(_GW,string.char(83,101,99,116,105,111,110)),ForceHide=_Gt(_GW,string.char(70,111,114,99,101,72,105,100,101)),InventoryKey=_GW.InventoryKey,Key=_GW.Key,Aliases={},}_Gq[_GW]=_GY end if not _GY.CanonicalKey or _GY.Item~=_GW.Item or _GY.Name~=_GW.Name then local _GZ,_Ha=pcall(_Gr.ItemToKey,_Gr,_GO,_GW.Item)_GY.CanonicalKey=_GZ and _Ha or _GW.Name _GY.Item=_GW.Item _GY.Name=_GW.Name _GY.Hidden=string.find(_GW.Name or"",string.char(65,119,97,107,101,110,101,100),1,true)~=nil end local _Hb,_Hc=_GY.CanonicalKey,_GY.Hidden local _Hd=not _GX or _Gt(_GW,string.char(83,101,99,116,105,111,110))~=string.char(79,119,110,101,100)or _Gt(_GW,string.char(70,111,114,99,101,72,105,100,101))~=_Hc or _GW.InventoryKey~=_Hb or _GW.Key~=_Hb if _Hb and _GP[_Hb]~=_GW then if _GP[_Hb]==nil then _GY.Aliases[#_GY.Aliases+1]={List=_GP,Key=_Hb}_GP[_Hb]=_GW _Hd=true end end if _Hd then _GM+=1 _GW.InventoryKey=_Hb _GW.Key=_Hb _Gx(_GW,string.char(79,119,110,115,73,116,101,109),true)_Gx(_GW,string.char(83,101,99,116,105,111,110),string.char(79,119,110,101,100))_Gx(_GW,string.char(70,111,114,99,101,72,105,100,101),_Hc)end if _GQ and _GQ.MarkDirty and(_Hd or _GY.LastPage~=_GQ)then _GM+=1 _GQ.MarkDirty(_GW,false,true)_GY.LastPage=_GQ end end end end return _GM end local function _He()if _Gi or not _a.Unlock_Enabled or _zc or _zd then return end _Gi=true _Gh+=1 local _Hf=_Gh task.spawn(function()local _Hg,_Hh=false,0 while _Hf==_Gh and _a.Unlock_Enabled and not _zc and not _zd do local _Hi,_Hj=pcall(function()_GC()if _Hf~=_Gh then return 0 end return _GL()end)if not _Hi and not _Hg then warn(string.char(91,85,110,108,111,99,107,101,114,93,32,73,110,118,101,110,116,111,114,121,32,114,101,102,114,101,115,104,32,102,97,105,108,101,100,58,32)..tostring(_Hj))end _Hg=not _Hi if _Hi and _Hj==0 and _GH()then _Hh+=1 if _Hh>=3 then break end else _Hh=0 end task.wait(1)end if _Hf==_Gh then _Gi=false end end)end _a._Unlock_DoUnlockAll=_He do local _Hk=require(_d.ClientGameModules.GuiHandler)if _Hk and _Hk.OnGuiOpen then _zC(_Hk:OnGuiOpen(string.char(83,104,111,112),function()if not _a.Unlock_Enabled then return end task.delay(0.3,function()if not _a.Unlock_Enabled then return end _He()if _a._Unlock_ReapplyFavorites then _a._Unlock_ReapplyFavorites()end end)end))end end local _Hl=nil local function _Hm()if _Hl then return end local _Hn=_bk.Character _Hl=(_Hn and _Hn:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100)))or string.char(66,97,115,101,32,83,119,111,114,100)end _Hm()_a._Unlock_CaptureOriginalSword=function()_Hl=nil _Hm()end _zy(function()_Gh+=1 table.clear(_Gs)_Gi=false for _Ho,_Hp in pairs(_Gq)do _Gx(_Ho,string.char(79,119,110,115,73,116,101,109),_Hp.OwnsItem)_Gx(_Ho,string.char(83,101,99,116,105,111,110),_Hp.Section)_Gx(_Ho,string.char(70,111,114,99,101,72,105,100,101),_Hp.ForceHide)_Ho.InventoryKey=_Hp.InventoryKey _Ho.Key=_Hp.Key for _Hq,_Hr in ipairs(_Hp.Aliases)do if _Hr.List[_Hr.Key]==_Ho then _Hr.List[_Hr.Key]=nil end end local _Hs=_Gc._inventoryPages and _Gc._inventoryPages[_Hp.type]if _Hs and _Hs.MarkDirty then _Hs.MarkDirty(_Ho,false,true)end end table.clear(_Gq)for _Ht,_Hu in ipairs(_Gp)do _Ge(_Hu)end _Gc._selectedItem=nil end)local function _Hv(_Hw,_Hx,_Hy,_Hz)local _HA=type(_Hy)==string.char(116,97,98,108,101)and _Hy or{}if _Hx~=nil and#_HA>0 then return _HA end local _HB=_Gc._virtualItems and _Gc._virtualItems[_Hw]local _HC=_yW.FakeDeleted and _yW.FakeDeleted[_Hw]or{}if _Hx~=nil then local _HD=_HB and _HB[_Hx]local _HE=_HD and _HD.Name or _Hx if _HC[_HE]then return{}end return{_Hx}end local _HF,_HG={},{}for _HH,_HI in ipairs(_HA)do _HF[#_HF+1]=_HI local _HJ=type(_HI)==string.char(116,97,98,108,101)and(_HI.Key or _HI.Name)or _HI if _HJ then _HG[_HJ]=true end end for _HK,_HL in pairs(_HB or{})do local _HM=_Hz and(_HL.InventoryKey or _HL.Key or _HL.Name)or _HL.Name if _HM and not _HG[_HM]and not _HC[_HL.Name]then _HF[#_HF+1]=_HM _HG[_HM]=true end end return _HF end local _HN=require(_d.Shared.Inventory.Shared)if typeof(_HN.FindItems)==string.char(102,117,110,99,116,105,111,110)then local _HO _HO=hookfunction(_HN.FindItems,function(_HP,_HQ,_HR,_HS,_HT)if not _a.Unlock_Enabled or not _Go[_HR]then return _HO(_HP,_HQ,_HR,_HS,_HT)end local _HU=_HO(_HP,_HQ,_HR,_HS,_HT)return _Hv(_HR,_HS,_HU,false)end)_zw(function()hookfunction(_HN.FindItems,_HO)end)end local function _HV(_HW,_HX)local _HY=_Gr[_HW]if type(_HY)~=string.char(102,117,110,99,116,105,111,110)then return end local _Id=function(_HZ,_Ia,_Ib,...)if not _a.Unlock_Enabled or not _Go[_Ia]then return _HY(_HZ,_Ia,_Ib,...)end local _Ic=_HY(_HZ,_Ia,_Ib,...)return _Hv(_Ia,_Ib,_Ic,_HX)end _Gr[_HW]=_Id _zw(function()if _Gr[_HW]==_Id then _Gr[_HW]=_HY end end)end _HV(string.char(70,105,110,100,73,116,101,109,115),false)_HV(string.char(70,105,110,100,73,116,101,109,115,87,105,116,104,75,101,121),true)if _a.Unlock_Enabled then _He()end local _Ie=_yU:WaitForChild(string.char(83,104,111,112))local _If=_Ie.Holder.InfoBG.BuyButton local _Ig=require(_d.Shared.ReplicatedInstances.Swords)local _Ih=_Ie.Holder.Favorite local _Ii=_Ie.Holder.InfoBG.Delete local _Ij=_Ie.Holder.InfoBG.Equips.Finisher local _Ik=_Ie.Holder.InfoBG.Equips.EquipAccessory local _Il={Sword=true,Explosion=true,Ability=true}local _Im={}local _In={[true]={Image=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,54,57,55,57,56,55,48,53,56),HoverImage=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,54,57,55,57,56,51,48,54,50)},[false]={Image=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,54,57,55,57,56,49,55,53,48),HoverImage=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,54,57,55,57,56,55,48,53,56)},}local function _Io(_Ip,_Iq)for _Ir,_Is in pairs(_Gc._virtualItems[_Ip]or{})do if _Is and(_Is.Name==_Iq or _Ir==_Iq)then return _Is end end end local function _It(_Iu,_Iv)local _Iw=_zl[_Iu]if _a.Unlock_Enabled and _Iw and _Iw[_Iv]~=nil then return _Iw[_Iv]==true end for _Ix,_Iy in pairs(_Gc._virtualItems[_Iu]or{})do if _Iy.Name==_Iv and _Iy.IsFavorited==true then return true end end return false end local function _Iz()if not _a.Unlock_Enabled then return end local _IA=_Gc._selectedItem if not _IA or not _Il[_IA.type]then return end for _IB,_IC in pairs(_In[_It(_IA.type,_IA.name)])do _Ih[_IB]=_IC end end local function _ID(_IE)local _IF=_zl[_IE]if not _IF then return false end local _IG=false for _IH,_II in pairs(_Gc._virtualItems[_IE]or{})do local _IJ=_IF[_II.Name]if _IJ~=nil then if not _Im[_II]then _Im[_II]={Name_=_II.Name_,LayoutOrder=_II.LayoutOrder,IsFavorited=_II.IsFavorited,}end if _IJ then _II.IsFavorited=true _II.Name_=string.char(35,0,124)..(_II.Name or"")_II.LayoutOrder=-1000000000 else local _IK=_Im[_II]_II.IsFavorited=false _II.Name_=(_IK.Name_ or _II.Name or""):gsub(string.char(94,35),"")_II.LayoutOrder=_IK.LayoutOrder if _II.Type==string.char(65,98,105,108,105,116,121)and _IK.IsFavorited then _II.LayoutOrder=(_II.OriginalLayoutOrder or 0)end end _IG=true end end return _IG end local _IL={}local function _IM(_IN)local _IO=_Gc._inventoryPages[_IN]if not _IO or _IL[_IO]then return end local _IP=_IO.MarkDirty local _IQ=false local _IR _IR=function(...)_IP(...)if not _a.Unlock_Enabled or _IQ then return end _IQ=true task.defer(function()_IQ=false if not _a.Unlock_Enabled or _IO.MarkDirty~=_IR then return end if _ID(_IN)then _IP(nil,false,true)end _Iz()end)end _IL[_IO]=_IP _IO.MarkDirty=_IR _zw(function()if _IO.MarkDirty==_IR then _IO.MarkDirty=_IP end end)end local function _IS(_IT)_IM(_IT)_Ge(_IT)end local function _IU(_IV,_IW,_IX,_IY)_zl[_IV]=_zl[_IV]or{}_zl[_IV][_IW]=_IX==true _ID(_IV)_IS(_IV)_Iz()if not _IY then _zu()end end _a._Unlock_ReapplyFavorites=function()if not _a.Unlock_Enabled then return end for _IZ in pairs(_Il)do _IS(_IZ)end _Iz()end _zy(function()for _Ja,_Jb in pairs(_Im)do _Ja.Name_=_Jb.Name_ _Ja.LayoutOrder=_Jb.LayoutOrder _Ja.IsFavorited=_Jb.IsFavorited end table.clear(_Im)for _Jc in pairs(_Il)do local _Jd=_Gc._inventoryPages[_Jc]local _Je=_Jd and _IL[_Jd]if _Je then _Je(nil,true,true)end end end)if _a.Unlock_Enabled then _a._Unlock_ReapplyFavorites()end local _Jf local _Jg=false local function _Jh()if _Jg then return end _Jg=true task.defer(function()_Jg=false if _a.Unlock_Enabled and not _zd and _Jf then _Jf()end end)end _zC(_Gc.itemSelected,_Jh)local _Ji=_Gj(_Ih.Activated)_zC(_Ih.Activated,function(...)if not _a.Unlock_Enabled then if _Ji then _Ji(...)end return end local _Jj=_Gc._selectedItem if not _Jj or not _Il[_Jj.type]then if _Ji then _Ji(...)end return end _IU(_Jj.type,_Jj.name,not _It(_Jj.type,_Jj.name))_Iz()end)local _Jk=require(_d.Controllers.DeleteItemPromptController)local _Jl=require(_d.Shared.ItemInfo)do local _Jm=require(_d.Common.Utils.Utilities.ValueConvertor)if _Jm and _Jm.ShrinkNumber then local _Jn=_Jm.ShrinkNumber local _Jq=function(_Jo,_Jp,...)if type(_Jp)==string.char(116,97,98,108,101)and type(_Jp.Get)==string.char(102,117,110,99,116,105,111,110)then _Jp=_Jp:Get()end if type(_Jp)==string.char(110,117,109,98,101,114)then return _Jn(_Jo,_Jp,...)end return""end _Jm.ShrinkNumber=_Jq _zw(function()if _Jm.ShrinkNumber==_Jq then _Jm.ShrinkNumber=_Jn end end)end end local _Jr=_Gj(_Ii.Activated)local function _Js(_Jt,_Ju)local _Jv=_Gc._virtualItems[_Jt]if not _Jv then return end local _Jw={}for _Jx,_Jy in pairs(_Jv)do if _Jy and(_Jy.Name==_Ju or _Jx==_Ju)then _Jw[_Jy]=true end end for _Jz,_JA in pairs(_Jv)do if _Jw[_JA]then _Jv[_Jz]=nil end end for _JB in pairs(_Jw)do _Gq[_JB]=nil if _JB.Trove then _JB.Trove:Destroy()end end _Ge(_Jt)end local function _JC(_JD,_JE)if _JD==string.char(83,119,111,114,100)and _a.Sword_Name==_JE then _a.Sword_Name=string.char(66,97,115,101,32,83,119,111,114,100)_zj=string.char(66,97,115,101,32,83,119,111,114,100)_yW.LastSword=_zj _a.FinisherEquipped[_JE]=nil _a.Selected_Finisher=_a.FinisherEquipped[string.char(66,97,115,101,32,83,119,111,114,100)]and string.char(66,97,115,101,32,83,119,111,114,100)or false local _JF=_Ig:GetSword(string.char(66,97,115,101,32,83,119,111,114,100))if _JF then _Ig:ForceEquipSwordTo(_bk.Character,_JF.Name)if _a._Sword_Function then _a._Sword_Function(_JF.Name)end end else _a.FinisherEquipped[_JE]=nil end _yW.FakeDeleted[_JD]=_yW.FakeDeleted[_JD]or{}_yW.FakeDeleted[_JD][_JE]=true _zu()_Js(_JD,_JE)_Gc._selectedItem=nil end _zC(_Ii.Activated,function(...)if not _a.Unlock_Enabled then if _Jr then return _Jr(...)end return end local _JG=_Gc._selectedItem if not _JG or(_JG.type~=string.char(83,119,111,114,100)and _JG.type~=string.char(69,120,112,108,111,115,105,111,110))then return end local _JH,_JI=_JG.type,_JG.name local _JJ=_Jl[_JH]and _Jl[_JH][_JI]_Jk:PromptConfirmation({PromptType=string.char(83,105,110,103,108,101),Description=`Are you sure you want to delete x1 {(_JJ and _JJ.DisplayName)or _JI}? This cannot be undone.`,},function(_JK)if _JK then _JC(_JH,_JI)end end)end)local _JL=_Gc._canDelete _Gc._canDelete=function(_JM,_JN,_JO)if not _a.Unlock_Enabled then return _JL(_JM,_JN,_JO)end local _JP=false do local _JQ=require(_d.Shared.Inventory).Client local _JR=_JQ:FindItemsWithKey(_JN,_JO)_JP=_JR and#_JR>0 end if not _JP then if _JO==string.char(66,97,115,101,32,83,119,111,114,100)or _JO==string.char(69,120,112,108,111,115,105,111,110,32,78,111,114,109,97,108)then return false,string.char(67,97,110,110,111,116,32,100,101,108,101,116,101,32,98,97,115,101,32,105,116,101,109,115)end return true end return _JL(_JM,_JN,_JO)end local _JS=_Gc._addToMultiDelete _Gc._addToMultiDelete=function(_JT,_JU,_JV)if not _a.Unlock_Enabled then return _JS(_JT,_JU,_JV)end local _JW=false do local _JX=require(_d.Shared.Inventory).Client local _JY=_JX:FindItemsWithKey(_JU,_JV)_JW=_JY and#_JY>0 end if _JW then return _JS(_JT,_JU,_JV)end if _JV==string.char(66,97,115,101,32,83,119,111,114,100)or _JV==string.char(69,120,112,108,111,115,105,111,110,32,78,111,114,109,97,108)then return end if not _JT._multiDelete or not _JT._multiDelete[_JU]then return end local _JZ=_JT._multiDelete[_JU][_JV]if _JZ and#_JZ>=1 then return end if not _JZ then _JT._multiDelete[_JU][_JV]={}end table.insert(_JT._multiDelete[_JU][_JV],_JV)local _Ka=_JT._virtualItems[_JU]and _JT._virtualItems[_JU][_JV]if _Ka then if _Ka.InDeleteMulti then _Ka.InDeleteMulti:Set(#_JT._multiDelete[_JU][_JV])end _Ka.ForceHide:Set(true)end _JT:_updateMultiDelete()end local _Kb=_Gc._updateMultiDelete _Gc._updateMultiDelete=function(_Kc)if not _a.Unlock_Enabled or not _Kc._multiDelete then _Kb(_Kc)return end local _Kd=_Ie.Holder.DeleteItems.List.ContentsCanvas.ScrollingFrame for _Ke,_Kf in ipairs(_Kd:GetChildren())do if _Kf:IsA(string.char(71,117,105,79,98,106,101,99,116))and _Kf:GetAttribute(string.char(95,70,97,107,101,69,110,116,114,121))then local _Kg=_Kf:GetAttribute(string.char(95,70,97,107,101,84,121,112,101))local _Kh=_Kf.Name if not _Kg or not _Kc._multiDelete[_Kg]or not _Kc._multiDelete[_Kg][_Kh]or#_Kc._multiDelete[_Kg][_Kh]<=0 then _Kf:Destroy()end end end for _Ki,_Kj in pairs(_Kc._multiDelete)do for _Kk,_Kl in pairs(_Kj)do if#_Kl<=0 then continue end local _Km=false do local _Kn=require(_d.Shared.Inventory).Client local _Ko=_Kn:FindItemsWithKey(_Ki,_Kk)_Km=not _Ko or#_Ko<=0 end if not _Km then continue end local _Kp=_Kd:FindFirstChild(_Kk)if _Kp and not _Kp:GetAttribute(string.char(95,70,97,107,101,69,110,116,114,121))then _Kp=nil end if not _Kp then local _Kq=_Kd:FindFirstChild(string.char(85,73,76,105,115,116,76,97,121,111,117,116))and _Kd.UIListLayout:FindFirstChild(string.char(84,101,109,112,108,97,116,101))if _Kq then local _Kr=_Kq:Clone()_Kr.Name=_Kk _Kr.Visible=true _Kr:SetAttribute(string.char(95,70,97,107,101,69,110,116,114,121),true)_Kr:SetAttribute(string.char(95,70,97,107,101,84,121,112,101),_Ki)_Kr:SetAttribute(string.char(73,110,118,101,110,116,111,114,121,84,121,112,101),_Ki)local function _Ks()if not _Kc._multiDelete or not _Kc._multiDelete[_Ki]or not _Kc._multiDelete[_Ki][_Kk]then return end table.remove(_Kc._multiDelete[_Ki][_Kk],1)if#_Kc._multiDelete[_Ki][_Kk]<=0 then _Kc._multiDelete[_Ki][_Kk]=nil _Kr:Destroy()local _Kt=_Kc._virtualItems[_Ki]and _Kc._virtualItems[_Ki][_Kk]if _Kt then _Kt.ForceHide:Set(false)_Kt.Section:Set(string.char(79,119,110,101,100))end end local _Ku=_Kc._virtualItems[_Ki]and _Kc._virtualItems[_Ki][_Kk]if _Ku and _Ku.InDeleteMulti then local _Kv=(_Kc._multiDelete[_Ki]and _Kc._multiDelete[_Ki][_Kk])and#_Kc._multiDelete[_Ki][_Kk]or 0 _Ku.InDeleteMulti:Set(_Kv)end _Kc:_updateMultiDelete()end _zC(_Kr.Button.Activated,_Ks)_zC(_Kr.Button.Item.Activated,_Ks)_Kr.Parent=_Kd _Kp=_Kr end end if _Kp then local _Kw=_Jl[_Ki]and _Jl[_Ki][_Kk]local _Kx=(_Kw and _Kw.DisplayName)or _Kk _Kp.Button.Label.Text=_Kx _Kp.Button.Item.Label.Text=string.char(120)..#_Kl if _Kw and _Kw.Icon then _Kp.Button.Item.Vector.Image=_Kw.Icon end end end end _Kb(_Kc)end local _Ky=nil do local _Kz=_Ie.Holder.DeleteItems.List.Buttons.Delete local _KA=_Ie.Holder.DeleteItems.List.Buttons.Cancel for _KB,_KC in getconnections(_Kz.Activated)do if _KC and _KC.Function then _Ky=_KC.Function _zA(_KC)break end end _zC(_Kz.Activated,function()if not _a.Unlock_Enabled or not _Gc._multiDelete then if _Ky then return _Ky()end return end local _KD={}local _KE={}local _KF,_KG=0,0 for _KH,_KI in pairs(_Gc._multiDelete)do for _KJ,_KK in pairs(_KI)do if#_KK<=0 then continue end local _KL=false do local _KM=require(_d.Shared.Inventory).Client local _KN=_KM:FindItemsWithKey(_KH,_KJ)_KL=not _KN or#_KN<=0 end if _KL then table.insert(_KD,{type=_KH,name=_KJ})_KF+=1 else if not _KE[_KH]then _KE[_KH]={}end for _KO,_KP in ipairs(_KK)do table.insert(_KE[_KH],_KP)end _KG+=#_KK end end end local _KQ=_KF+_KG if _KQ==0 then _Gc._multiDelete=nil _Gc:_updateMultiDeleteVisbility()_Gc:_updateMultiDelete()return end _Jk:PromptConfirmation({PromptType=string.char(83,105,110,103,108,101),Description=string.char(65,114,101,32,121,111,117,32,115,117,114,101,32,121,111,117,32,119,97,110,116,32,116,111,32,100,101,108,101,116,101,32,120).._KQ..string.char(32,105,116,101,109,115,63,32,84,104,105,115,32,99,97,110,110,111,116,32,98,101,32,117,110,100,111,110,101,46),},function(_KR)if _KR then for _KS,_KT in ipairs(_KD)do _JC(_KT.type,_KT.name)end if _KG>0 then do local _KU=require(_d.Packages.Net)_KU:Invoke(string.char(82,101,113,117,101,115,116,68,101,108,101,116,101),_KE)end end else for _KV,_KW in ipairs(_KD)do local _KX=_Gc._virtualItems[_KW.type]and _Gc._virtualItems[_KW.type][_KW.name]if _KX then _KX.ForceHide:Set(false)_KX.InDeleteMulti:Set(0)_KX.Section:Set(string.char(79,119,110,101,100))end end end _Gc._multiDelete=nil _Gc:_updateMultiDeleteVisbility()_Gc:_updateMultiDelete()end)end)local _KY=nil for _KZ,_La in getconnections(_KA.Activated)do if _La and _La.Function then _KY=_La.Function _zA(_La)break end end _zC(_KA.Activated,function()if not _a.Unlock_Enabled then if _KY then return _KY()end return end if _Gc._multiDelete then for _Lb,_Lc in pairs(_Gc._multiDelete)do for _Ld,_Le in pairs(_Lc)do if#_Le<=0 then continue end local _Lf=false do local _Lg=require(_d.Shared.Inventory).Client local _Lh=_Lg:FindItemsWithKey(_Lb,_Ld)_Lf=not _Lh or#_Lh<=0 end if _Lf then local _Li=_Gc._virtualItems[_Lb]and _Gc._virtualItems[_Lb][_Ld]if _Li then _Li.ForceHide:Set(false)_Li.InDeleteMulti:Set(0)_Li.Section:Set(string.char(79,119,110,101,100))end end end end end _Gc._multiDelete=nil _Gc:_updateMultiDeleteVisbility()_Gc:_updateMultiDelete()end)end local _Lj=_Gj(_Ij.Activated)_zC(_Ij.Activated,function(...)if not _a.Unlock_Enabled then if _Lj then return _Lj(...)end return end local _Lk=_Gc._selectedItem if not _Lk or _Lk.type~=string.char(83,119,111,114,100)or not _Lk.data or not _Lk.data.HasFinisher then return end local _Ll=_Lk.name if _a.FinisherEquipped[_Ll]then _a.FinisherEquipped[_Ll]=nil if _a.Sword_Name==_Ll then _a.Selected_Finisher=false end _Ij.Image=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,52,52,54,56,50)_Ij.Label.Text=string.char(69,81,85,73,80)else _a.FinisherEquipped[_Ll]=true if _a.Sword_Name==_Ll then _a.Selected_Finisher=_Ll end _Ij.Image=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,48,50,51,56,55)_Ij.Label.Text=string.char(85,78,69,81,85,73,80)end _zu()_Jh()end)local _Lm=_yW.FakeShowAccessoryPerSword or{}local function _Ln()local _Lo=_a.Sword_Name if _Lo and _Lm[_Lo]~=nil then return _Lm[_Lo]end return false end local _Lp={}local function _Lq(_Lr)local _Ls=_bk.Character if not _Ls then return end local _Lt=_Ls:FindFirstChild(string.char(83,119,111,114,100,65,99,99,101,115,115,111,114,105,101,115))if not _Lt then return end if _Lr then for _Lu,_Lv in pairs(_Lp)do if _Lu and _Lu.Parent then if _Lu:IsA(string.char(66,97,115,101,80,97,114,116))or _Lu:IsA(string.char(68,101,99,97,108))or _Lu:IsA(string.char(84,101,120,116,117,114,101))then _Lu.Transparency=_Lv elseif _Lu:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114))or _Lu:IsA(string.char(84,114,97,105,108))or _Lu:IsA(string.char(66,101,97,109))or _Lu:IsA(string.char(80,111,105,110,116,76,105,103,104,116))or _Lu:IsA(string.char(83,112,111,116,76,105,103,104,116))or _Lu:IsA(string.char(83,117,114,102,97,99,101,76,105,103,104,116))then _Lu.Enabled=_Lv end end end _Lp={}else _Lp={}for _Lw,_Lx in ipairs(_Lt:GetDescendants())do if _Lx:IsA(string.char(66,97,115,101,80,97,114,116))or _Lx:IsA(string.char(68,101,99,97,108))or _Lx:IsA(string.char(84,101,120,116,117,114,101))then _Lp[_Lx]=_Lx.Transparency _Lx.Transparency=1 elseif _Lx:IsA(string.char(80,97,114,116,105,99,108,101,69,109,105,116,116,101,114))or _Lx:IsA(string.char(84,114,97,105,108))or _Lx:IsA(string.char(66,101,97,109))or _Lx:IsA(string.char(80,111,105,110,116,76,105,103,104,116))or _Lx:IsA(string.char(83,112,111,116,76,105,103,104,116))or _Lx:IsA(string.char(83,117,114,102,97,99,101,76,105,103,104,116))then _Lp[_Lx]=_Lx.Enabled _Lx.Enabled=false end end end _Ls:SetAttribute(string.char(72,97,115,65,99,99,101,115,115,111,114,121,69,113,117,105,112,112,101,100),_Lr)end local function _Ly()local _Lz=_Gc._selectedItem if not _Lz or _Lz.type~=string.char(83,119,111,114,100)then _Ik.Visible=false return end local _LA=_Lz.data if not _LA or not _LA.AccessoryToggleable then _Ik.Visible=false return end if _LA.AccessoryUnlockable and not _a.Unlock_Enabled then local _LB=_Io(string.char(83,119,111,114,100),_Lz.name)local _LC=false if _LB then _LC=_LB.HasAccessory and _LB.HasAccessory:Get()end if not _LC then _Ik.Visible=false return end end _Ik.Visible=true _Ik.HoverImage=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,52,55,56,51,48,53,49,49,50,52)_Ik.ImageColor3=Color3.new(1,1,1)local _LD=false _LD=_yW.FakeShowAccessoryPerSword and _yW.FakeShowAccessoryPerSword[_Lz.name]==true _Ik.Image=_LD and string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,48,50,51,56,55)or string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,52,52,54,56,50)_Ik.Label.Text=_LD and string.char(85,78,69,81,85,73,80,32,65,67,67,69,83,83,79,82,89)or string.char(69,81,85,73,80,32,65,67,67,69,83,83,79,82,89)end _zC(_bk:GetAttributeChangedSignal(string.char(83,104,111,119,83,119,111,114,100,65,99,99,101,115,115,111,114,121)),function()_Jh()end)local _LE=_Gj(_Ik.Activated)local _LF=false _zC(_Ik.Activated,function(...)if _LF then return end _LF=true task.delay(0.2,function()_LF=false end)local _LG=_Gc._selectedItem if not _LG or _LG.type~=string.char(83,119,111,114,100)or not _LG.data or not _LG.data.AccessoryToggleable then if _LE then return _LE(...)end return end local _LH=_LG.name local _LI=_yW.FakeShowAccessoryPerSword and _yW.FakeShowAccessoryPerSword[_LH]==true local _LJ=not _LI if not _yW.FakeShowAccessoryPerSword then _yW.FakeShowAccessoryPerSword={}end _yW.FakeShowAccessoryPerSword[_LH]=_LJ _zg=true _bk:SetAttribute(string.char(83,104,111,119,83,119,111,114,100,65,99,99,101,115,115,111,114,121),_LJ)if _LJ then local _LK=_bk.Character if _LK then local _LL=_LK:FindFirstChild(string.char(83,119,111,114,100,65,99,99,101,115,115,111,114,105,101,115))if _LL then _LL:ClearAllChildren()end local _LM=_a.Sword_Name if _LK:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100))==_LM then _Ig:ForceEquipSwordTo(_LK,string.char(66,97,115,101,32,83,119,111,114,100))end _Ig:ForceEquipSwordTo(_LK,_LM)if _a._Sword_Function then _a._Sword_Function(_LM)end end _Lp={}else _Lq(false)end _Ik.Image=_LJ and string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,48,50,51,56,55)or string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,52,52,54,56,50)_Ik.Label.Text=_LJ and string.char(85,78,69,81,85,73,80,32,65,67,67,69,83,83,79,82,89)or string.char(69,81,85,73,80,32,65,67,67,69,83,83,79,82,89)_zu()end)local _LN={}for _LO,_LP in getconnections(_If.Activated)do if _LP and _LP.Function then table.insert(_LN,_LP.Function)end end _Gj(_If.Activated)local _LQ=nil for _LR,_LS in getconnections(_d.Remotes.FireSwordInfo.OnClientEvent)do if _LS and _LS.Function then _LQ=_LS.Function _zA(_LS)end end _a._Sword_Function=_LQ local _LT=nil for _LU,_LV in getconnections(_d.Remotes.ParrySuccessAll.OnClientEvent)do if _LV and _LV.Function then _LT=_LV.Function end end if _LT then for _LW,_LX in getconnections(_d.Remotes.ParrySuccessAll.OnClientEvent)do if _LX and _LX.Function then _zA(_LX)end end end local _LY=require(_d.Controllers.VFXController)local _LZ=_LY.PlayExplosion _zw(function()_LY.PlayExplosion=_LZ end)local _Ma=0 local _Mb local function _Mc(_Md,_Me)if _Mb then _Mb:Disconnect()_Mb=nil end if not _Me or _Me.Parent~=_Md then return end local _Mf,_Mg local _Mh={}function _Mh:Disconnect()if _Mf then _Mf:Disconnect()end if _Mg then _Mg:Disconnect()end if _Mb==self then _Mb=nil end end _Mf=_Md.ChildAdded:Connect(function(_Mi)if _Mi==_Me then return end task.defer(function()if not _a.Unlock_Enabled and _Mi.Parent==_Md and _Mi:GetAttribute(string.char(95,101,113,117,105,112,112,101,100,83,119,111,114,100))then if _Me.Parent==_Md then _Me:Destroy()end _Mh:Disconnect()end end)end)_Mg=_Me.AncestryChanged:Connect(function()if _Me.Parent~=_Md then _Mh:Disconnect()end end)_Mb=_Mh end _zy(function()_Ma+=1 _yW.LastSword=_zj or _yW.LastSword _yW.LastExplosion=_zi or _yW.LastExplosion _zu()local _Mj=_Hl or string.char(66,97,115,101,32,83,119,111,114,100)_a.Sword_Name,_a.Selected_Finisher=_Mj,false local _Mk=_Ig:GetSword(_Mj)if _Mk and _bk.Character then local _Ml=_bk.Character _Mc(_Ml,_Ig:ForceEquipSwordTo(_Ml,_Mk.Name))if _LQ then _LQ(_Mk.Name)end end _zi=nil end)local function _Mm()_LY.PlayExplosion=function(_Mn,_Mo,_Mp,_Mq,_Mr,_Ms,_Mt)if _a.Unlock_Enabled and _zi and _zi~=""and _Mt and _Ms==_bk.Character then _Mo=_zi end return _LZ(_Mn,_Mo,_Mp,_Mq,_Mr,_Ms,_Mt)end end _a._Unlock_ReequipLast=function()if not _a.Unlock_Enabled or _zc or _zd then return end if _Mb then _Mb:Disconnect()end _zi=_yW.LastExplosion _Mm()local _Mu=_zj or _yW.LastSword local _Mv=_Mu and _Ig:GetSword(_Mu)if _Mv then _zj=_Mv.Name _Ma+=1 local _Mw=_Ma _a.Sword_Name=_Mv.Name _a.Selected_Finisher=_a.FinisherEquipped[_Mv.Name]and _Mv.Name or false local _Mx=_bk.Character if _Mx then local _My=_Ig:ForceEquipSwordTo(_Mx,_Mv.Name)task.spawn(function()local _Mz=_My for _MA=1,30 do task.wait(0.1)if _Mw~=_Ma or not _a.Unlock_Enabled or _zc or _zd or _bk.Character~=_Mx then return end local _MB=_Mz and _Mz.Parent==_Mx for _MC,_MD in ipairs(_Mx:GetChildren())do if _MD~=_Mz and _MD:GetAttribute(string.char(95,101,113,117,105,112,112,101,100,83,119,111,114,100))then _MB=false break end end if not _MB then _Mz=_Ig:ForceEquipSwordTo(_Mx,_Mv.Name)end end end)if _Mw~=_Ma or not _a.Unlock_Enabled then return end if _LQ then _LQ(_Mv.Name)end local _ME=_Ln()_bk:SetAttribute(string.char(83,104,111,119,83,119,111,114,100,65,99,99,101,115,115,111,114,121),_ME)_Lq(_ME)end end if _Jf then _Jf()end end local _MF={}local _MG=false local _MH,_MI=0,0 local function _MJ(_MK,_ML)local _MM=false for _MN,_MO in ipairs(_MK:GetChildren())do if _MO:GetAttribute(string.char(95,101,113,117,105,112,112,101,100,83,119,111,114,100))then if _MO.Name~=_ML then return true end _MM=true elseif _MO.Name==_ML and _MO:IsA(string.char(77,111,100,101,108))then _MM=true end end return not _MM end local function _MP(_MQ)if _MG then return end _MG=true task.defer(function()_MG=false if not _a.Unlock_Enabled or _zc or _zd or _bk.Character~=_MQ then return end local _MR=_zj or _yW.LastSword local _MS=_MR and _Ig:GetSword(_MR)if not _MS or not _MJ(_MQ,_MS.Name)then return end local _MT=0.3-(os.clock()-_MH)if _MT>0 then task.delay(_MT,_MP,_MQ)return end _MI=(os.clock()-_MH<3)and _MI+1 or 1 _MH=os.clock()if _MI>6 then if _MI==7 then warn(string.char(91,85,110,108,111,99,107,101,114,93,32,70,97,107,101,32,115,119,111,114,100,32,107,101,101,112,115,32,103,101,116,116,105,110,103,32,114,101,112,108,97,99,101,100,58,32).._MS.Name)end return end _a.Sword_Name=_MS.Name _a.Selected_Finisher=_a.FinisherEquipped[_MS.Name]and _MS.Name or false _Ig:ForceEquipSwordTo(_MQ,_MS.Name)if _LQ then _LQ(_MS.Name)end end)end local function _MU(_MV)_zG(_MF)if not _MV then return end local function _MW()_MP(_MV)end _MF[1]=_MV:GetAttributeChangedSignal(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100)):Connect(_MW)_MF[2]=_MV.ChildAdded:Connect(_MW)end _MU(_bk.Character)local _MX=_bk.CharacterAdded:Connect(_MU)_zw(function()_MX:Disconnect()_zG(_MF)end)_zC(_If.Activated,function(...)local _MY=_Gc._selectedItem if not _MY then return end local _MZ,_Na=_MY.type,_MY.name if not _a.Unlock_Enabled or(_MZ~=string.char(83,119,111,114,100)and _MZ~=string.char(69,120,112,108,111,115,105,111,110))then for _Nb,_Nc in ipairs(_LN)do _Nc(...)end return end if _MZ==string.char(69,120,112,108,111,115,105,111,110)and _zi==_Na then _If.PriceTag.TextLabel.Text=string.char(69,113,117,105,112,112,101,100)return end if _MZ==string.char(83,119,111,114,100)then _Ma+=1 local _Nd=_Ma _Hm()local _Ne=_a.Sword_Name if _Ne and _Ne~=_Na then _a.FinisherEquipped[_Ne]=nil end local _Nf=_Ig:GetSword(_Na)local _Ng=_bk.Character if not _Nf or not _Ng then return end local _Nh,_Ni=pcall(_Ig.ForceEquipSwordTo,_Ig,_Ng,_Nf.Name)if _Nd~=_Ma or not _a.Unlock_Enabled then return end if not _Nh or not _Ni or _Ni.Parent~=_Ng or _Ng~=_bk.Character then _If.PriceTag.TextLabel.Text=string.char(69,113,117,105,112)warn(string.char(91,85,110,108,111,99,107,101,114,93,32,83,119,111,114,100,32,109,111,100,101,108,32,100,105,100,32,110,111,116,32,102,105,110,105,115,104,32,101,113,117,105,112,112,105,110,103,58,32)..tostring(_Na))return end _a.Sword_Name=_Nf.Name _a.Selected_Finisher=_a.FinisherEquipped[_Nf.Name]and _Nf.Name or false _If.PriceTag.TextLabel.Text=string.char(69,113,117,105,112,112,101,100)if _LQ then _LQ(_Nf.Name)end _zj=_Nf.Name _yW.LastSword=_zj _zu()_zg=false _zh+=1 local _Nj=_zh local _Nk=_Lm[_Nf.Name]if _Nk==nil then _Lm[_Nf.Name]=false end _yW.FakeShowAccessoryPerSword=_Lm task.spawn(function()local _Nl=_bk.Character if not _Nl then return end local _Nm=_Lm[_Nf.Name]or false for _Nn=1,20 do task.wait(0.1)if _zg or _Nj~=_zh or _Nd~=_Ma or not _a.Unlock_Enabled then return end if not _Nl or _Nl~=_bk.Character then return end _bk:SetAttribute(string.char(83,104,111,119,83,119,111,114,100,65,99,99,101,115,115,111,114,121),_Nm)_Lq(_Nm)end end)_Jh()elseif _MZ==string.char(69,120,112,108,111,115,105,111,110)then _If.PriceTag.TextLabel.Text=string.char(69,113,117,105,112,112,101,100)_zi=_Na _yW.LastExplosion=_Na _Mm()_zu()_Jh()end end)if _LT then _zC(_d.Remotes.ParrySuccessAll.OnClientEvent,function(...)local _No={...}if _a.Unlock_Enabled and _a.Sword_Name then local _Np=_Ig:GetSword(_a.Sword_Name)local _Nq=_bk.Character and _bk.Character:FindFirstChild(string.char(72,117,109,97,110,111,105,100,82,111,111,116,80,97,114,116))if _Np and(_No[4]==_Nq or tostring(_No[4])==_bk.Name)then _No[1],_No[3]=_Np.SlashName,_Np.Name end end return _LT(unpack(_No))end)end _zC(_bk.CharacterAppearanceLoaded,function()if not _a.Unlock_Enabled then return end local _Nr=_bk.Character if not _Nr then return end for _Ns=1,80 do task.wait(0.05)if not _a.Unlock_Enabled then return end local _Nt=_bk.Character if not _Nt or _Nt~=_Nr then return end if _Nt:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100))then break end end if not _a.Unlock_Enabled then return end local _Nu=_bk.Character if not _Nu or _Nu~=_Nr then return end local _Nv=_zj or _yW.LastSword or _a.Sword_Name local _Nw=_Nv and _Ig:GetSword(_Nv)if not _Nw then return end _Nv=_Nw.Name _a.Sword_Name=_Nv local _Nx=_Ma for _Ny=1,5 do task.delay(_Ny*1,function()if _bk.Character~=_Nu or _Nx~=_Ma then return end if not _a.Unlock_Enabled or _zc or _zd then return end if _Nu:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,83,119,111,114,100))~=_Nv then _Ig:ForceEquipSwordTo(_Nu,_Nv)if _LQ then _LQ(_Nv)end end end)end _Ig:ForceEquipSwordTo(_Nu,_Nv)if _LQ then _LQ(_Nv)end _a.Selected_Finisher=(_a.Sword_Name and _a.FinisherEquipped[_a.Sword_Name])and _a.Sword_Name or false local _Nz=_Ln()_bk:SetAttribute(string.char(83,104,111,119,83,119,111,114,100,65,99,99,101,115,115,111,114,121),_Nz)_Lq(_Nz)end)_Jf=function()_Ly()local _NA=_Gc._selectedItem if not _NA then return end if _Gc._multiDelete then return end do local _NB=_a.Unlock_Enabled and(_NA.type==string.char(83,119,111,114,100)or _NA.type==string.char(69,120,112,108,111,115,105,111,110))_Ii.Visible=_NB if _a.Unlock_Enabled and _NA.type==string.char(83,119,111,114,100)and _NA.data and _NA.data.HasFinisher then _Ij.Visible=true _Ij.HoverImage=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,52,55,56,51,48,53,49,49,50,52)_Ij.ImageColor3=Color3.new(1,1,1)local _NC=_a.FinisherEquipped[_NA.name]_Ij.Image=_NC and string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,48,50,51,56,55)or string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,53,52,53,50,53,52,52,54,56,50)_Ij.Label.Text=_NC and string.char(85,78,69,81,85,73,80)or string.char(69,81,85,73,80)else _Ij.Visible=false end if _NB then _If.Visible=true local _ND=(_NA.type==string.char(83,119,111,114,100)and _a.Sword_Name==_NA.name)or(_NA.type==string.char(69,120,112,108,111,115,105,111,110)and _zi==_NA.name)_If.PriceTag.TextLabel.Text=_ND and string.char(69,113,117,105,112,112,101,100)or string.char(69,113,117,105,112)end if _Il[_NA.type]then _Ih.Visible=true _Ih:SetAttribute(string.char(86,105,115,105,98,108,101),true)_Iz()end end end _a._Unlock_RefreshSelected=_Jf end if _a.Unlock_Enabled then _zU(string.char(73,110,118,101,110,116,111,114,121),_Gb)_zU(string.char(82,101,45,101,113,117,105,112,32,115,119,111,114,100),_a._Unlock_ReequipLast)task.spawn(_zU,string.char(69,109,111,116,101,115),_a._Unlock_InitializeEmotes)end _a._Unlock_Initialize=_Gb local function _NE(_NF)return string.format(string.char(35,37,48,50,88,37,48,50,88,37,48,50,88),math.floor(_NF.R*255+0.5),math.floor(_NF.G*255+0.5),math.floor(_NF.B*255+0.5))end local function _NG()local _NH=_G.__TitleState.Selected return _NH and string.format(string.char(60,102,111,110,116,32,99,111,108,111,114,61,34,37,115,34,62,37,115,60,47,102,111,110,116,62),_NE(_NH.Color),_NH.Text)or""end local _NI=false local function _NJ()if _NI then return end _NI=true if not _a.Unlock_Enabled then return end local _NK={{string.char(67,117,115,116,111,109,105,122,101),string.char(80,114,111,102,105,108,101),string.char(80,108,97,121,101,114,112,114,111,102,105,108,101),string.char(68,101,116,97,105,108,115),string.char(84,105,116,108,101)},{string.char(67,117,115,116,111,109,105,122,101),string.char(80,108,97,121,101,114,67,97,114,100),string.char(84,105,116,108,101)},}local function _NL(_NM)if not _NM then return false end for _NN,_NO in ipairs(_NM:GetDescendants())do if _NO:IsA(string.char(84,101,120,116,76,97,98,101,108))or _NO:IsA(string.char(84,101,120,116,66,117,116,116,111,110))or _NO:IsA(string.char(84,101,120,116,66,111,120))then local _NP=_NO.Text if _NP and(_NP==_bk.Name or _NP==_bk.DisplayName or string.find(_NP,_bk.DisplayName,1,true))then return true end end end return false end local function _NQ()local _NR={}local _NS=_yU:FindFirstChild(string.char(80,114,111,102,105,108,101,67,97,114,100))if not _NS or not _NL(_NS)then return _NR end for _NT,_NU in ipairs(_NK)do local _NV=_NS for _NW,_NX in ipairs(_NU)do if _NV then _NV=_NV:FindFirstChild(_NX)end end if _NV and(_NV:IsA(string.char(84,101,120,116,76,97,98,101,108))or _NV:IsA(string.char(84,101,120,116,66,117,116,116,111,110))or _NV:IsA(string.char(84,101,120,116,66,111,120)))then table.insert(_NR,_NV)end end return _NR end local function _NY()if not _a.Unlock_Enabled then return end local _NZ=_NG()for _Oa,_Ob in ipairs(_NQ())do do _Ob.RichText,_Ob.Visible,_Ob.TextTransparency=true,true,0 if _Ob.TextSize==0 then _Ob.TextSize=18 end if _Ob.TextColor3==Color3.new(0,0,0)then _Ob.TextColor3=Color3.new(1,1,1)end if _Ob.Text~=_NZ then _Ob.Text=_NZ end end end end local _Oc={}local _Od=setmetatable({},{__mode=string.char(107)})local _Oe=false local function _Of()if _Oe or _C or _zd then return end _Oe=true task.defer(function()_Oe=false if not _C and not _zd then _NY()end end)end local function _Og(_Oh)if _Od[_Oh]or not(_Oh:IsA(string.char(84,101,120,116,76,97,98,101,108))or _Oh:IsA(string.char(84,101,120,116,66,117,116,116,111,110))or _Oh:IsA(string.char(84,101,120,116,66,111,120)))then return end _Od[_Oh]=true _Oc[#_Oc+1]=_Oh:GetPropertyChangedSignal(string.char(84,101,120,116)):Connect(_Of)_Oc[#_Oc+1]=_Oh.AncestryChanged:Connect(function()_Of()end)end local function _Oi(_Oj)for _Ok,_Ol in ipairs(_Oj:GetDescendants())do _Og(_Ol)end _Of()end _B[string.char(80,114,111,102,105,108,101,67,97,114,100,95,68,101,115,99,101,110,100,97,110,116)]=_yU.DescendantAdded:Connect(function(_Om)if _Om:FindFirstAncestor(string.char(80,114,111,102,105,108,101,67,97,114,100))then _Og(_Om)_Of()end end)_B[string.char(80,114,111,102,105,108,101,67,97,114,100,95,84,105,116,108,101)]=_yU.ChildAdded:Connect(function(_On)if _On.Name==string.char(80,114,111,102,105,108,101,67,97,114,100)then _Oi(_On)end end)_zw(function()_zG(_Oc)table.clear(_Od)_a._Unlock_RefreshTitle=nil end)_a._Unlock_RefreshTitle=_Of local _Oo=_yU:FindFirstChild(string.char(80,114,111,102,105,108,101,67,97,114,100))if _Oo then _Oi(_Oo)end task.spawn(function()local _Op=require(_d.Shared:WaitForChild(string.char(84,105,116,108,101,68,97,116,97)))if not _Op then return end local _Oq=_yU:WaitForChild(string.char(83,101,116,116,105,110,103,115)):WaitForChild(string.char(70,114,97,109,101)):WaitForChild(string.char(70,114,97,109,101)):WaitForChild(string.char(83,101,116,116,105,110,103,84,105,116,108,101,115)):WaitForChild(string.char(84,105,116,108,101,76,105,115,116))local _Or=#_Op+1 for _Os=1,60 do local _Ot=0 for _Ou,_Ov in ipairs(_Oq:GetChildren())do if _Ov:IsA(string.char(73,109,97,103,101,66,117,116,116,111,110))then _Ot+=1 end end if _Ot>=_Or then break end task.wait(0.25)end local _Ow={}for _Ox,_Oy in ipairs(_Oq:GetChildren())do if _Oy:IsA(string.char(73,109,97,103,101,66,117,116,116,111,110))then table.insert(_Ow,_Oy)end end table.sort(_Ow,function(_Oz,_OA)return _Oz.LayoutOrder<_OA.LayoutOrder end)for _OB,_OC in ipairs(_Op)do local _OD=_Ow[_OB+1]if not _OD then break end local _OE=_OD:FindFirstChild(string.char(84,101,120,116,76,97,98,101,108))if _OE and _OC.Tag then _OE.Text=_OC.Tag.Text _OE.TextColor3=_OC.Tag.Color end _OD.Name=_OC.Name or _OD.Name _OD.Visible=true end local _OF=nil for _OG,_OH in ipairs(_Ow)do local _OI=_OG _zC(_OH.Activated,function()_OF=_OH local _OJ=_Op[_OI-1]_G.__TitleState.Selected=(_OI>1 and _OJ)and{Text=_OJ.Tag.Text,Color=_OJ.Tag.Color}or nil for _OK,_OL in ipairs(_Ow)do local _OM=_OL:FindFirstChild(string.char(83,101,108,101,99,116,101,100))if _OM then _OM.Visible=(_OL==_OF)end end _Of()end)end end)_Of()do if _yS.ChatVersion==Enum.ChatVersion.TextChatService then local _ON=_yS.OnIncomingMessage _yS.OnIncomingMessage=function(_OO)local _OP=Instance.new(string.char(84,101,120,116,67,104,97,116,77,101,115,115,97,103,101,80,114,111,112,101,114,116,105,101,115))if _a.Unlock_Enabled and _OO.TextSource and _OO.TextSource.UserId==_bk.UserId then local _OQ=_G.__TitleState.Selected if _OQ then _OP.PrefixText=string.format(string.char(60,102,111,110,116,32,99,111,108,111,114,61,34,37,115,34,62,91,37,115,93,60,47,102,111,110,116,62,32,60,102,111,110,116,32,99,111,108,111,114,61,34,37,115,34,62,37,115,60,47,102,111,110,116,62),_NE(_OQ.Color),_OQ.Text,_NE(_OQ.Color),_bk.DisplayName)end end return _OP end _a._Unlock_RestoreTextChatHook=function()_yS.OnIncomingMessage=_ON end end end end if _a.Unlock_Enabled then _NJ()end _a._Unlock_InitializeTitles=_NJ local _OR=_lm.Sword:AddLeftGroupbox(string.char(83,119,111,114,100,115,32,67,104,97,110,103,101,114),string.char(115,119,111,114,100,115))_OR:AddToggle(string.char(85,110,108,111,99,107,95,69,110,97,98,108,101,100,95,84,111,103,103,108,101),{Text=string.char(69,110,97,98,108,101,32,85,110,108,111,99,107,101,114),Default=_a.Unlock_Enabled and true or false,Tooltip=string.char(85,110,108,111,99,107,32,115,119,111,114,100,115,44,32,101,120,112,108,111,115,105,111,110,115,44,32,102,105,110,105,115,104,101,114,115,32,97,110,100,32,101,109,111,116,101,115,46),Callback=function(_OS)if _C or _zd then return end local _OT=_a.Unlock_Enabled _a.Unlock_Enabled=_OS if _OS then _zR()_zU(string.char(73,110,118,101,110,116,111,114,121),_a._Unlock_Initialize)if not _OT then _zU(string.char(67,97,112,116,117,114,101,32,115,119,111,114,100),_a._Unlock_CaptureOriginalSword)end _zU(string.char(84,105,116,108,101,115),_a._Unlock_InitializeTitles)_zU(string.char(82,101,102,114,101,115,104,32,116,105,116,108,101),_a._Unlock_RefreshTitle)_zU(string.char(85,110,108,111,99,107,32,97,108,108),_a._Unlock_DoUnlockAll)_zU(string.char(70,97,118,111,114,105,116,101,115),_a._Unlock_ReapplyFavorites)_zU(string.char(83,101,108,101,99,116,101,100,32,105,116,101,109),_a._Unlock_RefreshSelected)_zU(string.char(82,101,45,101,113,117,105,112,32,115,119,111,114,100),_a._Unlock_ReequipLast)task.spawn(_zU,string.char(69,109,111,116,101,115),_a._Unlock_InitializeEmotes)_zu()else if not _C then _zN()end end end,})end)do local _OU=Color3.fromRGB(255,0,0)local _OV={ParticleShine=string.char(115,104,105,101,108,100),ParryFX=string.char(115,108,97,115,104)}local _OW={ParticleEmitter={string.char(67,111,108,111,114),true},Beam={string.char(67,111,108,111,114),true},Trail={string.char(67,111,108,111,114),true},Decal={string.char(67,111,108,111,114),false},Texture={string.char(67,111,108,111,114),false},PointLight={string.char(67,111,108,111,114),false},SpotLight={string.char(67,111,108,111,114),false},SurfaceLight={string.char(67,111,108,111,114),false},ImageLabel={string.char(73,109,97,103,101,67,111,108,111,114,51),false},ImageButton={string.char(73,109,97,103,101,67,111,108,111,114,51),false},Highlight={string.char(70,105,108,108,67,111,108,111,114),false},}local function _OX(_OY)return{Kind=_OY,Enabled=false,Color=_OU,Seq=ColorSequence.new(_OU),Rainbow=false,PickerColor=_OU,Thread=nil,}end local _OZ,_Pa=_OX(string.char(115,104,105,101,108,100)),_OX(string.char(115,108,97,115,104))local _Pb={shield=_OZ,slash=_Pa}local _Pc=setmetatable({},{__mode=string.char(107)})local _Pd,_Pe,_Pf local _Pg,_Ph local function _Pi(_Pj)local _Pk=_OV[_Pj.Name]if _Pk then return _Pk end local _Pl=_Pj.Parent for _Pm=1,8 do if not _Pl or _Pl==workspace then return nil end _Pk=_OV[_Pl.Name]if _Pk then return _Pk end _Pl=_Pl.Parent end return nil end local function _Pn(_Po,_Pp)local _Pq=_Pc[_Po]if not _Pq then return end if _Pq.PropConn then _Pq.PropConn:Disconnect()end if _Pq.DestroyConn then _Pq.DestroyConn:Disconnect()end if _Pp and _Po.Parent then _Po[_Pq.Prop]=_Pq.Value end _Pc[_Po]=nil end local function _Pr(_Ps)local _Pt={}for _Pu,_Pv in pairs(_Pc)do if _Pv.Kind==_Ps then _Pt[#_Pt+1]=_Pu end end for _Pw=1,#_Pt do _Pn(_Pt[_Pw],true)end end local function _Px(_Py,_Pz)local _PA=_Pb[_Pz.Kind]if not(_PA and _PA.Enabled)then return end _Pz.Applying=true _Py[_Pz.Prop]=_Pz.IsSeq and _PA.Seq or _PA.Color _Pz.Applying=false end local function _PB(_PC,_PD)if _Pc[_PC]then return end local _PE=_OW[_PC.ClassName]if not _PE then return end _PD=_PD or _Pi(_PC)local _PF=_PD and _Pb[_PD]if not(_PF and _PF.Enabled)then return end local _PG,_PH=_PE[1],_PE[2]local _PI,_PJ=true,_PC[_PG]if not _PI then return end local _PK={Prop=_PG,Value=_PJ,Kind=_PD,IsSeq=_PH,Applying=false}_Pc[_PC]=_PK _PK.PropConn=_PC:GetPropertyChangedSignal(_PG):Connect(function()if _PK.Applying then return end if _PC.Parent then _Px(_PC,_PK)end end)_PK.DestroyConn=_PC.Destroying:Connect(function()_Pn(_PC,false)end)_Px(_PC,_PK)end local function _PL(_PM,_PN)if not(_PM and _PN and _Pb[_PN].Enabled)then return end _PB(_PM,_PN)local _PO=_PM:GetDescendants()for _PP=1,#_PO do _PB(_PO[_PP],_PN)end end local function _PQ(_PR)for _PS,_PT in pairs(_Pc)do if _PT.Kind==_PR and _PS.Parent then _Px(_PS,_PT)end end end local function _PU(_PV,_PW)_PV.Color=_PW _PV.Seq=ColorSequence.new(_PW)if _PV.Enabled then _PQ(_PV.Kind)end end local function _PX(_PY)if not _PY then return end local _PZ=_OV[_PY.Name]if _PZ then _PL(_PY,_PZ)end local _Qa=_PY:GetDescendants()for _Qb=1,#_Qa do local _Qc=_Qa[_Qb]_PZ=_OV[_Qc.Name]if _PZ then _PL(_Qc,_PZ)end end end local function _Qd(_Qe)local _Qf=_OV[_Qe.Name]if _Qf then _PL(_Qe,_Qf)return end if _OW[_Qe.ClassName]then _PB(_Qe)end end local function _Qg(_Qh)if _Pg~=_Qh then if _Pe then _Pe:Disconnect()end _Pg=_Qh _Pe=_Qh and _Qh.DescendantAdded:Connect(_Qd)or nil _B[string.char(70,88,95,67,104,97,114,68,101,115,99)]=_Pe end _PX(_Qh)end local function _Qi()if _Pd then return end local _Qj=workspace:FindFirstChild(string.char(82,117,110,116,105,109,101))if not _Qj then return end _Pd=_Qj.ChildAdded:Connect(function(_Qk)local _Ql=_OV[_Qk.Name]if _Ql then _PL(_Qk,_Ql)end end)_B[string.char(70,88,95,82,117,110,116,105,109,101)]=_Pd local _Qm=_Qj:GetChildren()for _Qn=1,#_Qm do local _Qo=_Qm[_Qn]local _Qp=_OV[_Qo.Name]if _Qp then _PL(_Qo,_Qp)end end end local function _Qq()if not _Ph then _Ph=true if not _Pf then _Pf=_bk.CharacterAdded:Connect(_Qg)_B[string.char(70,88,95,82,101,115,112,97,119,110)]=_Pf end _Qi()end _Qg(_bk.Character)end local function _Qr()if _OZ.Enabled or _Pa.Enabled then return end _Ph=false _Pg=nil if _Pe then _Pe:Disconnect();_Pe=nil;_B[string.char(70,88,95,67,104,97,114,68,101,115,99)]=nil end if _Pd then _Pd:Disconnect();_Pd=nil;_B[string.char(70,88,95,82,117,110,116,105,109,101)]=nil end if _Pf then _Pf:Disconnect();_Pf=nil;_B[string.char(70,88,95,82,101,115,112,97,119,110)]=nil end end local function _Qs(_Qt)if _Qt.Thread or not _Qt.Enabled then return end _Qt.Thread=task.spawn(function()local _Qu=0 while _Qt.Rainbow and _Qt.Enabled do _Qu=(_Qu+0.01)%1 _Qt.Color=Color3.fromHSV(_Qu,1,1)_Qt.Seq=ColorSequence.new(_Qt.Color)_PQ(_Qt.Kind)task.wait(0.05)end _Qt.Thread=nil end)end local function _Qv(_Qw,_Qx)_Qw.Enabled=_Qx if _Qx then _Qq()if _Qw.Rainbow then _Qs(_Qw)end else _Pr(_Qw.Kind)_Qr()end end local _Qy=_lm.Sword:AddRightGroupbox(string.char(83,104,105,101,108,100,32,38,32,83,108,97,115,104,32,70,88),string.char(115,112,97,114,107,108,101))local function _Qz(_QA,_QB,_QC)local _QE=_Qy:AddToggle(_QB..string.char(95,84,111,103,103,108,101),{Text=_QC,Default=false,Callback=function(_QD)_Qv(_QA,_QD)end,})_QE:AddColorPicker({SaveId=_QB..string.char(95,67,111,108,111,114),Name=_QC..string.char(32,67,111,108,111,114),Default=_OU,Callback=function(_QF)_QA.PickerColor=_QF if not _QA.Rainbow then _PU(_QA,_QF)end end,})_Qy:AddToggle(_QB..string.char(95,82,97,105,110,98,111,119),{Text=string.char(82,97,105,110,98,111,119),Default=false,Callback=function(_QG)_QA.Rainbow=_QG if _QG then _Qs(_QA)else _PU(_QA,_QA.PickerColor)end end,})end _Qz(_OZ,string.char(83,104,105,101,108,100,70,88),string.char(83,104,105,101,108,100,32,70,88))_Qz(_Pa,string.char(83,108,97,115,104,70,88),string.char(83,108,97,115,104,32,70,88))local _QH=_lm.Sword:AddRightGroupbox(string.char(82,101,119,97,114,100,115),string.char(103,105,102,116))local _QI={Items={},Running=false}_QI.Items[1]={ID=string.char(67,108,97,105,109,95,68,97,105,108,121,95,82,101,119,97,114,100,115),Name=string.char(65,117,116,111,32,67,108,97,105,109,32,68,97,105,108,121),Interval=5,Next=0,Enabled=false}_QI.Items[2]={ID=string.char(67,108,97,105,109,95,80,108,97,121,116,105,109,101,95,82,101,119,97,114,100,115),Name=string.char(65,117,116,111,32,67,108,97,105,109,32,80,108,97,121,116,105,109,101),Interval=5,Next=0,Enabled=false}_QI.Items[3]={ID=string.char(67,108,97,105,109,95,66,97,116,116,108,101,112,97,115,115,95,82,101,119,97,114,100,115),Name=string.char(65,117,116,111,32,67,108,97,105,109,32,66,80,32,82,101,119,97,114,100,115),Interval=5,Next=0,Enabled=false}_QI.Items[4]={ID=string.char(65,117,116,111,95,87,104,101,101,108,95,83,112,105,110,115),Name=string.char(65,117,116,111,32,83,112,105,110,32,87,104,101,101,108),Interval=12,Next=0,Enabled=false}for _QJ,_QK in ipairs(_QI.Items)do _QK.Locked=(_QK.ID==string.char(67,108,97,105,109,95,66,97,116,116,108,101,112,97,115,115,95,82,101,119,97,114,100,115))_QH:AddToggle(_QK.ID..string.char(95,84,111,103,103,108,101),{Text=_QK.Name,Default=false,Status=_QK.Locked and string.char(76,111,99,107,101,100)or nil,StatusSubtitle=string.char(66,65,67,32,68,101,116,101,99,116,101,100),Callback=function(_QL)if _QK.Locked then _QK.Enabled=false return end _QK.Enabled=_QL end})end task.spawn(function()local _QM=_bk:WaitForChild(string.char(80,108,97,121,101,114,71,117,105),10)local _QN=require(_d.Packages.Replion).Client:WaitReplion(string.char(68,97,116,97))local _QO=_d.Controllers local _QP=nil pcall(function()_QP=require(_d.Shared.InfiniteBattlepass.InfiniteBattlepassData)end)local function _QQ(...)local _QR=_QM for _QS,_QT in ipairs({...})do _QR=_QR and _QR:FindFirstChild(_QT);if not _QR then return nil end end return _QR end local function _QU(_QV,_QW)if not _QV or not _QV.Visible then return false end for _QX,_QY in getconnections(_QV.Activated)do if _QY.Enabled and _QY.Function and getfenv(_QY.Function).script==_QW then _QY:Fire();return true end end return false end local _QZ={}_QZ[string.char(67,108,97,105,109,95,68,97,105,108,121,95,82,101,119,97,114,100,115)]=function()local _Ra=_QN:Get(string.char(67,117,114,114,101,110,116,68,97,105,108,121,76,111,103,105,110,84,121,112,101))local _Rb=_QN:Get({string.char(68,97,105,108,121,76,111,103,105,110,68,97,116,97),_Ra})if not _Rb or not _Rb.NextClaim then return end if(_Ra~=string.char(68,51,48)and _Ra~=string.char(76,111,110,103,116,101,114,109))then return end if workspace:GetServerTimeNow()<_Rb.NextClaim then return end local _Rc=_QQ(string.char(68,97,105,108,121,76,111,103,105,110,95).._Ra..string.char(95,82,101,119,97,114,100,115))if _Rc then local _Rd=_Ra==string.char(68,51,48)and _Rc.Page.Rewards:FindFirstChild(string.char(68,97,121).._Rb.DaysClaimedStreak+1,true)or(_Rc.Frame and _Rc.Frame.Claim)pcall(function()_QU(_Rd,_QO.UI.DailyLoginController)end)end if _QP and _QP.isEnabled()then local _Re=_QQ(string.char(66,97,116,116,108,101,112,97,115,115,68,97,105,108,121,76,111,103,105,110),string.char(66,97,99,107,103,114,111,117,110,100),string.char(70,114,97,109,101),string.char(83,99,114,111,108,108,105,110,103,70,114,97,109,101))if _Re then for _Rf,_Rg in _Re:GetChildren()do if _Rg:GetAttribute(string.char(83,116,97,116,101))==string.char(67,108,97,105,109,97,98,108,101)then pcall(function()_QU(_Rg:FindFirstChild(string.char(67,108,97,105,109)),_bk:WaitForChild(string.char(80,108,97,121,101,114,83,99,114,105,112,116,115)).Client.UIBinders.BattlepassDailyLogin)end)break end end end end local _Rh=_QN:Get(string.char(87,101,108,99,111,109,101,66,97,99,107,69,118,101,110,116))if _Rh and workspace:GetServerTimeNow()<(_Rh.EventEndTime or 0)then local _Ri=_QQ(string.char(78,101,119,87,101,108,99,111,109,101,66,97,99,107),string.char(70,114,97,109,101),string.char(86,105,101,119,115),string.char(76,111,103,105,110),string.char(68,97,121,115))if _Ri then for _Rj,_Rk in _Ri:GetChildren()do local _Rl=_Rk:FindFirstChild(string.char(67,108,97,105,109))local _Rm=_Rk.LayoutOrder if _Rl and _Rl.Visible and _Rm<=_Rh.DailyLoginStreak and not _Rh.ClaimedDailyRewards[_Rm]then pcall(function()for _Rn,_Ro in getconnections(_Rl.MouseButton1Click)do if _Ro.Enabled and _Ro.Function and getfenv(_Ro.Function).script==_QO.WelcomeBackController.EventControllers.Login then _Ro:Fire();break end end end)break end end end end end _QZ[string.char(67,108,97,105,109,95,80,108,97,121,116,105,109,101,95,82,101,119,97,114,100,115)]=function()local _Rp=require(_d.Common.PlaytimeRewardsInfo).Rewards local _Rq=_QN:Get(string.char(80,108,97,121,116,105,109,101,82,101,119,97,114,100,115,68,97,116,97))if _Rq then for _Rr,_Rs in pairs(_Rp)do if not _Rq.ClaimedRewards[tostring(_Rr)]and workspace:GetServerTimeNow()>=_Rq.TimerStart+_Rs.Duration then pcall(function()_QU(_QQ(string.char(80,108,97,121,116,105,109,101,82,101,119,97,114,100,115),string.char(80,108,97,121,116,105,109,101,82,101,119,97,114,100,115),string.char(80,97,103,101),string.char(76,105,115,116),string.char(82,101,119,97,114,100,115,76,105,115,116),tostring(_Rr),string.char(67,108,97,105,109,66,117,116,116,111,110)),_QO.UI.PlaytimeRewardsController)end)break end end end if _QP and _QP.isEnabled()then local _Rt=require(_d.Shared.Battlepass.BattlepassPlaytimeRewardsData)local _Ru=_QN:Get(string.char(67,108,97,105,109,101,100,80,108,97,121,116,105,109,101,82,101,119,97,114,100,115))or{}for _Rv,_Rw in pairs(_Rt)do if _Rw.Seconds<=(_QN:Get(string.char(83,101,99,111,110,100,115,80,108,97,121,101,100,84,111,100,97,121))or 0)and not table.find(_Ru,_Rv)then local _Rx=_QQ(string.char(66,97,116,116,108,101,112,97,115,115,80,108,97,121,116,105,109,101,82,101,119,97,114,100,115),string.char(80,108,97,121,116,105,109,101,82,101,119,97,114,100,115),string.char(77,97,105,110,70,114,97,109,101),string.char(71,114,105,100),tostring(_Rv))if _Rx then pcall(function()_QU(_Rx.Claim.Claim,_QO.Battlepass.BattlepassPlaytimeRewardsController)end)end break end end end local _Ry=_QN:Get(string.char(67,117,114,114,101,110,116,81,117,101,115,116,115))or{}local _Rz=require(_d.Shared.Quests)for _RA,_RB in pairs(_Ry)do local _RC=_Rz[_RB]if _RC and(_QN:Get({string.char(81,117,101,115,116,83,116,97,116,115),_RC.stat})or 0)>=_RC.goal and not table.find(_QN:Get(string.char(81,117,101,115,116,115,65,119,97,114,100,101,100))or{},_RB)then pcall(function()_QU(_QQ(string.char(78,101,119,68,97,105,108,121,81,117,101,115,116,115),string.char(72,111,108,100,101,114),string.char(81,117,101,115,116,115),_RB,string.char(73,110,116,101,114,109,101,100,105,97,116,101)),_QO.UI.QuestsController)end)end end end _QZ[string.char(67,108,97,105,109,95,66,97,116,116,108,101,112,97,115,115,95,82,101,119,97,114,100,115)]=function()if not _QP or not _QP.isEnabled()then return end local _RD=_QQ(string.char(66,97,116,116,108,101,112,97,115,115),string.char(77,97,105,110),string.char(66,97,99,107,103,114,111,117,110,100),string.char(76,101,102,116),string.char(67,108,97,105,109,65,108,108))if _RD and _RD.Visible then pcall(function()_QU(_RD,_QO.Battlepass.BattlepassTierController)end)end end _QZ[string.char(65,117,116,111,95,87,104,101,101,108,95,83,112,105,110,115)]=function()if(_QN:Get(string.char(114,111,108,108,115))or 0)<=0 then return end local _RE=_QQ(string.char(87,104,101,101,108),string.char(68,101,102,97,117,108,116))if _RE and _RE:GetAttribute(string.char(83,112,105,110,110,105,110,103))then _RE:SetAttribute(string.char(83,112,105,110,110,105,110,103),false)end local _RF=require(_d.Common.Utils)pcall(function()_RF.Network:Invoke(string.char(83,112,105,110,87,104,101,101,108))end)end _QI.Running=true while not _C and _QI.Running do for _RG,_RH in ipairs(_QI.Items)do if _RH.Enabled and os.clock()>=_RH.Next and _QZ[_RH.ID]then _RH.Next=os.clock()+_RH.Interval pcall(_QZ[_RH.ID])end end task.wait(1)end end)end do local _RI=game:GetService(string.char(72,116,116,112,83,101,114,118,105,99,101))local _RJ=game:GetService(string.char(84,101,108,101,112,111,114,116,83,101,114,118,105,99,101))local _RK=getgenv()_RK.txtDeviceSpoofType=_RK.txtDeviceSpoofType or string.char(80,67)local _RL=_lm.Sword:AddLeftGroupbox(string.char(68,101,118,105,99,101,32,83,112,111,111,102,101,114),string.char(109,111,110,105,116,111,114))_RL:AddDropdown(string.char(68,101,118,105,99,101,83,112,111,111,102,95,84,121,112,101),{Text=string.char(68,101,118,105,99,101),Values={string.char(80,67),string.char(77,111,98,105,108,101),string.char(67,111,110,115,111,108,101)},Multi=false,Default=string.char(80,67),Callback=function(_RM)_RK.txtDeviceSpoofType=_RM end,})local function _RN(_RO,_RP,_RQ)if _bp and _bp.Notify then pcall(function()_bp:Notify({Title=_RO,Content=_RP,Duration=_RQ or 3})end)end end do local _RR=_RK.txtDeviceSpoofApplied if type(_RR)==string.char(116,97,98,108,101)and _RR.JobId==game.JobId and _RR.Device then local _RS=(_RR.Device==string.char(80,104,111,110,101)or _RR.Device==string.char(84,97,98,108,101,116))and string.char(77,111,98,105,108,101)or _RR.Device task.defer(function()_RN(string.char(68,101,118,105,99,101,32,83,112,111,111,102,101,114),string.char(65,99,116,105,118,101,58,32)..tostring(_RS),3)end)end end _RL:AddButton({Text=string.char(65,112,112,108,121,32,38,32,82,101,106,111,105,110),Callback=function()local _RT=_RK.txtDeviceSpoofType local _RU=_bm and _bm.Options and _bm.Options.DeviceSpoof_Type if _RU then local _RV,_RW=pcall(function()return _RU.Value end)if _RV and type(_RW)==string.char(115,116,114,105,110,103)and(_RW==string.char(80,67)or _RW==string.char(77,111,98,105,108,101)or _RW==string.char(67,111,110,115,111,108,101))then _RT=_RW end end _RT=_RT or string.char(80,67)_RK.txtDeviceSpoofType=_RT local _RX=(_RT==string.char(77,111,98,105,108,101))and string.char(80,104,111,110,101)or _RT local _RY=(_RX==string.char(80,104,111,110,101)or _RX==string.char(84,97,98,108,101,116))and string.char(77,111,98,105,108,101)or _RX local _RZ=(string.char(108,111,99,97,108,32,83,111,117,114,99,101,32,61,32,37,113,10,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,110,111,116,32,103,97,109,101,58,73,115,76,111,97,100,101,100,40,41,32,116,104,101,110,32,103,97,109,101,46,76)..string.char(111,97,100,101,100,58,87,97,105,116,40,41,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,81,117,101,117,101,32,61,32,113,117,101,117,101,95,111,110,95,116,101,108,101,112,111,114,116,32,111,114,32)..string.char(113,117,101,117,101,111,110,116,101,108,101,112,111,114,116,32,111,114,32,40,115,121,110,32,97,110,100,32,115,121,110,46,113,117,101,117,101,95,111,110,95,116,101,108,101,112,111,114,116,41,32,111,114,32,40,102,108,117,120,117,115,32,97,110)..string.char(100,32,102,108,117,120,117,115,46,113,117,101,117,101,95,111,110,95,116,101,108,101,112,111,114,116,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,80,108,97,121,101,114,115,32,61,32,103,97,109,101,58,71,101,116)..string.char(83,101,114,118,105,99,101,40,39,80,108,97,121,101,114,115,39,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,80,108,97,121,101,114,32,61,32,80,108,97,121,101,114,115,46,76,111,99,97,108,80,108,97,121,101)..string.char(114,32,111,114,32,80,108,97,121,101,114,115,46,80,108,97,121,101,114,65,100,100,101,100,58,87,97,105,116,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,69,110,118,105,114,111,110,109,101,110,116,32,61,32)..string.char(103,101,116,103,101,110,118,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,81,117,101,117,101,32,116,104,101,110,10,32,32)..string.char(32,32,32,32,32,32,32,32,32,32,32,32,32,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,81,117,101,117,101,58,68,105,115,99,111,110,110,101,99,116,40,41,10,32,32,32,32,32)..string.char(32,32,32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,81,117,101,117,101,100,32,61,32,102,97,108,115,101,10,32,32,32,32,32,32,32,32,32,32,32,32,69,110,118,105,114,111,110,109)..string.char(101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,81,117,101,117,101,32,61,32,80,108,97,121,101,114,46,79,110,84,101,108,101,112,111,114,116,58,67,111,110,110,101,99,116,40,102,117,110,99,116,105,111,110,40,41,10,32)..string.char(32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,110,111,116,32,81,117,101,117,101,100,32,116,104,101,110,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,81,117,101,117,101,40,83,111,117,114)..string.char(99,101,58,102,111,114,109,97,116,40,83,111,117,114,99,101,41,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,81,117,101,117,101,100,32,61,32,116,114,117,101,10,32,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,68,101,118,105,99,101,32,61,32)).._RI:JSONEncode(_RX)..string.char(32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,103,97,109,101,46,71,97,109,101,73,100,32,126,61,32)..tostring(game.GameId)..((string.char(32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,80,114,101,118,105,111,117,115,32,61,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118)..string.char(105,99,101,83,112,111,111,102,82,117,110,10,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,80,114,101,118,105,111,117,115,32,97,110,100,32,80,114,101,118,105,111,117,115,46,74,111,98,73,100,32,61,61,32,103,97,109,101,46,74)..string.char(111,98,73,100,32,97,110,100,32,80,114,101,118,105,111,117,115,46,68,101,118,105,99,101,32,61,61,32,68,101,118,105,99,101,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,105)..string.char(102,32,80,114,101,118,105,111,117,115,32,97,110,100,32,80,114,101,118,105,111,117,115,46,82,101,115,116,111,114,101,32,116,104,101,110,32,80,114,101,118,105,111,117,115,46,82,101,115,116,111,114,101,40,41,32,101,110,100,10,32,32,32,32)..string.char(32,32,32,32,32,32,32,32,108,111,99,97,108,32,82,117,110,32,61,32,123,32,68,101,118,105,99,101,32,61,32,68,101,118,105,99,101,44,32,74,111,98,73,100,32,61,32,103,97,109,101,46,74,111,98,73,100,32,125,10,32,32,32,32)..string.char(32,32,32,32,32,32,32,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,82,117,110,32,61,32,82,117,110,10,32,32,32,32,32,32,32,32,32,32,32,32,119,104,105,108,101,32,110,111)..string.char(116,32,119,111,114,107,115,112,97,99,101,58,71,101,116,65,116,116,114,105,98,117,116,101,40,39,67,108,105,101,110,116,77,111,100,117,108,101,115,76,111,97,100,101,100,39,41,32,100,111,10,32,32,32,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,119,111,114,107,115,112,97,99,101,58,71,101,116,65,116,116,114,105,98,117,116,101,67,104,97,110,103,101,100,83,105,103,110,97,108,40,39,67,108,105,101,110,116,77,111,100,117,108,101,115,76,111,97,100,101,100,39,41,58,87,97)..string.char(105,116,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,82,117)..string.char(110,32,126,61,32,82,117,110,32,116,104,101,110,32,114,101,116,117,114,110,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101,32,61,32,103)..string.char(97,109,101,58,71,101,116,83,101,114,118,105,99,101,40,39,82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101,39,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,76,105,115,116,101,110,101,114,32,61)..string.char(32,114,101,113,117,105,114,101,40,82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101,58,87,97,105,116,70,111,114,67,104,105,108,100,40,39,67,108,105,101,110,116,71,97,109,101,77,111,100,117,108,101,115,39,41,58,87,97,105)..string.char(116,70,111,114,67,104,105,108,100,40,39,68,101,118,105,99,101,76,105,115,116,101,110,101,114,39,41,41,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,79,98,115,101,114,118,101,32,61,32,76,105,115,116,101,110,101)..string.char(114,46,79,98,115,101,114,118,101,10,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,102,117,110,99,116,105,111,110,32,65,112,112,108,121,40,67,97,108,108,98,97,99,107,41,10,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,32,32,32,105,102,32,82,117,110,46,82,101,115,116,111,114,101,32,116,104,101,110,32,82,117,110,46,82,101,115,116,111,114,101,40,41,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,116,97,115,107)..string.char(46,115,112,97,119,110,40,102,117,110,99,116,105,111,110,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,83,117,99,99,101,115,115,44,32,82,101,115,117,108,116,32,61,32,112,99)..string.char(97,108,108,40,102,117,110,99,116,105,111,110,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,67,97,108,108,98,97,99,107,40,68,101,118,105,99,101,41,10,32,32,32,32,32,32,32,32)..string.char(32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,67,97,108,108,98,97,99,107,40,76,105,115,116,101,110,101,114,46,68,101,118,105,99,101,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101,110)..string.char(100,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,110,111,116,32,83,117,99,99,101,115,115,32,116,104,101,110,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,69,110,118,105,114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,82,117,110,32,61,32,110,105,108,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101)..string.char(114,114,111,114,40,82,101,115,117,108,116,44,32,48,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,69,110,118,105)..string.char(114,111,110,109,101,110,116,46,116,120,116,68,101,118,105,99,101,83,112,111,111,102,65,112,112,108,105,101,100,32,61,32,123,32,68,101,118,105,99,101,32,61,32,68,101,118,105,99,101,44,32,74,111,98,73,100,32,61,32,103,97,109,101,46)..string.char(74,111,98,73,100,32,125,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,112,99,97,108,108,40,102,117,110,99,116,105,111,110,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,32,32,119,111,114,107,115,112,97,99,101,58,83,101,116,65,116,116,114,105,98,117,116,101,40,34,116,120,116,68,101,118,105,99,101,83,112,111,111,102,95,34,32,46,46,32,80,108,97,121,101,114,46,85,115,101,114,73,100,44,32)..string.char(68,101,118,105,99,101,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,41,10,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,101,110,100,10,10,32,32,32,32,32,32,32,32,32,32,32,32,102,111,114,32,95,44,32,67,111,110,110,101,99,116,105,111,110,32,105,110,32,76,105,115,116,101,110,101,114,46,79,110,67,104,97,110,103,101,58,71,101,116,67,111,110)..string.char(110,101,99,116,105,111,110,115,40,41,32,100,111,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,100,101,98,117,103,46,105,110,102,111,40,67,111,110,110,101,99,116,105,111,110,46,95,102,110,44,32,39,115,39,41)..string.char(32,61,61,32,39,82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101,46,67,111,110,116,114,111,108,108,101,114,115,46,80,108,97,121,101,114,80,114,111,102,105,108,101,67,111,110,116,114,111,108,108,101,114,39,32,116,104,101,110)..string.char(10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,65,112,112,108,121,40,67,111,110,110,101,99,116,105,111,110,46,95,102,110,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,114)..string.char(101,116,117,114,110,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,10,10,32,32,32,32,32,32,32,32,32,32,32,32,108,111,99,97,108,32,102,117,110)..string.char(99,116,105,111,110,32,79,98,115,101,114,118,101,68,101,118,105,99,101,40,83,101,108,102,44,32,67,97,108,108,98,97,99,107,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,100,101,98,117,103,46,105,110,102)..string.char(111,40,67,97,108,108,98,97,99,107,44,32,39,115,39,41,32,61,61,32,39,82,101,112,108,105,99,97,116,101,100,83,116,111,114,97,103,101,46,67,111,110,116,114,111,108,108,101,114,115,46,80,108,97,121,101,114,80,114,111,102,105,108,101))..(string.char(67,111,110,116,114,111,108,108,101,114,39,32,116,104,101,110,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,65,112,112,108,121,40,67,97,108,108,98,97,99,107,41,10,32,32,32,32,32,32,32,32,32,32,32)..string.char(32,32,32,32,32,32,32,32,32,114,101,116,117,114,110,32,83,101,108,102,46,79,110,67,104,97,110,103,101,58,67,111,110,110,101,99,116,40,67,97,108,108,98,97,99,107,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32)..string.char(101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,114,101,116,117,114,110,32,79,98,115,101,114,118,101,40,83,101,108,102,44,32,67,97,108,108,98,97,99,107,41,10,32,32,32,32,32,32,32,32,32,32,32,32,101)..string.char(110,100,10,10,32,32,32,32,32,32,32,32,32,32,32,32,82,117,110,46,82,101,115,116,111,114,101,32,61,32,102,117,110,99,116,105,111,110,40,41,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,105,102,32,76,105,115,116)..string.char(101,110,101,114,46,79,98,115,101,114,118,101,32,61,61,32,79,98,115,101,114,118,101,68,101,118,105,99,101,32,116,104,101,110,32,76,105,115,116,101,110,101,114,46,79,98,115,101,114,118,101,32,61,32,79,98,115,101,114,118,101,32,101,110)..string.char(100,10,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,82,117,110,46,82,101,115,116,111,114,101,32,61,32,110,105,108,10,32,32,32,32,32,32,32,32,32,32,32,32,101,110,100,10,32,32,32,32,32,32,32,32,32,32,32,32)..string.char(76,105,115,116,101,110,101,114,46,79,98,115,101,114,118,101,32,61,32,79,98,115,101,114,118,101,68,101,118,105,99,101,10,32,32,32,32,32,32,32,32,32,32,32,32)))local _Sa=_RZ:format(_RZ)if _RK.txtDeviceSpoofQueue then _RK.txtDeviceSpoofQueue:Disconnect()_RK.txtDeviceSpoofQueue=nil end local _Sb=queue_on_teleport or queueonteleport or(syn and syn.queue_on_teleport)or(fluxus and fluxus.queue_on_teleport)if not _Sb then _RN(string.char(68,101,118,105,99,101,32,83,112,111,111,102,101,114),string.char(69,120,101,99,117,116,111,114,32,100,111,101,115,32,110,111,116,32,115,117,112,112,111,114,116,32,113,117,101,117,101,95,111,110,95,116,101,108,101,112,111,114,116,46),4)return end _Sb(_Sa)_RN(string.char(68,101,118,105,99,101,32,83,112,111,111,102,101,114),string.char(83,112,111,111,102,105,110,103,32,97,115,32)..tostring(_RY)..string.char(44,32,114,101,106,111,105,110,105,110,103,46,46,46),3)task.wait(0.2)if not pcall(_RJ.TeleportToPlaceInstance,_RJ,game.PlaceId,game.JobId,_bk)then pcall(function()game:GetService(string.char(69,120,112,101,114,105,101,110,99,101,83,101,114,118,105,99,101)):LaunchExperience({placeId=game.PlaceId,gameInstanceId=game.JobId})end)end end,})_a._DeviceSpoofUnload=function()if _RK.txtDeviceSpoofQueue then pcall(function()_RK.txtDeviceSpoofQueue:Disconnect()end)_RK.txtDeviceSpoofQueue=nil end _RN(string.char(68,101,118,105,99,101,32,83,112,111,111,102,101,114),string.char(82,101,115,116,111,114,101,100),2)_a._DeviceSpoofUnload=nil end end do local _Sc={Enabled_Blind=false,Enabled_Disorient=false,Active_Until=0,Saved_Atmosphere=nil,Saved_Camera=nil,Conns={},}local function _Sd(_Se,_Sf)if _Sf then _Sc.Conns[#_Sc.Conns+1]=_Sf _B[_Se]=_Sf end end local function _Sg(_Sh,_Si)if _Si then pcall(function()_Si:Disconnect()end)end if _B[_Sh]==_Si then _B[_Sh]=nil end end local function _Sj(_Sk)local _Sl=workspace:FindFirstChildOfClass(string.char(76,105,103,104,116,105,110,103))or _w if _Sk then local _Sm=_Sc.Saved_Atmosphere _Sk.Density=_Sm and _Sm.Density or 0 _Sk.Offset=_Sm and _Sm.Offset or 0 _Sk.Haze=_Sm and _Sm.Haze or 0 _Sk.Glare=_Sm and _Sm.Glare or 0 if _Sm then _Sk.Color=_Sm.Color _Sk.Decay=_Sm.Decay end return end local _Sn=_Sl:FindFirstChild(string.char(66,108,105,110,100,110,101,115,115))if _Sn and _Sn:IsA(string.char(65,116,109,111,115,112,104,101,114,101))then _Sj(_Sn)end for _So,_Sp in ipairs(workspace:GetChildren())do if _Sp:IsA(string.char(65,116,109,111,115,112,104,101,114,101))and _Sp.Name==string.char(66,108,105,110,100,110,101,115,115)then _Sj(_Sp)end end end local function _Sq()local _Sr=_bk:FindFirstChild(string.char(80,108,97,121,101,114,71,117,105))if not _Sr then return end for _Ss,_St in ipairs(_Sr:GetDescendants())do if _St:IsA(string.char(73,109,97,103,101,76,97,98,101,108))or _St:IsA(string.char(70,114,97,109,101))then if _St.Name==string.char(66,108,105,110,100,110,101,115,115)or _St.Name==string.char(66,108,105,110,100)or _St.Name==string.char(81,117,97,115,97,114,66,108,105,110,100)then _St.Visible=false end end end end local function _Su(_Sv,_Sw)if _Sw~=_bk.Character then return end local _Sx=_Sv and _Sv:FindFirstChild(string.char(85,112,103,114,97,100,101,115))_Sx=_Sx and _Sx:FindFirstChild(string.char(81,117,97,115,97,114))_Sc.Active_Until=os.clock()+5+(_Sx and _Sx.Value or 0)if _Sc.Enabled_Blind then _Sj()_Sq()end if _Sc.Enabled_Disorient and _Sc.Saved_Camera then local _Sy=workspace.CurrentCamera if _Sy then local _Sz=_Sc.Saved_Camera.Rotation _Sy.CFrame=CFrame.new(_Sy.CFrame.Position)*_Sz end end end local function _SA()if not _Sc.Enabled_Blind then return end if os.clock()>=_Sc.Active_Until then return end local _SB=_w:FindFirstChild(string.char(66,108,105,110,100,110,101,115,115))if _SB and _SB.Enabled then _SB.Enabled=false end _Sq()end local function _SC(_SD)if not _Sc.Enabled_Blind then return end if not _SD:IsA(string.char(65,116,109,111,115,112,104,101,114,101))then return end if os.clock()<_Sc.Active_Until and _SD.Name==string.char(66,108,105,110,100,110,101,115,115)then _Sj(_SD)elseif _SD.Name~=string.char(66,108,105,110,100,110,101,115,115)then _Sc.Saved_Atmosphere={Density=_SD.Density,Offset=_SD.Offset,Haze=_SD.Haze,Glare=_SD.Glare,Color=_SD.Color,Decay=_SD.Decay,}end end local function _SE()local _SF=_d:FindFirstChild(string.char(82,101,109,111,116,101,115))if _SF then local _SG=_SF:FindFirstChild(string.char(80,108,114,81,117,97,115,97,114,101,100))if _SG then _Sd(string.char(81,117,97,115,97,114,95,69,118,101,110,116),_SG.OnClientEvent:Connect(function(_SH,_SI)_Su(_SH,_SI)end))end end _Sd(string.char(81,117,97,115,97,114,95,66,108,105,110,100,80,114,111,112),_w:GetPropertyChangedSignal(string.char(69,110,97,98,108,101,100)):Connect(_SA))local _SJ=_w:FindFirstChild(string.char(66,108,105,110,100,110,101,115,115))if _SJ then _Sd(string.char(81,117,97,115,97,114,95,66,108,105,110,100,80,114,111,112,50),_SJ:GetPropertyChangedSignal(string.char(69,110,97,98,108,101,100)):Connect(_SA))end _Sd(string.char(81,117,97,115,97,114,95,65,116,109,111),workspace.ChildAdded:Connect(_SC))_Sd(string.char(81,117,97,115,97,114,95,67,97,109),_e.PreRender:Connect(function()local _SK=workspace.CurrentCamera if _SK then _Sc.Saved_Camera=_SK.CFrame end end))for _SL,_SM in ipairs(_w:GetChildren())do if _SM:IsA(string.char(65,116,109,111,115,112,104,101,114,101))and _SM.Name~=string.char(66,108,105,110,100,110,101,115,115)and not _Sc.Saved_Atmosphere then _Sc.Saved_Atmosphere={Density=_SM.Density,Offset=_SM.Offset,Haze=_SM.Haze,Glare=_SM.Glare,Color=_SM.Color,Decay=_SM.Decay,}end end end local function _SN()for _SO,_SP in pairs(_Sc.Conns)do pcall(function()_SP:Disconnect()end)_Sc.Conns[_SO]=nil end for _SQ,_SR in pairs(_B)do if type(_SQ)==string.char(115,116,114,105,110,103)and _SQ:sub(1,6)==string.char(81,117,97,115,97,114)then pcall(function()_SR:Disconnect()end)_B[_SQ]=nil end end _Sc.Active_Until=0 _Sc.Saved_Camera=nil end _a._Quasar_State=_Sc local _SS=_lm.Sword:AddLeftGroupbox(string.char(65,110,116,105,45,81,117,97,115,97,114),string.char(101,121,101,45,111,102,102))_SS:AddToggle(string.char(81,117,97,115,97,114,95,66,108,105,110,100,95,84,111,103,103,108,101),{Text=string.char(65,110,116,105,32,66,108,105,110,100),Default=false,Callback=function(_ST)_Sc.Enabled_Blind=_ST if _ST then _SE()_Sj()_Sq()else _SN()end end,})_SS:AddToggle(string.char(81,117,97,115,97,114,95,68,105,115,111,114,105,101,110,116,95,84,111,103,103,108,101),{Text=string.char(65,110,116,105,32,68,105,115,111,114,105,101,110,116),Default=false,Callback=function(_SU)_Sc.Enabled_Disorient=_SU if _SU and not _Sc.Saved_Camera then _SE()elseif not _SU and not _Sc.Enabled_Blind then _SN()end end,})end local _SV=_lm.Client:AddLeftGroupbox(string.char(69,83,80),string.char(112,97,108,101,116,116,101))local _SW={}local _SX={}local _SY=5 local function _SZ(_Ta)return _Ta:GetAttribute(string.char(83,101,114,118,101,114,80,97,114,114,121,67,111,117,110,116))or(_Ta.Character and _Ta.Character:GetAttribute(string.char(83,101,114,118,101,114,80,97,114,114,121,67,111,117,110,116)))or 0 end local function _Tb(_Tc)return math.max(_SZ(_Tc)-(_SW[_Tc]or 0),0)end local _Td={}local function _Te(_Tf)if _Tf==_bk or not _Tf.Character then return end if _Td[_Tf]then return end local _Tg=_Tf.Character local _Tj=_Tg:GetAttributeChangedSignal(string.char(65,98,105,108,105,116,121,65,99,116,105,118,101)):Connect(function()if _C then return end local _Th=_Tg:GetAttribute(string.char(65,98,105,108,105,116,121,65,99,116,105,118,101))local _Ti=_Tf:GetAttribute(string.char(69,113,117,105,112,112,101,100,65,98,105,108,105,116,121))or _Tf:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,65,98,105,108,105,116,121))if _Th and _Ti==string.char(83,108,97,115,104,101,115,32,111,102,32,70,117,114,121)then _SW[_Tf]=_SZ(_Tf)_SX[_Tf]=nil elseif not _Th and _SW[_Tf]then _SX[_Tf]={_Tb(_Tf),workspace:GetServerTimeNow()+_SY}_SW[_Tf]=nil end end)_Td[_Tf]=_Tj end for _Tk,_Tl in ipairs(_b:GetPlayers())do task.spawn(_Te,_Tl)_B[string.char(83,79,70,95,67,104,97,114,95).._Tl.UserId]=_Tl.CharacterAdded:Connect(function()task.wait(1);_Te(_Tl)end)end _B[string.char(83,79,70,95,80,108,97,121,101,114,65,100,100,101,100)]=_b.PlayerAdded:Connect(function(_Tm)task.wait(1);_Te(_Tm)_B[string.char(83,79,70,95,67,104,97,114,95).._Tm.UserId]=_Tm.CharacterAdded:Connect(function()task.wait(1);_Te(_Tm)end)end)_B[string.char(83,79,70,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]=_b.PlayerRemoving:Connect(function(_Tn)if _Td[_Tn]then _Td[_Tn]:Disconnect();_Td[_Tn]=nil end local _To=string.char(83,79,70,95,67,104,97,114,95).._Tn.UserId if _B[_To]then _B[_To]:Disconnect();_B[_To]=nil end _SW[_Tn]=nil _SX[_Tn]=nil end)_a._SOF_Cleanup=function()for _Tp,_Tq in pairs(_Td)do pcall(function()_Tq:Disconnect()end)_Td[_Tp]=nil end end local _Tr task.spawn(function()_Tr=require(_d.Shared.Abilities)end)local function _Ts(_Tt,_Tu)if _Tr and _Tr.getAbilityCooldown then local _Tv,_Tw=true,_Tr.getAbilityCooldown(_Tt,_Tu)if _Tv then return _Tw end end return nil end local function _Tx(_Ty)return _Ty:GetAttribute(string.char(69,113,117,105,112,112,101,100,65,98,105,108,105,116,121))or _Ty:GetAttribute(string.char(67,117,114,114,101,110,116,108,121,69,113,117,105,112,112,101,100,65,98,105,108,105,116,121))end local function _Tz(_TA,_TB,_TC)local _TD=nil if _Tr and _Tr.getUpgradeLevel and _TC and(_TA or _TB)then local _TE,_TF=true,_Tr.getUpgradeLevel(_TA or _TB,_TC)if _TE and type(_TF)==string.char(110,117,109,98,101,114)then _TD=_TF end end if _TD==nil and _TA and _TC then local _TG=_TA:FindFirstChild(string.char(85,112,103,114,97,100,101,115))if _TG then local _TH=_TC:gsub(string.char(32),'')local _TI=_TG:FindFirstChild(_TC)or _TG:FindFirstChild(_TH)if _TI and(_TI:IsA(string.char(73,110,116,86,97,108,117,101))or _TI:IsA(string.char(78,117,109,98,101,114,86,97,108,117,101)))then _TD=_TI.Value end end end if _TD==nil and _TB then _TD=_TB:GetAttribute(string.char(65,98,105,108,105,116,121,85,112,103,114,97,100,101))end if type(_TD)~=string.char(110,117,109,98,101,114)then return 0 end return math.max(0,math.floor(_TD))end local function _TJ(_TK,_TL,_TM)local _TN=_TK:GetAttribute(_TM)if _TN==nil and _TL then _TN=_TL:GetAttribute(_TM)end if _TN==nil then local _TO=_TK:FindFirstChild(string.char(65,98,105,108,105,116,105,101,115))_TN=_TO and _TO:GetAttribute(_TM)end return _TN end local function _TP(_TQ,_TR)local _TS=_yR[_TR]if not _TS then return nil end local _TT=_b:GetPlayerFromCharacter(_TQ)local _TU=_TS.MaxCharges or 2 local _TV=_TS.MaxChargesByLevel if _TV then local _TW=_Tz(_TT,_TQ,_TR)while _TW>0 and _TV[_TW]==nil do _TW-=1 end _TU=_TV[_TW]or _TU end if _TS.MaxChargesAttr then _TU=_TJ(_TQ,_TT,_TS.MaxChargesAttr)or _TU end local _TX=math.min(_TJ(_TQ,_TT,_TS.ChargeAttr)or _TU,_TU)local _TY=nil if _TS.NextUseAttr then local _TZ=_TJ(_TQ,_TT,_TS.NextUseAttr)if _TZ then local _Ua=_TZ-workspace:GetServerTimeNow()if _Ua>0 then _TY=tick()+_Ua end end end return{Charges=_TX,MaxCharges=_TU,CDEnd=_TY}end local _Ub=Color3.fromRGB(100,220,120)local _Uc=Color3.fromRGB(225,95,85)local _Ud=Color3.fromRGB(90,190,255)local _Ue=Color3.fromRGB(255,200,70)local _Uf={{Color3.fromRGB(95,185,255),Color3.fromRGB(35,105,215),Color3.fromRGB(15,45,95)},{Color3.fromRGB(200,130,255),Color3.fromRGB(120,55,210),Color3.fromRGB(55,20,95)},{Color3.fromRGB(255,225,110),Color3.fromRGB(235,145,25),Color3.fromRGB(110,60,5)},}local function _Ug(_Uh,_Ui,_Uj,_Uk)local _Ul=(_Ui>0)and(_Uh/_Ui)or 0 local _Um=(_Uh>=_Ui)and _Ub or _Ue local _Un=string.format(string.char(37,100,47,37,100),_Uh,_Ui)if _Uj and _Uj>0 then _Un=_Un..string.char(32,32)..string.format(_Uk or string.char(37,46,48,102),_Uj)end return _Ul,_Um,_Un end local function _Uo(_Up,_Uq)local _Ur=math.clamp(_Uq,1,#_Uf)local _Us=_Up:FindFirstChild(string.char(76,97,98,101,108))if _Us then local _Ut=string.char(86)..tostring(_Uq)if _Us.Text~=_Ut then _Us.Text=_Ut end end if _Up:GetAttribute(string.char(84,105,101,114))==_Ur then return end _Up:SetAttribute(string.char(84,105,101,114),_Ur)local _Uu=_Uf[_Ur]local _Uv=_Up:FindFirstChildOfClass(string.char(85,73,71,114,97,100,105,101,110,116))if _Uv then _Uv.Color=ColorSequence.new(_Uu[1],_Uu[2])end local _Uw=_Up:FindFirstChildOfClass(string.char(85,73,83,116,114,111,107,101))if _Uw then _Uw.Color=_Uu[3]end end local _Ux={}local _Uy={}local _Uz={}local _UA={}local _UB={}local _UC={}local function _UD(_UE,_UF,_UG,_UH)local _UI=tonumber(_UE:GetAttribute(string.char(65,98,105,108,105,116,121,68,117,114,97,116,105,111,110)))if not _UG or not _UI or _UI<=0 then _Ux[_UE]=nil _UA[_UE]=nil return end if not _UH or not _Ux[_UE]or _UA[_UE]~=_UI then _Ux[_UE]=_UF _UA[_UE]=_UI end end local function _UJ(_UK,_UL,_UM)if _UK and _UL and _UL>0 then local _UN=math.max(0,_UL-(_UM-_UK))if _UN>0 then return math.clamp(_UN/_UL,0,1),string.format(string.char(37,46,49,102),_UN)end end return nil,""end local _UO=35 local _UP=5 local function _UQ(_UR,_US)return _Tz(_UR,_UR.Character,_US)>0 and 3 or 2 end local _UT={}local _UU={}local function _UV(_UW)if _UW.Name~=string.char(68,82,73,66,66,76,69,95,73,77,77,85,78,73,84,89)then return end local _UX=_UW:FindFirstAncestorOfClass(string.char(77,111,100,101,108))local _UY=_UX and _b:GetPlayerFromCharacter(_UX)if not _UY then return end local _UZ=_UQ(_UY,string.char(68,114,105,98,98,108,101))_UT[_UY]=math.min(_UT[_UY]or _UZ,_UZ)_UT[_UY]=math.max(_UT[_UY]-1,0)local _Va=_Ts(_UY,string.char(68,114,105,98,98,108,101))if _Va and _Va>0 then _UU[_UY]=_UU[_UY]or{}table.insert(_UU[_UY],workspace:GetServerTimeNow()+_Va)end end local _Vb={}local _Vc={}local function _Vd(_Ve)if _Ve.Name~=string.char(71,85,65,82,68,73,65,78,95,68,82,65,71,79,78)then return end for _Vf,_Vg in _b:GetPlayers()do if _Tx(_Vg)==string.char(68,114,97,103,111,110,32,83,112,105,114,105,116)then local _Vh=_UQ(_Vg,string.char(68,114,97,103,111,110,32,83,112,105,114,105,116))_Vb[_Vg]=math.min(_Vb[_Vg]or _Vh,_Vh)_Vb[_Vg]=math.max(_Vb[_Vg]-1,0)local _Vi=_Ts(_Vg,string.char(68,114,97,103,111,110,32,83,112,105,114,105,116))if _Vi and _Vi>0 then local _Vj=workspace:GetServerTimeNow()if not _Vc[_Vg]or _Vc[_Vg]<=_Vj then _Vc[_Vg]=_Vj+_Vi-1 end end end end end local function _Vk()if not _B[string.char(68,114,105,98,98,108,101,32,69,118,101,110,116,32,77,111,110,105,116,111,114)]then _B[string.char(68,114,105,98,98,108,101,32,69,118,101,110,116,32,77,111,110,105,116,111,114)]=_z.DescendantAdded:Connect(_UV)end if not _B[string.char(68,114,97,103,111,110,32,83,112,105,114,105,116,32,69,118,101,110,116,32,77,111,110,105,116,111,114)]then _B[string.char(68,114,97,103,111,110,32,83,112,105,114,105,116,32,69,118,101,110,116,32,77,111,110,105,116,111,114)]=_A.ChildAdded:Connect(_Vd)end end local function _Vl()for _Vm,_Vn in ipairs({string.char(68,114,105,98,98,108,101,32,69,118,101,110,116,32,77,111,110,105,116,111,114),string.char(68,114,97,103,111,110,32,83,112,105,114,105,116,32,69,118,101,110,116,32,77,111,110,105,116,111,114)})do local _Vo=_B[_Vn]if _Vo then _Vo:Disconnect()_B[_Vn]=nil end end end local function _Vp(_Vq)_UT[_Vq]=nil _UU[_Vq]=nil _Vb[_Vq]=nil _Vc[_Vq]=nil _Ux[_Vq]=nil _Uy[_Vq]=nil _Uz[_Vq]=nil _UA[_Vq]=nil _UB[_Vq]=nil _UC[_Vq]=nil _SW[_Vq]=nil _SX[_Vq]=nil _hQ.Clear(_Vq)end local _Vr={}local function _Vs(_Vt)if _Vt==_bk then return end local _Vu=_Vt.Character if not _Vu then return end local _Vv=_eW[_Vt]local _Vw=_Vv and _Vv.Parent if _Vw and _Vw.Adornee and _Vw.Adornee:IsDescendantOf(_Vu)then _Vw.Enabled=true return end if _Vr[_Vt]then return end _Vr[_Vt]=true task.spawn(function()_eV.CreateBillboard(_Vt,_Vt.Character)_Vr[_Vt]=nil end)end local _WF=_SV:AddToggle(string.char(65,98,105,108,105,116,121,95,69,83,80,95,84,111,103,103,108,101),{Text=string.char(65,98,105,108,105,116,121,32,69,83,80),Default=false,Callback=function(_Vx)if _Vx then _Vk()if not _B[string.char(66,105,108,108,98,111,97,114,100,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]then _B[string.char(66,105,108,108,98,111,97,114,100,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]=_b.PlayerRemoving:Connect(function(_Vy)local _Vz=_eW[_Vy]if _Vz and _Vz.Parent then _Vz.Parent:Destroy()end _eW[_Vy]=nil _Vr[_Vy]=nil _Vp(_Vy)end)end if _B[string.char(65,98,105,108,105,116,121,32,69,83,80)]then _B[string.char(65,98,105,108,105,116,121,32,69,83,80)]:Disconnect()_B[string.char(65,98,105,108,105,116,121,32,69,83,80)]=nil end _B[string.char(65,98,105,108,105,116,121,32,69,83,80)]=_e.Heartbeat:Connect(function()local _VA=_d.Misc.DataAbilities local _VB=workspace:GetServerTimeNow()for _VC,_VD in _UU do local _VE=_UQ(_VC,string.char(68,114,105,98,98,108,101))while _VD[1]and _VB>=_VD[1]do table.remove(_VD,1)_UT[_VC]=math.min((_UT[_VC]or 0)+1,_VE)end if not _VD[1]then _UU[_VC]=nil end end for _VF,_VG in _Vc do if _VB>=_VG then local _VH=_UQ(_VF,string.char(68,114,97,103,111,110,32,83,112,105,114,105,116))_Vb[_VF]=math.min((_Vb[_VF]or 0)+1,_VH)if _Vb[_VF]<_VH then _Vc[_VF]=_VB+(_Ts(_VF,string.char(68,114,97,103,111,110,32,83,112,105,114,105,116))or 0)else _Vc[_VF]=nil end end end for _VI,_VJ in _b:GetPlayers()do if _VJ~=_bk and not _VJ.Character and _UC[_VJ]then _Vp(_VJ)end if _VJ and _VJ~=_bk and _VJ.Character then local _VK=_Tx(_VJ)local _VL=tostring(_VK)..string.char(58)..tostring(_Tz(_VJ,_VJ.Character,_VK))local _VM=_UC[_VJ]if not _VM or _VM.Character~=_VJ.Character or _VM.Key~=_VL or _VM.Parent~=_VJ.Character.Parent then _Vp(_VJ)_UC[_VJ]={Character=_VJ.Character,Key=_VL,Parent=_VJ.Character.Parent}end local _VN=_VJ.Character:GetAttribute(string.char(65,98,105,108,105,116,121,65,99,116,105,118,101))==true local _VO=_UB[_VJ]if _VO==nil then _VO=false end _UD(_VJ,_VB,_VN,_VO)if _VN~=_VO then if _VN then local _VP=_VK if not _VP then continue end local _VQ=_Ts(_VJ,_VP)local _VR=_VB if _VQ and _VQ>0 then _Uy[_VJ]=_VR+_VQ _Uz[_VJ]=_VQ end end _UB[_VJ]=_VN end _Vs(_VJ)local _VS=_Tx(_VJ)local _VT=_eW[_VJ]local _VU=_VT and _VT.Parent if _VT and _VU then local _VV=_VU:FindFirstChild(string.char(66,97,114))local _VW=_VV and _VV:FindFirstChild(string.char(70,105,108,108))local _VX=_VU:FindFirstChild(string.char(73,110,102,111))if not _VS then _VT.Visible=false if _VV then _VV.Visible=false end if _VX then _VX.Visible=false end else local _VY=_VU.Adornee local _VZ=workspace.CurrentCamera if _VY and _VZ then local _Wa=(_VZ.CFrame.Position-_VY.Position).Magnitude local _Wb=math.clamp(_VZ.ViewportSize.Y/1080,0.7,1.5)local _Wc=math.clamp(1.3-_Wa/200,0.85,1.25)*_Wb _VU.Size=UDim2.new(0,60*_Wc,0,80*_Wc)end local _Wd=_VA:FindFirstChild(_VS)local _We=_Wd and _Wd:GetAttribute(string.char(73,99,111,110))local _Wf=_Wd and _Wd:GetAttribute(string.char(73,99,111,110,49))local _Wg=_Tz(_VJ,_VJ.Character,_VS)if _Wg>0 and _Wf and _Wf~=""then _We=_Wf end if _We and _We~=""then if _VT.Image~=_We then _VT.Image=_We end _VT.Visible=true else _VT.Visible=false end local _Wh=_VT:FindFirstChild(string.char(86,101,114,115,105,111,110,66,97,100,103,101))if _Wh then if _VT.Visible and _Wg>0 then _Uo(_Wh,_Wg)_Wh.Visible=true else _Wh.Visible=false end end local _Wi=nil local _Wj=_Ub local _Wk=""local _Wl=_yQ[_VS]local _Wm=_yR[_VS]local _Wn=_SX[_VJ]if _Wn and _VB>=_Wn[2]then _SX[_VJ]=nil _Wn=nil _hQ.Clear(_VJ)end if _Wl then elseif _VS==string.char(83,108,97,115,104,101,115,32,111,102,32,70,117,114,121)and(_SW[_VJ]or _Wn)then _Wi=nil _Wk=""local _Wo=_SW[_VJ]~=nil local _Wp=_Wo and _Tb(_VJ)or(_Wn and _Wn[1])or 0 local _Wq=nil if _Wo then for _Wr,_Ws in ipairs(_y:GetChildren())do if not _Ws:GetAttribute(string.char(114,101,97,108,66,97,108,108))then _Wq=_Ws;break end end end _hQ.Sync(_VJ,_Wo,_Wp,_Wq,_VB)elseif _VS==string.char(68,114,105,98,98,108,101)then local _Wt=_UQ(_VJ,string.char(68,114,105,98,98,108,101))local _Wu=_UU[_VJ]and _UU[_VJ][1]_Wi,_Wj,_Wk=_Ug(math.min(_UT[_VJ]or _Wt,_Wt),_Wt,_Wu and _Wu-_VB)elseif _VS==string.char(68,114,97,103,111,110,32,83,112,105,114,105,116)then local _Wv=_UQ(_VJ,string.char(68,114,97,103,111,110,32,83,112,105,114,105,116))local _Ww=_Vc[_VJ]_Wi,_Wj,_Wk=_Ug(math.min(_Vb[_VJ]or _Wv,_Wv),_Wv,_Ww and _Ww-_VB)elseif _Wm then local _Wx=_TP(_VJ.Character,_VS)if _Wx then _Wi,_Wj,_Wk=_Ug(_Wx.Charges,_Wx.MaxCharges,_Wx.CDEnd and _Wx.CDEnd-tick())end else if _VN then _Wj=_Ud if _Ux[_VJ]and _UA[_VJ]then _Wi,_Wk=_UJ(_Ux[_VJ],_UA[_VJ],_VB)else _Wi=1 _Wk=""end else local _Wy=_Uy[_VJ]if _Wy then local _Wz=_Wy-_VB if _Wz>0 then local _WA=_Uz[_VJ]or _Wz _Wi=(_WA>0)and(_Wz/_WA)or 0 _Wj=_Uc _Wk=string.format(string.char(37,46,49,102),_Wz)else _Uy[_VJ]=nil _Uz[_VJ]=nil _Wi=1 _Wj=_Ub end else _Wi=1 _Wj=_Ub end end end if _VV and _VW then if _Wi and _VT.Visible then _VV.Visible=true _VW.Size=UDim2.new(math.clamp(_Wi,0,1),0,1,0)_VW.BackgroundColor3=_Wj local _WB=_VW:FindFirstChild(string.char(71,108,111,119))if _WB then _WB.Color=_Wj _WB.Enabled=_Wi>0 end else _VV.Visible=false end end if _VX then if _Wk~=""and _VT.Visible then _VX.Text=_Wk _VX.Visible=true else _VX.Visible=false end end end end end end end)else _Vl()if _B[string.char(65,98,105,108,105,116,121,32,69,83,80)]then _B[string.char(65,98,105,108,105,116,121,32,69,83,80)]:Disconnect()_B[string.char(65,98,105,108,105,116,121,32,69,83,80)]=nil end if _B[string.char(66,105,108,108,98,111,97,114,100,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]then _B[string.char(66,105,108,108,98,111,97,114,100,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]:Disconnect()_B[string.char(66,105,108,108,98,111,97,114,100,95,80,108,97,121,101,114,82,101,109,111,118,105,110,103)]=nil end for _WC,_WD in pairs(_eW)do local _WE=_WD and _WD.Parent if _WE then _WE.Enabled=false end end table.clear(_Vr)end end,})_WF:AddKeyPicker(string.char(65,98,105,108,105,116,121,95,69,83,80,95,75,101,121,98,105,110,100),{Text=string.char(65,98,105,108,105,116,121,32,69,83,80),Mode=string.char(84,111,103,103,108,101),})_B[string.char(82,117,110,116,105,109,101,95,84,111,114,110,97,100,111)]=_A.ChildAdded:Connect(function(_WG)if _WG.Name==string.char(84,111,114,110,97,100,111)then _jZ=os.clock()local _WH=_B[string.char(82,117,110,116,105,109,101,95,84,111,114,110,97,100,111,95,78,101,115,116,101,100)]if type(_WH)~=string.char(116,97,98,108,101)then _WH={}_B[string.char(82,117,110,116,105,109,101,95,84,111,114,110,97,100,111,95,78,101,115,116,101,100)]=_WH end _WH[#_WH+1]=_WG:GetAttributeChangedSignal(string.char(84,111,114,110,97,100,111,84,105,109,101)):Connect(function()_jZ=os.clock()end)_WH[#_WH+1]=_WG.Destroying:Connect(function()_jZ=nil end)end end)if not _cx then local _WI={[Enum.KeyCode.One]=string.char(67,97,109,101,114,97),[Enum.KeyCode.Two]=string.char(68,111,116),[Enum.KeyCode.Three]=string.char(73,110,115,116,97,68,111,116),[Enum.KeyCode.Four]=string.char(66,97,99,107,119,97,114,100),[Enum.KeyCode.Five]=string.char(82,97,110,100,111,109),[Enum.KeyCode.Six]=string.char(82,97,110,100,111,109,84,97,114,103,101,116)}_B[string.char(80,97,114,114,121,95,84,121,112,101,95,75,101,121,98,105,110,100,115)]=_c.InputBegan:Connect(function(_WJ,_WK)if _C then return end if _WK then return end local _WL=_WI[_WJ.KeyCode]if _WL then _iB=_WL if _bm.Options.Parry_Type_Dropdown then local _WM=(_WL==string.char(82,97,110,100,111,109,84,97,114,103,101,116))and string.char(82,97,110,100,111,109,32,84,97,114,103,101,116)or(_WL==string.char(73,110,115,116,97,68,111,116))and string.char(73,110,115,116,97,32,68,111,116)or _WL _bm.Options.Parry_Type_Dropdown:SetValue(_WM)end end end)end local _WN=_lm.UISettings:AddLeftGroupbox(string.char(77,101,110,117),string.char(109,101,110,117))_WN:AddToggle(string.char(87,97,116,101,114,109,97,114,107,95,84,111,103,103,108,101),{Text=string.char(87,97,116,101,114,109,97,114,107),Default=true,Callback=function(_WO)if _a._WatermarkGui then _a._WatermarkGui.Enabled=_WO end end})_WN:AddButton({Text=string.char(85,110,108,111,97,100),Callback=function()_bp:Dialog({Title=string.char(85,110,108,111,97,100),Content=string.char(65,114,101,32,121,111,117,32,83,85,82,69,63),OnConfirm=UnloadScript,})end})if _cx then task.spawn(function()local _WP=pcall(function()if _bm.MobileToggle or _bm.UniversalMobileButton or _bm.ToggleButton then error(string.char(104,97,115,95,109,111,98,105,108,101))end end)if _WP then local _WQ=Instance.new(string.char(84,101,120,116,66,117,116,116,111,110))_WQ.Name=string.char(66,121,116,101,77,111,98,105,108,101,77,101,110,117)_WQ.Size=UDim2.fromOffset(56,56)_WQ.Position=UDim2.new(0,12,0.5,-28)_WQ.BackgroundColor3=Color3.fromRGB(20,20,20)_WQ.BackgroundTransparency=0.15 _WQ.Text=string.char(226,152,176)_WQ.TextSize=26 _WQ.TextColor3=Color3.new(1,1,1)_WQ.Font=Enum.Font.GothamBold _WQ.AutoButtonColor=false _WQ.Parent=(typeof(gethui)==string.char(102,117,110,99,116,105,111,110)and gethui())or game:GetService(string.char(67,111,114,101,71,117,105))Instance.new(string.char(85,73,67,111,114,110,101,114),_WQ).CornerRadius=UDim.new(1,0)local _WR=Instance.new(string.char(85,73,83,116,114,111,107,101),_WQ)_WR.Color=Color3.fromRGB(60,60,60)_WR.Thickness=1 _WQ.Activated:Connect(function()if _bm and _bm.Toggle then pcall(function()_bm:Toggle()end)end end)end end)end _bo:SetLibrary(_bm)if _bn then _bn:SetLibrary(_bm)end _bo:IgnoreThemeSettings()if _bn then _bn:SetFolder(string.char(86,97,110,97,110,97))end _bo:SetFolder(string.char(86,97,110,97,110,97))_bo:BuildConfigSection(_lm.UISettings)if _bn then _bn:ApplyToTab(_lm.UISettings)end _bo:LoadAutoloadConfig()task.spawn(function()while not _C do if not _bm or not _bm.Window then break end task.wait(0.5)end if not _C then UnloadScript()end end)
+local Env: any = getgenv()
+if Env.Visual_Unload then pcall(Env.Visual_Unload) end
+repeat task.wait() until game:IsLoaded()
+Env.Unlock_Enabled = (Env.Unlock_Enabled == nil) and false or Env.Unlock_Enabled
+_G.__TitleState = _G.__TitleState or { Selected = nil }
+Env.Selected_Finisher = Env.Selected_Finisher or false
+Env.FinisherEquipped = Env.FinisherEquipped or {}
+local Players = game:GetService('Players')
+local UserInputService = game:GetService('UserInputService')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local RunService = game:GetService('RunService')
+local Debris = game:GetService('Debris')
+local TweenService = game:GetService('TweenService')
+local Stats = game:GetService('Stats')
+local Pings = Stats.Network.ServerStatsItem['Data Ping']
+
+local PING_SAMPLE_INTERVAL = 0.05
+local PING_ALPHA_UP, PING_ALPHA_DOWN = 0.4, 0.08
+local PING_JITTER_WEIGHT = 1.5
+local Ping_Mean, Ping_Jitter, Comp_Ping, Ping_Sample_At = nil, 0, 0, 0
+
+local function Get_Comp_Ping()
+    local Now = os.clock()
+    if Now - Ping_Sample_At < PING_SAMPLE_INTERVAL then return Comp_Ping end
+    Ping_Sample_At = Now
+
+    local Raw = math.clamp(Pings:GetValue(), 0, 500)
+    if not Ping_Mean then
+        Ping_Mean = Raw
+    else
+        local Diff = Raw - Ping_Mean
+        Ping_Mean += Diff * (Diff > 0 and PING_ALPHA_UP or PING_ALPHA_DOWN)
+        Ping_Jitter += (math.abs(Diff) - Ping_Jitter) * PING_ALPHA_DOWN
+    end
+    Comp_Ping = math.clamp(Ping_Mean + Ping_Jitter * PING_JITTER_WEIGHT, 0, 500)
+    return Comp_Ping
+end
+
+local GuiService = game:GetService('GuiService')
+local Lighting = game:GetService('Lighting')
+local Menu_Is_Open = false
+
+local BallsFolder = workspace:WaitForChild("Balls")
+local AliveFolder = workspace:WaitForChild("Alive")
+local RuntimeFolder = workspace:WaitForChild("Runtime")
+
+local Connections_Manager = {}
+local _ScriptUnloaded = false
+
+Connections_Manager['GuiService_MenuOpened'] = GuiService.MenuOpened:Connect(function()
+    Menu_Is_Open = true
+end)
+
+Connections_Manager['GuiService_MenuClosed'] = GuiService.MenuClosed:Connect(function()
+    Menu_Is_Open = false
+end)
+
+do
+    local WatermarkGui = Instance.new('ScreenGui')
+    WatermarkGui.Name = 'ByteWatermark'
+    WatermarkGui.ResetOnSpawn = false
+    WatermarkGui.IgnoreGuiInset = true
+    WatermarkGui.DisplayOrder = 999
+    WatermarkGui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+    WatermarkGui.Enabled = false
+
+    local Main = Instance.new('Frame')
+    Main.Size = UDim2.fromOffset(0, 32)
+    Main.AutomaticSize = Enum.AutomaticSize.X
+    Main.Position = UDim2.new(0.5, 0, 0, 10)
+    Main.AnchorPoint = Vector2.new(0.5, 0)
+    Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    Main.BackgroundTransparency = 0.1
+    Main.BorderSizePixel = 0
+    Main.Parent = WatermarkGui
+    
+    local MainLayout = Instance.new('UIListLayout')
+    MainLayout.FillDirection = Enum.FillDirection.Horizontal
+    MainLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    MainLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    MainLayout.Padding = UDim.new(0, 8)
+    MainLayout.Parent = Main
+
+    local MainPadding = Instance.new('UIPadding')
+    MainPadding.PaddingLeft = UDim.new(0, 10)
+    MainPadding.PaddingRight = UDim.new(0, 14)
+    MainPadding.Parent = Main
+
+    Instance.new('UICorner', Main).CornerRadius = UDim.new(0, 6)
+
+    local Stroke = Instance.new('UIStroke')
+    Stroke.Color = Color3.fromRGB(50, 50, 50)
+    Stroke.Thickness = 1
+    Stroke.Parent = Main
+
+    local Logo = Instance.new('ImageLabel')
+    Logo.Size = UDim2.fromOffset(20, 20)
+    Logo.Position = UDim2.new(0, 8, 0.5, -10)
+    Logo.BackgroundTransparency = 1
+    Logo.Image = "rbxassetid://95943456246483"
+    Logo.ScaleType = Enum.ScaleType.Fit
+    Logo.Parent = Main
+
+    local Name = Instance.new('TextLabel')
+    Name.Size = UDim2.fromOffset(0, 32)
+    Name.AutomaticSize = Enum.AutomaticSize.X
+    Name.BackgroundTransparency = 1
+    Name.Text = 'Byte'
+    Name.TextColor3 = Color3.new(1,1,1)
+    Name.TextSize = 14
+    Name.Font = Enum.Font.GothamBold
+    Name.TextXAlignment = Enum.TextXAlignment.Left
+    Name.LayoutOrder = 2
+    Name.Parent = Main
+
+    local Info = Instance.new('TextLabel')
+    Info.Size = UDim2.fromOffset(0, 32)
+    Info.AutomaticSize = Enum.AutomaticSize.X
+    Info.BackgroundTransparency = 1
+    Info.TextColor3 = Color3.fromRGB(220, 220, 220)
+    Info.TextSize = 13
+    Info.Font = Enum.Font.Gotham
+    Info.TextXAlignment = Enum.TextXAlignment.Left
+    Info.LayoutOrder = 3
+    Info.Parent = Main
+
+    local frames, lastUpdate = 0, tick()
+    local cachedRegion = "Loading..."
+
+    task.spawn(function()
+        local function FindServerText()
+            local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui")
+            if playerGui then
+                for _, desc in ipairs(playerGui:GetDescendants()) do
+                    if desc:IsA("TextLabel") and desc.Text:find("Server Region:") then
+                        return string.gsub(desc.Text, "Server Region:%s*", "")
+                    end
+                end
+            end
+            
+            local coreGui = game:GetService("CoreGui")
+            if coreGui then
+                for _, desc in ipairs(coreGui:GetDescendants()) do
+                    if desc:IsA("TextLabel") and desc.Text:find("Server Region:") then
+                        return string.gsub(desc.Text, "Server Region:%s*", "")
+                    end
+                end
+            end
+            
+            local jid = game.JobId
+            if jid and #jid > 0 then
+                return string.upper(string.sub(jid, 1, 4))
+            end
+            
+            return "Unknown"
+        end
+
+        cachedRegion = FindServerText()
+    end)
+
+    Connections_Manager['Watermark_FPS'] = RunService.RenderStepped:Connect(function()
+        frames = frames + 1
+        local now = tick()
+        if now - lastUpdate >= 1 then
+            local realPing = 0
+            local pingStat = Stats.Network.ServerStatsItem:FindFirstChild("Data Ping")
+            if pingStat then
+                realPing = math.floor(pingStat:GetValue())
+            end
+            
+            Info.Text = string.format("%s | %d FPS | %d MS | %s", os.date("%H:%M:%S"), math.floor(frames / (now - lastUpdate)), realPing, cachedRegion)
+            
+            frames = 0
+            lastUpdate = now
+        end
+    end)
+
+    local dragging, dragStart, startPos
+    Connections_Manager['Watermark_DragStart'] = Main.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging, dragStart, startPos = true, input.Position, Main.Position
+        end
+    end)
+    Connections_Manager['Watermark_DragMove'] = UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    Connections_Manager['Watermark_DragEnd'] = UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    Env._WatermarkGui = WatermarkGui
+end
+local Parry_Input_Method = "Remote"
+local KEYPRESS_INTERVAL = 0.06
+local Keypress_Last_Fire = 0
+
+local Player = Players.LocalPlayer
+local Server_Ball_Positions = setmetatable({}, { __mode = 'k' })
+local Library = nil
+local ThemeManager = nil  
+local SaveManager = nil
+local Window = nil
+
+local Auto_Parry = {}
+
+do
+    local AnimationController = require(ReplicatedStorage.Controllers.AnimationController)
+    local SwordApi = require(ReplicatedStorage.Shared.SwordAPI)
+    local Swords = require(ReplicatedStorage.Shared.ReplicatedInstances.Swords)
+
+    Auto_Parry.Parry_Animation = function()
+        local Character = Player.Character
+        local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+        local Animator = Humanoid and Humanoid:FindFirstChildOfClass("Animator")
+        if not Animator then
+            return
+        end
+
+        local Attribute = Character:GetAttribute("CurrentlyEquippedSword") or Player:GetAttribute("CurrentlyEquippedSword")
+        if not Attribute then
+            return
+        end
+
+        local SwordInfo = Swords:GetSword(Attribute)
+        if not SwordInfo or Character ~= Player.Character then
+            return
+        end
+
+        local Tracks = {}
+        for _, Animation in SwordApi:GetAnimations(Character, {"Parry", "GrabParry"}, SwordInfo.AnimationType, SwordInfo.SwordType) do
+            Tracks[#Tracks + 1] = AnimationController:LoadAnimation(Animator, Animation, true)
+        end
+
+        for _, track in AnimationController:GetPlayingAnimationTracks(Animator) do
+            local Name = track.Name
+            if Name == 'GrabParry' or Name == 'Grab' or Name == 'SuccessParry' or Name == 'Success' then
+                track:Stop(track:GetAttribute('StopFadeTime') or 0.1)
+            end
+        end
+
+        for _, track in ipairs(Tracks) do
+            local speed = track:GetAttribute("PlaySpeed") or 1
+            track.Priority = Enum.AnimationPriority.Action4
+            track.Looped = false
+            track:Play(track:GetAttribute("PlayFadeTime") or 0, track:GetAttribute("PlayWeight") or 1, speed)
+            track.TimePosition = 0
+            Character:SetAttribute("ParryTime", math.max(Character:GetAttribute("ParryTime") or 0, track.Length == 0 and 1 or (track.Length - track.TimePosition) * speed))
+        end
+    end
+
+    Connections_Manager['Parry Animation Success'] = ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
+        if _ScriptUnloaded then return end
+        local Character = Player.Character
+        local Humanoid = Character and Character:FindFirstChildOfClass('Humanoid')
+        local Animator = Humanoid and Humanoid:FindFirstChildOfClass('Animator')
+        if not Animator then return end
+
+        for _, track in Animator:GetPlayingAnimationTracks() do
+            if track.Name == 'GrabParry' or track.Name == 'Grab' or track.Name == 'Parry' then
+                track:Stop(track:GetAttribute('StopFadeTime') or 0.1)
+            end
+        end
+    end)
+end
+
+-- remote
+local function Child(parent, name)
+    return parent:WaitForChild(name, 10)
+end
+
+local Upvalues = ((debug and debug.getupvalues) or getupvalues)(require(
+    Child(Child(Child(ReplicatedStorage, "Controllers"), "SwordsController \012"), "PRY")
+))
+local Key, Hash, JobId = Upvalues[3][3], Upvalues[8], game.JobId
+
+if Hash:find("PARRY_HASH_FAKE", 1, true) then
+    Hash = nil
+end
+
+local Encoded = table.create(#Upvalues[7])
+
+for i = 1, #Upvalues[7] do
+    Encoded[i] = string.char(
+        (Upvalues[7]:byte(i) - 32 + JobId:byte((i - 1) % #JobId + 1)) % 95 + 32
+    )
+end
+
+local Remote = Child(
+    Child(Child(Child(Child(ReplicatedStorage, "Packages"), "_Index"), "sleitnick_net@0.1.0"), "net"),
+    "RE/" .. crypt.hash(
+        table.concat(Encoded) .. "bd93afff-8aba-409d-9946-a875f6c33087" .. JobId,
+        "sha256"
+    )
+)
+
+local function Parry_Token()
+    local Pad = Upvalues[4](Key, 'TIME')
+    local ST = tostring(math.floor(workspace:GetServerTimeNow() * 100))
+    local TK = {}
+    for i = 1, #ST do
+        TK[i] = string.char(bit32.bxor((string.byte(ST, i) + i) % 256, string.byte(Pad, (i - 1) % #Pad + 1)))
+    end
+    return table.concat(TK)
+end
+
+task.spawn(function()
+    local Net_Folder
+    Net_Folder = ReplicatedStorage.Packages._Index['sleitnick_net@0.1.0'].net
+    if not Net_Folder then return end
+
+    for _, Remote in Net_Folder:GetChildren() do
+        if Remote:IsA('UnreliableRemoteEvent') and Remote.Name ~= 'URE/ReplicateBallPosition' then
+            Connections_Manager['Real Ball Position - ' .. Remote.Name] = Remote.OnClientEvent:Connect(function(Ball, Server_Position)
+                if typeof(Ball) ~= 'Instance' then return end
+                if not Ball.Parent then
+                    Server_Ball_Positions[Ball] = nil
+                    return
+                end
+                if typeof(Server_Position) == 'Vector3' then
+                    Server_Ball_Positions[Ball] = Server_Position
+                end
+            end)
+        end
+    end
+end)
+
+local function GetBallPosition(ball)
+    return Server_Ball_Positions[ball] or ball.Position
+end
+
+function Auto_Parry.Get_Balls(single)
+    local List = {}
+    local Folder = BallsFolder
+    if not Folder or Folder.Parent ~= workspace then
+        Folder = workspace:FindFirstChild('Balls')
+        BallsFolder = Folder
+    end
+    if not Folder then
+        if single then return nil end
+        return List
+    end
+
+    for _, Ball in ipairs(Folder:GetChildren()) do
+        if Ball:IsA('BasePart') and Ball:GetAttribute('realBall') == true then
+            if single then return Ball end
+            List[#List + 1] = Ball
+        end
+    end
+
+    if single then return nil end
+    return List
+end
+
+local Target_Ball = nil
+
+function Auto_Parry.Get_Targeting_Balls()
+    return Target_Ball
+end
+
+local CURVE_DOT_THRESHOLD = 0.5
+
+function Auto_Parry.Is_Curved(Offset, Velocity, Ball_Velocity)
+    if Ball_Velocity:Dot(Offset) < 0 then return true end
+
+    local Speed = Velocity.Magnitude
+    if Speed < 0.001 then return true end
+    local Distance = Offset.Magnitude
+    if Distance < 0.001 then return false end
+    return Offset:Dot(Velocity) / (Distance * Speed) < CURVE_DOT_THRESHOLD
+end
+
+local Local_Player_Name = Player.Name
+
+local Vector2_Mouse_Location = nil
+local Is_Mobile = UserInputService.TouchEnabled
+if Is_Mobile then Parry_Input_Method = "Remote" end
+
+local RT_Random = Random.new()
+
+function Auto_Parry.Parry_Data(Parry_Type)
+    local Cam = workspace.CurrentCamera
+    local ViewportSize = Cam.ViewportSize
+    
+    local Mouse_X, Mouse_Y
+    if Is_Mobile then
+        Mouse_X = ViewportSize.X * 0.5
+        Mouse_Y = ViewportSize.Y * 0.5
+    else
+        local Mouse_Location = UserInputService:GetMouseLocation()
+        Mouse_X = Mouse_Location.X
+        Mouse_Y = Mouse_Location.Y
+    end
+    Vector2_Mouse_Location = {Mouse_X, Mouse_Y}
+
+    local Events = {}
+    local Character = Player.Character
+    local MyRoot = Character and Character.PrimaryPart
+    local Cam_Pos = Cam.CFrame.Position
+
+    if not MyRoot then
+        return {0, CFrame.new(Cam_Pos, Cam_Pos + Cam.CFrame.LookVector), Events, Vector2_Mouse_Location}
+    end
+
+    local My_Pos = MyRoot.Position
+    local My_Name = Player.Name
+
+    local Mouse_Direction = nil
+    local Best_Target = nil
+    local Best_Dot = -math.huge
+    local candidates = Parry_Type == 'RandomTarget' and {} or nil
+
+    if Parry_Type == 'Dot' or Parry_Type == 'InstaDot' then
+        local Mouse_Ray = Cam:ScreenPointToRay(Mouse_X, Mouse_Y)
+        Mouse_Direction = Mouse_Ray.Direction
+    end
+
+    for _, Instance in AliveFolder:GetChildren() do
+        local Target_Root = Instance.PrimaryPart
+        if Target_Root then
+            local Target_Pos = Target_Root.Position
+            Events[Instance.Name] = Cam:WorldToScreenPoint(Target_Pos)
+
+            if Instance.Name ~= My_Name then
+                if Parry_Type == 'Dot' or Parry_Type == 'InstaDot' then
+                    local Enemy_Direction = (Target_Pos - Cam_Pos).Unit
+                    local Dot = Mouse_Direction:Dot(Enemy_Direction)
+                    if Dot > Best_Dot then
+                        Best_Dot = Dot
+                        Best_Target = Instance
+                    end
+                elseif Parry_Type == 'RandomTarget' then
+                    local pos, onScreen = Cam:WorldToScreenPoint(Target_Pos)
+                    if onScreen then
+                        candidates[#candidates + 1] = { Instance, pos }
+                    end
+                end
+            end
+        end
+    end
+
+    if Parry_Type == 'Camera' then
+        return {0, CFrame.new(Cam_Pos, Cam_Pos + Cam.CFrame.LookVector), Events, Vector2_Mouse_Location}
+    end
+
+    if Parry_Type == 'Backward' then
+        local Backwards_Direction = -Cam.CFrame.LookVector * 10000
+        Backwards_Direction = Vector3.new(Backwards_Direction.X, 0, Backwards_Direction.Z)
+        return {0, CFrame.new(Cam_Pos, Cam_Pos + Backwards_Direction), Events, Vector2_Mouse_Location}
+    end
+
+    if Parry_Type == 'Random' then
+        return {0, CFrame.new(Cam_Pos, Vector3.new(math.random(-3000, 3000), math.random(-3000, 3000), math.random(-3000, 3000))), Events, Vector2_Mouse_Location}
+    end
+
+    if Parry_Type == 'Dot' then
+        local Target_Position = (Best_Target and Best_Target.PrimaryPart)
+            and Best_Target.PrimaryPart.Position
+            or (My_Pos + Cam.CFrame.LookVector * 1000)
+
+        local Aimed_Position = CFrame.lookAt(My_Pos, Target_Position + Vector3.new(0, 2, 0))
+        return {0, Aimed_Position, Events, Vector2_Mouse_Location}
+    end
+
+    if Parry_Type == 'InstaDot' then
+        local Target_Position = (Best_Target and Best_Target.PrimaryPart)
+            and Best_Target.PrimaryPart.Position
+            or (My_Pos + Cam.CFrame.LookVector * 1000)
+
+        local Aimed_Position = CFrame.lookAt(My_Pos, Target_Position)
+        local Screen_Pos = Cam:WorldToScreenPoint(Target_Position)
+        return {0, Aimed_Position, Events, {Screen_Pos.X, Screen_Pos.Y}}
+    end
+
+    if Parry_Type == 'RandomTarget' then
+        local pick
+        if candidates and #candidates > 0 then
+            pick = candidates[RT_Random:NextInteger(1, #candidates)][1]
+        end
+
+        if pick then
+            local aimAt = pick.PrimaryPart.Position + Vector3.new(
+                RT_Random:NextNumber(-1.8, 1.8),
+                RT_Random:NextNumber(-0.6, 1.8),
+                RT_Random:NextNumber(-1.8, 1.8)
+            )
+            local pos = Cam:WorldToScreenPoint(aimAt)
+            return {
+                0,
+                CFrame.new(My_Pos, aimAt),
+                Events,
+                { pos.X + RT_Random:NextNumber(-45, 45), pos.Y + RT_Random:NextNumber(-45, 45) },
+            }
+        end
+
+        local randDir = Vector3.new(
+            RT_Random:NextNumber(-3000, 3000),
+            RT_Random:NextNumber(-3000, 3000),
+            RT_Random:NextNumber(-3000, 3000)
+        )
+        return {
+            0,
+            CFrame.new(Cam_Pos, Cam_Pos + randDir),
+            Events,
+            {
+                Cam.ViewportSize.X / 2 + RT_Random:NextNumber(-80, 80),
+                Cam.ViewportSize.Y / 2 + RT_Random:NextNumber(-80, 80),
+            },
+        }
+    end
+
+    return {0, CFrame.new(Cam_Pos, Cam_Pos + Cam.CFrame.LookVector), Events, Vector2_Mouse_Location}
+end
+
+local Auto_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Slashes of Fury', 'Singularity'}
+local Protect_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Forcefield', 'Singularity', 'Invisibility', 'Telekinesis', 'Ninja Dash', 'Continuity Zero', 'Infinity', 'Time Hole', 'Dribble', 'Slashes of Fury', 'Phantom', 'Dragon Spirit', 'Quantum Arena'}
+local Use_Ability = ReplicatedStorage.Remotes.AbilityButtonPress
+
+local function Get_Hotbar_Gradient(Slot)
+    local PlayerGui = Player:FindFirstChild('PlayerGui')
+    local Hotbar = PlayerGui and PlayerGui:FindFirstChild('Hotbar')
+    local Button = Hotbar and Hotbar:FindFirstChild(Slot)
+    return Button and Button:FindFirstChildOfClass('UIGradient')
+end
+
+local Parried = false
+local Last_Parry = 0
+local Parries = 0
+
+local function Find_Target()
+    for _, Ball in BallsFolder:GetChildren() do
+        if Ball:GetAttribute('realBall') and Ball:GetAttribute('target') == Local_Player_Name then
+            return Ball
+        end
+    end
+end
+
+local function On_Target_Changed(Ball)
+    if Ball == Target_Ball then Parried = false end
+    Target_Ball = Find_Target()
+end
+
+local Parry_Times = {}
+local PARRY_HISTORY = 1
+
+local function Note_Parry(Now)
+    Parry_Times[#Parry_Times + 1] = Now
+    while Parry_Times[1] and Now - Parry_Times[1] > PARRY_HISTORY do
+        table.remove(Parry_Times, 1)
+    end
+end
+
+local function Recent_Parries(Now, Window)
+    local Count = 0
+    for i = #Parry_Times, 1, -1 do
+        if Now - Parry_Times[i] > Window then break end
+        Count += 1
+    end
+    return Count
+end
+
+local Clash_Info = setmetatable({}, { __mode = 'k' })
+
+local function Record_Target(Ball)
+    local Now, Target = os.clock(), Ball:GetAttribute('target')
+    if not Target or Target == '' then return end
+
+    local Info = Clash_Info[Ball]
+    if not Info then
+        Clash_Info[Ball] = { Time = Now, Target = Target }
+        return
+    end
+    Info.Previous, Info.Time, Info.Target = Info.Target, Now, Target
+end
+
+local Ball_Watch = {}
+Connections_Manager['Target_Ball_Watch'] = Ball_Watch
+
+local function Watch_Ball(Ball)
+    Ball_Watch[Ball] = Ball:GetAttributeChangedSignal('target'):Connect(function()
+        Record_Target(Ball)
+        On_Target_Changed(Ball)
+    end)
+    Record_Target(Ball)
+    On_Target_Changed(Ball)
+end
+
+for _, Ball in BallsFolder:GetChildren() do Watch_Ball(Ball) end
+Connections_Manager['Target_Ball_Added'] = BallsFolder.ChildAdded:Connect(Watch_Ball)
+Connections_Manager['Target_Ball_Removed'] = BallsFolder.ChildRemoved:Connect(function(Ball)
+    if Ball_Watch[Ball] then Ball_Watch[Ball]:Disconnect(); Ball_Watch[Ball] = nil end
+    Clash_Info[Ball] = nil
+    On_Target_Changed(Ball)
+end)
+
+function Auto_Parry.Parry(Parry_Type, Silent)
+    if Parry_Input_Method == "Keypress" then
+        local now = os.clock()
+        if (now - Keypress_Last_Fire) < KEYPRESS_INTERVAL then
+            return false
+        end
+        Keypress_Last_Fire = now
+
+        if not isrbxactive() or Menu_Is_Open then
+            Parry_Input_Method = "Remote"
+            Auto_Parry.Parry(Parry_Type)
+            Parry_Input_Method = "Keypress"
+            return true
+        end
+
+        keypress(0x46)
+        keyrelease(0x46)
+
+        if Env.Cooldown_Protection and (now - Last_Parry) > 0.5 then
+            task.delay(0.15, function()
+                if Parried then return end
+                local Character = Player.Character
+                local Abilities = Character and Character:FindFirstChild('Abilities')
+                if not Abilities then return end
+                for _, Ability in Protect_Abilities do
+                    if Abilities:FindFirstChild(Ability) and Abilities[Ability].Enabled then
+                        Use_Ability:Fire()
+                        break
+                    end
+                end
+            end)
+        end
+        return true
+    end
+
+    local Parry_Data = Auto_Parry.Parry_Data(Parry_Type)
+    Remote:FireServer(Hash, Key, Parry_Token(), Parry_Data[1], Parry_Data[2], Parry_Data[3], Parry_Data[4], false)
+
+    if not Silent and not Connections_Manager['Manual Spam'] then
+        Auto_Parry.Parry_Animation()
+    end
+    
+    if Parries >= 7 then return false end
+
+    Parries += 1
+    task.delay(0.05, function()
+        if Parries > 0 then Parries -= 1 end
+    end)
+end
+
+local GlowSettings = {
+    Enabled = false,
+    LifetimeMul = 1.4,
+    MinLifetime = 0.3,
+    LightEmission = 1,
+    LightInfluence = 0,
+    Color = ColorSequence.new(Color3.new(1, 1, 1)),
+    Transparency = NumberSequence.new(0)
+}
+
+local ActiveBalls = {}
+local BallTrailConnections = {}
+
+local SUPPRESS_FOLDER_NAMES = { clash = true, Runtime = true }
+
+local OriginalTrailData = setmetatable({}, {__mode = "k"})
+
+local function BoostTrail(ball, trail)
+    if trail:GetAttribute("GlowBoosted") then return end
+    local original = {
+        Lifetime = trail.Lifetime,
+        LightEmission = trail.LightEmission,
+        LightInfluence = trail.LightInfluence,
+        Color = trail.Color,
+        Transparency = trail.Transparency,
+    }
+    trail.Lifetime = math.max(GlowSettings.MinLifetime, original.Lifetime) * GlowSettings.LifetimeMul
+    trail.LightEmission = GlowSettings.LightEmission
+    trail.LightInfluence = GlowSettings.LightInfluence
+    trail.Color = GlowSettings.Color
+    trail.Transparency = GlowSettings.Transparency
+    trail:SetAttribute("GlowBoosted", true)
+    local data = OriginalTrailData[ball] or {}
+    data[trail] = original
+    OriginalTrailData[ball] = data
+end
+
+local function AddGlow(ball)
+    if not GlowSettings.Enabled then return end
+    if not ball or not ball:IsA("BasePart") then return end
+    if ActiveBalls[ball] then return end
+
+    ActiveBalls[ball] = true
+
+    for _, child in ipairs(ball:GetDescendants()) do
+        if child:IsA("Trail") then BoostTrail(ball, child) end
+    end
+
+    if BallTrailConnections[ball] then
+        BallTrailConnections[ball]:Disconnect()
+    end
+    BallTrailConnections[ball] = ball.DescendantAdded:Connect(function(child)
+        if child:IsA("Trail") then BoostTrail(ball, child) end
+    end)
+end
+
+local function UnboostBallTrails(ball)
+    local data = OriginalTrailData[ball]
+    if not data then return end
+    for trail, original in pairs(data) do
+        if trail and trail.Parent then
+            trail.Lifetime = original.Lifetime
+            trail.LightEmission = original.LightEmission
+            trail.LightInfluence = original.LightInfluence
+            trail.Color = original.Color
+            trail.Transparency = original.Transparency
+            trail:SetAttribute("GlowBoosted", nil)
+        end
+    end
+    OriginalTrailData[ball] = nil
+end
+
+local function RemoveGlow(ball)
+    if not ball then return end
+
+    if BallTrailConnections[ball] then
+        BallTrailConnections[ball]:Disconnect()
+        BallTrailConnections[ball] = nil
+    end
+
+    UnboostBallTrails(ball)
+
+    for _, v in ipairs(ball:GetDescendants()) do
+        if (v:IsA("Trail") or v:IsA("Beam") or v:IsA("ParticleEmitter")) and v:GetAttribute("ClientGlowDisabled") then
+            v.Enabled = true
+            v:SetAttribute("ClientGlowDisabled", nil)
+        end
+    end
+
+    ActiveBalls[ball] = nil
+end
+
+local function SweepExistingClashEffects()
+    task.spawn(function()
+        local YIELD = 1500
+        local Iter = 0
+        for _, v in ipairs(workspace:GetDescendants()) do
+            Iter += 1
+            if (Iter % YIELD) == 0 then task.wait() end
+            if not GlowSettings.Enabled then return end
+            if not v:GetAttribute("ClientGlowDisabled") then
+                local p = v.Parent
+                local isClash = false
+                while p and p ~= workspace do
+                    if p.Name == "clash" or p.Name == "Runtime" then isClash = true; break end
+                    p = p.Parent
+                end
+                if isClash then
+                    local ok = pcall(function() v.Enabled = false end)
+                    if ok then
+                        v:SetAttribute("ClientGlowDisabled", true)
+                        if v:IsA("ParticleEmitter") then pcall(function() v:Clear() end) end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+local function DisconnectGlowListeners()
+    for _, key in ipairs({ 'Glow_DescendantAdded', 'Glow_BallRemoved', 'Glow_BallAdded' }) do
+        local conn = Connections_Manager[key]
+        if conn then
+            conn:Disconnect()
+            Connections_Manager[key] = nil
+        end
+    end
+end
+
+local function ConnectGlowListeners()
+    if not Connections_Manager['Glow_DescendantAdded'] then
+        Connections_Manager['Glow_DescendantAdded'] = workspace.DescendantAdded:Connect(function(v)
+            if not GlowSettings.Enabled then return end
+            if not v:IsA("Trail") and not v:IsA("Beam") and not v:IsA("ParticleEmitter") then return end
+            task.defer(function()
+                if not v.Parent then return end
+                local p = v.Parent
+                while p and p ~= workspace do
+                    if SUPPRESS_FOLDER_NAMES[p.Name] then
+                        v.Enabled = false
+                        v:SetAttribute("ClientGlowDisabled", true)
+                        if v:IsA("ParticleEmitter") then v:Clear() end
+                        return
+                    end
+                    p = p.Parent
+                end
+            end)
+        end)
+    end
+
+    if not Connections_Manager['Glow_BallRemoved'] then
+        Connections_Manager['Glow_BallRemoved'] = BallsFolder.ChildRemoved:Connect(function(ball)
+            RemoveGlow(ball)
+        end)
+    end
+
+    if not Connections_Manager['Glow_BallAdded'] then
+        Connections_Manager['Glow_BallAdded'] = BallsFolder.ChildAdded:Connect(function(ball)
+            task.wait(0.05)
+            AddGlow(ball)
+        end)
+    end
+end
+
+local function SetBallGlow(state)
+    GlowSettings.Enabled = state
+
+    for ball in pairs(ActiveBalls) do
+        RemoveGlow(ball)
+    end
+
+    if state then
+        ConnectGlowListeners()
+        for _, ball in ipairs(BallsFolder:GetChildren()) do
+            AddGlow(ball)
+        end
+        SweepExistingClashEffects()
+    else
+        DisconnectGlowListeners()
+    end
+end
+
+local SkinChanger = {}
+local Billboard_Banner = {}
+local SkinCache_Folder = Instance.new('Folder')
+local SkinOriginal_Folder = Instance.new('Folder')
+
+local SkinConfig = {
+    Current_User_ID = nil,
+    Cache_User_ID = nil,
+    Default_Description = nil,
+    Original_Captured = false,
+    Applied_Characters = {},
+    Preset_Skins = {
+        ['Headless'] = {
+            Name = 'Headless',
+            Description = '',
+            Apply = function(character) SkinChanger.SetHeadlessState(character, true) end,
+            Restore = function(character) SkinChanger.SetHeadlessState(character, false) end
+        },
+        ['Korblox'] = {
+            Name = 'Korblox Deathspeaker',
+            Description = '',
+            Apply = function(character) SkinChanger.SetKorbloxState(character, true) end,
+            Restore = function(character) SkinChanger.SetKorbloxState(character, false) end
+        }
+    },
+    Active_Presets = {}
+}
+
+local function Skin_ApplyDescription(Humanoid, Desc)
+    if not Humanoid or not Desc then return false end
+    local methods = {
+        { name = 'ApplyDescription', args = function() return { Desc } end },
+        { name = 'ApplyDescriptionClientServer', args = function() return { Desc } end },
+    }
+    for _, m in ipairs(methods) do
+        local has = false
+        has = typeof(Humanoid[m.name]) == 'function'
+        if has then
+            local ok = true, (function() Humanoid[m.name](Humanoid, table.unpack(m.args())) end)()
+            if ok then return true end
+        end
+    end
+    return false
+end
+
+local function Skin_FindAttach(Character, name)
+    for _, part in pairs(Character:GetChildren()) do
+        if part:IsA('BasePart') then
+            local att = part:FindFirstChild(name)
+            if att and att:IsA('Attachment') then return att end
+        end
+    end
+    return nil
+end
+
+local function Skin_WeldAccessory(Character, Acc)
+    local Handle = Acc:FindFirstChild('Handle')
+    if not Handle then Acc.Parent = Character; return end
+    for _, w in pairs(Handle:GetChildren()) do
+        if w:IsA('Weld') or w:IsA('Motor6D') or w:IsA('WeldConstraint') then w:Destroy() end
+    end
+    local handleAtt = Handle:FindFirstChildOfClass('Attachment')
+    local charAtt = handleAtt and Skin_FindAttach(Character, handleAtt.Name)
+    local part1, c0, c1
+    if charAtt then
+        part1 = charAtt.Parent
+        c0 = handleAtt.CFrame
+        c1 = charAtt.CFrame
+    else
+        part1 = Character:FindFirstChild('Head') or Character:FindFirstChild('HumanoidRootPart')
+        c0 = CFrame.new()
+        c1 = CFrame.new(0, 0.5, 0)
+    end
+    if not part1 then Acc.Parent = Character; return end
+    Handle.Anchored = false
+    Handle.CanCollide = false
+    Handle.Massless = true
+    local weld = Instance.new('Weld')
+    weld.Name = 'SkinWeld'
+    weld.Part0 = Handle
+    weld.Part1 = part1
+    weld.C0 = c0
+    weld.C1 = c1
+    weld.Parent = Handle
+    Acc.Parent = Character
+end
+
+local Skin_BodyParts = { 'Head', 'Torso', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg' }
+
+local function Skin_IsTopItem(v)
+    return v:IsA('Accessory') or v:IsA('Shirt') or v:IsA('Pants') or v:IsA('ShirtGraphic')
+        or v:IsA('CharacterMesh') or v:IsA('BodyColors')
+end
+
+local function Skin_IsPartVisual(v, isHead)
+    if v:IsA('DataModelMesh') then return true end
+    return isHead and (v:IsA('Decal') or v:IsA('SurfaceAppearance') or v:IsA('FaceControls'))
+end
+
+local function Skin_StripAppearance(Character)
+    for _, v in pairs(Character:GetChildren()) do
+        if Skin_IsTopItem(v) then v:Destroy() end
+    end
+    for _, name in ipairs(Skin_BodyParts) do
+        local part = Character:FindFirstChild(name)
+        if part then
+            for _, d in pairs(part:GetChildren()) do
+                if Skin_IsPartVisual(d, name == 'Head') then d:Destroy() end
+            end
+        end
+    end
+end
+
+local function Skin_BuildDummy(userId)
+    local dummy
+    do
+        local desc = Players:GetHumanoidDescriptionFromUserId(userId)
+        desc.DepthScale, desc.HeadScale, desc.HeightScale = 1, 1, 1
+        desc.ProportionScale, desc.WidthScale = 1, 1
+        dummy = Players:CreateHumanoidModelFromDescription(desc, Enum.HumanoidRigType.R6)
+    end
+    return dummy
+end
+
+local function Skin_Capture(Folder, Model, tag)
+    for _, v in pairs(Folder:GetChildren()) do v:Destroy() end
+    local function keep(v, parent)
+        v.Archivable = true
+        local clone = v:Clone()
+        if not clone then return end
+        if tag then clone:SetAttribute(tag, true) end
+        clone.Parent = parent
+    end
+    local slots = {}
+    local function slot(name)
+        if not slots[name] then
+            slots[name] = Instance.new('Folder')
+            slots[name].Name = name
+            slots[name].Parent = Folder
+        end
+        return slots[name]
+    end
+
+    local items = Model:GetChildren()
+    local r6 = Model:FindFirstChild('R6')
+    if r6 then
+        for _, v in pairs(r6:GetChildren()) do table.insert(items, v) end
+    end
+    for _, v in pairs(items) do
+        if Skin_IsTopItem(v) then
+            keep(v, Folder)
+        elseif v:IsA('Decal') or v:IsA('SpecialMesh') then
+            keep(v, slot('Head'))
+        end
+    end
+
+    for _, name in ipairs(Skin_BodyParts) do
+        local part = Model:FindFirstChild(name)
+        if part and part:IsA('BasePart') then
+            local s = slot(name)
+            s:SetAttribute('Color', part.Color)
+            for _, v in pairs(part:GetChildren()) do
+                if Skin_IsPartVisual(v, name == 'Head') and v.Name ~= 'KorbloxMesh' then
+                    keep(v, s)
+                end
+            end
+        end
+    end
+end
+
+local function Skin_ApplyFolder(Character, Folder, PresetOwner)
+    Skin_StripAppearance(Character)
+    for _, Item in pairs(Folder:GetChildren()) do
+        if Item:IsA('Folder') then
+            local part = Character:FindFirstChild(Item.Name)
+            if part and part:IsA('BasePart') then
+                local color = Item:GetAttribute('Color')
+                if color then part.Color = color end
+                for _, v in pairs(Item:GetChildren()) do
+                    v:Clone().Parent = part
+                end
+            end
+        else
+            local clone = Item:Clone()
+            if clone:IsA('Accessory') then
+                Skin_WeldAccessory(Character, clone)
+            else
+                clone.Parent = Character
+            end
+        end
+    end
+
+    local presets = SkinConfig.Active_Presets[PresetOwner or Character]
+    if presets then
+        for name in pairs(presets) do
+            local preset = SkinConfig.Preset_Skins[name]
+            if preset and preset.Apply then preset.Apply(Character) end
+        end
+    end
+end
+
+function SkinChanger.ApplyCustomAvatar(character, userId)
+    if not character or not userId then return false end
+
+    local Humanoid = character:WaitForChild('Humanoid', 5)
+    if not Humanoid then return false end
+
+    if character:GetAttribute('SkinChanger_Applied') == userId then
+        return true
+    end
+
+    if character:GetAttribute('SkinChanger_Applied') == nil then
+        SkinConfig.Original_Captured = true, Skin_Capture(SkinOriginal_Folder, character)
+    end
+
+    character:SetAttribute('SkinChanger_Applied', userId)
+
+    if not SkinConfig.Default_Description then
+        local ok, desc = true, Humanoid:GetAppliedDescription()
+        if ok and desc then
+            SkinConfig.Default_Description = desc
+        end
+    end
+
+    local Source = Skin_BuildDummy(userId)
+    if not Source then
+        local gotModel, Appearance = true, Players:GetCharacterAppearanceAsync(userId)
+        if gotModel and Appearance and #Appearance:GetChildren() > 0 then
+            Source = Appearance
+        end
+    end
+
+    if character:GetAttribute('SkinChanger_Applied') ~= userId then
+        if Source then Source:Destroy() end
+        return false
+    end
+
+    if Source then
+        SkinConfig.Cache_User_ID = nil
+        local captured = true, Skin_Capture(SkinCache_Folder, Source, '_SkinAvatar')
+        Source:Destroy()
+        if captured then
+            SkinConfig.Cache_User_ID = userId
+            Skin_ApplyFolder(character, SkinCache_Folder)
+            SkinConfig.Applied_Characters[character] = userId
+            return true
+        end
+    end
+
+    local gotDesc, Target_Avatar = true, Players:GetHumanoidDescriptionFromUserId(userId)
+
+    if gotDesc and Target_Avatar then
+        local applied = false
+        for _ = 1, 6 do
+            if Skin_ApplyDescription(Humanoid, Target_Avatar) then
+                applied = true
+                break
+            end
+            task.wait()
+        end
+        if applied then
+            SkinConfig.Applied_Characters[character] = userId
+            return true
+        end
+    end
+
+    character:SetAttribute('SkinChanger_Applied', nil)
+    return false
+end
+
+function SkinChanger.RestoreDefaultAvatar(character)
+    if not character then return end
+
+    local humanoid = character:FindFirstChild('Humanoid')
+    if not humanoid then return end
+
+    local wasApplied = character:GetAttribute('SkinChanger_Applied') ~= nil
+    character:SetAttribute('SkinChanger_Applied', nil)
+    SkinConfig.Applied_Characters[character] = nil
+
+    if not wasApplied then return end
+
+    if SkinConfig.Original_Captured then
+        Skin_ApplyFolder(character, SkinOriginal_Folder)
+        return
+    end
+end
+
+function SkinChanger.SetHeadlessState(character, isHeadless)
+    if not character then return end
+    local transparency = isHeadless and 1 or 0
+    
+    local head = character:FindFirstChild('Head')
+    if head then
+        head.Transparency = transparency
+        local headDecal = head:FindFirstChildOfClass('Decal')
+        if headDecal then
+            headDecal.Transparency = transparency
+        end
+    end
+end
+
+function SkinChanger.SetKorbloxState(character, isKorblox)
+    if not character then return end
+    local rightLeg = character:FindFirstChild('Right Leg')
+    if not rightLeg then return end
+    
+    for _, mesh in ipairs(rightLeg:GetChildren()) do
+        if mesh:IsA('SpecialMesh') then
+            mesh:Destroy()
+        end
+    end
+    
+    if isKorblox then
+        local korbloxMesh = Instance.new('SpecialMesh')
+        korbloxMesh.Name = 'KorbloxMesh'
+        korbloxMesh.MeshId = 'rbxassetid://902942096'
+        korbloxMesh.TextureId = 'rbxassetid://902843398'
+        korbloxMesh.Offset = Vector3.new(0, 0.7, 0)
+        korbloxMesh.Parent = rightLeg
+    end
+end
+
+function SkinChanger.SetPreset(character, presetName, state)
+    local preset = SkinConfig.Preset_Skins[presetName]
+    if not preset then return end
+    
+    SkinConfig.Active_Presets[character] = SkinConfig.Active_Presets[character] or {}
+    
+    if state then
+        if preset.Apply then
+            preset.Apply(character)
+            SkinConfig.Active_Presets[character][presetName] = true
+        end
+    else
+        if preset.Restore then
+            preset.Restore(character)
+            SkinConfig.Active_Presets[character][presetName] = nil
+            
+            if next(SkinConfig.Active_Presets[character]) == nil then
+                SkinConfig.Active_Presets[character] = nil
+            end
+        end
+    end
+end
+
+function SkinChanger.RemoveAllPresets(character)
+    local activePresets = SkinConfig.Active_Presets[character]
+    if activePresets then
+        for presetName, _ in pairs(activePresets) do
+            SkinChanger.SetPreset(character, presetName, false)
+        end
+    end
+end
+
+function SkinChanger.CreateBillboard(player, character)
+    if player == Player then return end
+
+    character = character or player.Character or player.CharacterAdded:Wait()
+    local startTime = os.clock()
+    while not character:FindFirstChild('Head') and (os.clock() - startTime) < 5 do
+        task.wait(0.1)
+    end
+    local head = character:FindFirstChild('Head')
+    if not head then return end
+
+    if Billboard_Banner[player] then
+        local existingGui = Billboard_Banner[player].Parent
+        if existingGui then existingGui:Destroy() end
+    end
+
+    local billboardGui = Instance.new('BillboardGui')
+    billboardGui.Name = 'AbilityESP'
+    billboardGui:SetAttribute('NoRender_Ignore', true)
+    billboardGui.Adornee = head
+    billboardGui.Size = UDim2.new(0, 60, 0, 80)
+    billboardGui.StudsOffset = Vector3.new(0, 3, 0)
+    billboardGui.AlwaysOnTop = true
+    billboardGui.MaxDistance = 600
+    billboardGui.Parent = head
+
+    local icon = Instance.new('ImageLabel')
+    icon.Name = 'Icon'
+    icon.AnchorPoint = Vector2.new(0.5, 0)
+    icon.Position = UDim2.new(0.5, 0, 0, 0)
+    icon.Size = UDim2.new(1, 0, 0.6, 0)
+    icon.BackgroundTransparency = 1
+    icon.ScaleType = Enum.ScaleType.Fit
+    icon.Image = ''
+    icon.Visible = false
+    icon.Parent = billboardGui
+    local iconAspect = Instance.new('UIAspectRatioConstraint')
+    iconAspect.AspectRatio = 1
+    iconAspect.DominantAxis = Enum.DominantAxis.Height
+    iconAspect.Parent = icon
+    Instance.new('UICorner', icon).CornerRadius = UDim.new(0, 8)
+
+    local badge = Instance.new('Frame')
+    badge.Name = 'VersionBadge'
+    badge.AnchorPoint = Vector2.new(1, 0)
+    badge.Position = UDim2.new(1, 5, 0, -5)
+    badge.Size = UDim2.new(0.58, 0, 0.34, 0)
+    badge.BackgroundColor3 = Color3.new(1, 1, 1)
+    badge.BorderSizePixel = 0
+    badge.Visible = false
+    badge.ZIndex = 3
+    badge.Parent = icon
+    Instance.new('UICorner', badge).CornerRadius = UDim.new(1, 0)
+    local badgeGradient = Instance.new('UIGradient')
+    badgeGradient.Rotation = 90
+    badgeGradient.Parent = badge
+    local badgeStroke = Instance.new('UIStroke')
+    badgeStroke.Thickness = 1.5
+    badgeStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    badgeStroke.Parent = badge
+
+    local badgeLabel = Instance.new('TextLabel')
+    badgeLabel.Name = 'Label'
+    badgeLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    badgeLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    badgeLabel.Size = UDim2.new(0.82, 0, 0.78, 0)
+    badgeLabel.BackgroundTransparency = 1
+    badgeLabel.Text = ''
+    badgeLabel.TextColor3 = Color3.new(1, 1, 1)
+    badgeLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    badgeLabel.TextStrokeTransparency = 0.55
+    badgeLabel.TextScaled = true
+    badgeLabel.Font = Enum.Font.GothamBlack
+    badgeLabel.ZIndex = 4
+    badgeLabel.Parent = badge
+    local badgeSizeConstraint = Instance.new('UITextSizeConstraint')
+    badgeSizeConstraint.MaxTextSize = 13
+    badgeSizeConstraint.Parent = badgeLabel
+
+    local bar = Instance.new('Frame')
+    bar.Name = 'Bar'
+    bar.AnchorPoint = Vector2.new(0.5, 0)
+    bar.Position = UDim2.new(0.5, 0, 0.64, 0)
+    bar.Size = UDim2.new(0.85, 0, 0.08, 0)
+    bar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    bar.BackgroundTransparency = 0.35
+    bar.BorderSizePixel = 0
+    bar.Visible = false
+    bar.Parent = billboardGui
+    Instance.new('UICorner', bar).CornerRadius = UDim.new(1, 0)
+
+    local fill = Instance.new('Frame')
+    fill.Name = 'Fill'
+    fill.Size = UDim2.new(1, 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(100, 220, 120)
+    fill.BorderSizePixel = 0
+    fill.Parent = bar
+    Instance.new('UICorner', fill).CornerRadius = UDim.new(1, 0)
+    local fillShine = Instance.new('UIGradient')
+    fillShine.Rotation = 90
+    fillShine.Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(185, 185, 185))
+    fillShine.Parent = fill
+    local fillGlow = Instance.new('UIStroke')
+    fillGlow.Name = 'Glow'
+    fillGlow.Color = fill.BackgroundColor3
+    fillGlow.Thickness = 1.5
+    fillGlow.Transparency = 0.45
+    fillGlow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    fillGlow.Parent = fill
+
+    local info = Instance.new('TextLabel')
+    info.Name = 'Info'
+    info.AnchorPoint = Vector2.new(0.5, 0)
+    info.Position = UDim2.new(0.5, 0, 0.76, 0)
+    info.Size = UDim2.new(1, 0, 0.22, 0)
+    info.BackgroundTransparency = 1
+    info.Text = ''
+    info.TextColor3 = Color3.fromRGB(255, 255, 255)
+    info.TextStrokeTransparency = 0.4
+    info.TextScaled = true
+    info.Font = Enum.Font.GothamBold
+    info.TextXAlignment = Enum.TextXAlignment.Center
+    info.TextYAlignment = Enum.TextYAlignment.Center
+    info.Visible = false
+    info.Parent = billboardGui
+    local infoSizeConstraint = Instance.new('UITextSizeConstraint')
+    infoSizeConstraint.MaxTextSize = 18
+    infoSizeConstraint.Parent = info
+
+    Billboard_Banner[player] = icon
+end
+
+function SkinChanger.SetCustomAvatar(userId)
+    SkinConfig.Current_User_ID = userId
+end
+
+function SkinChanger.RestoreCharacter(character)
+    SkinChanger.RestoreDefaultAvatar(character)
+    SkinChanger.RemoveAllPresets(character)
+end
+
+function SkinChanger.Cleanup()
+    for character, _ in pairs(SkinConfig.Applied_Characters) do
+        if character and character.Parent then
+            SkinChanger.RestoreCharacter(character)
+        end
+    end
+    
+    SkinConfig.Applied_Characters = {}
+    SkinConfig.Active_Presets = {}
+end
+
+local FuryUI = {
+    Timers = setmetatable({}, { __mode = "k" }),
+    Uses   = setmetatable({}, { __mode = "k" }),
+}
+local FURY_UI_MAX = 35
+
+function FuryUI.ClearTimer(ballName)
+    local t = FuryUI.Timers[ballName]
+    if not t then return end
+    FuryUI.Timers[ballName] = nil
+    if t.Tween then pcall(function() t.Tween:Cancel() end) end
+    if t.Gui then pcall(function() t.Gui:Destroy() end) end
+end
+
+function FuryUI.Clear(player)
+    local data = FuryUI.Uses[player]
+    if not data then return end
+    FuryUI.Uses[player] = nil
+    if data.TimerId then FuryUI.ClearTimer(data.TimerId) end
+    if data.Counter then pcall(function() data.Counter:Destroy() end) end
+    if data.ScaleTween then pcall(function() data.ScaleTween:Cancel() end) end
+    if data.PosTween   then pcall(function() data.PosTween:Cancel()   end) end
+end
+function FuryUI.UpdateTimer(ballName, seconds, total)
+    if not seconds or seconds <= 0 then
+        FuryUI.ClearTimer(ballName)
+        return false
+    end
+    local furyBall
+    for _, b in ipairs(BallsFolder:GetChildren()) do
+        if b.Name == ballName and not b:GetAttribute("realBall") then
+            furyBall = b; break
+        end
+    end
+    if not furyBall then return false end
+
+    local bar = FuryUI.Timers[ballName]
+    if bar and bar.Gui.Adornee ~= furyBall then
+        FuryUI.ClearTimer(ballName); bar = nil
+    end
+
+    if not bar then
+        local gui = Instance.new("BillboardGui")
+        gui.Name = "FuryCharge"
+        gui:SetAttribute("NoRender_Ignore", true)
+        gui.AlwaysOnTop = true
+        local size = math.max(furyBall.Size.X, furyBall.Size.Y, furyBall.Size.Z) * 2.5
+        gui.Size = UDim2.fromScale(size, size * 0.12)
+        gui.StudsOffset = Vector3.new(0, -furyBall.Size.Y / 2 - 0.5, 0)
+        gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+        gui.AlwaysOnTop = true
+        gui.Adornee = furyBall
+        gui.Parent = furyBall
+
+        local bg = Instance.new("Frame")
+        bg.Name = "Track"
+        bg.AnchorPoint = Vector2.new(0.5, 0.5)
+        bg.Position = UDim2.fromScale(0.5, 0.5)
+        bg.Size = UDim2.fromScale(0.88, 1)
+        bg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        bg.BackgroundTransparency = 0.35
+        bg.BorderSizePixel = 0
+        bg.Parent = gui
+        Instance.new("UICorner", bg).CornerRadius = UDim.new(1, 0)
+
+        local fill = Instance.new("Frame")
+        fill.Name = "Fill"
+        fill.Size = UDim2.fromScale(1, 1)
+        fill.BackgroundColor3 = Color3.fromRGB(255, 90, 90)
+        fill.BorderSizePixel = 0
+        fill.Parent = bg
+        Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
+        local fillGrad = Instance.new("UIGradient")
+        fillGrad.Rotation = 90
+        fillGrad.Color = ColorSequence.new(Color3.new(1,1,1), Color3.fromRGB(185,185,185))
+        fillGrad.Parent = fill
+
+        bar = { Gui = gui, Fill = fill, Tween = nil }
+        FuryUI.Timers[ballName] = bar
+    end
+
+    if bar.Tween then bar.Tween:Cancel(); bar.Tween = nil end
+    bar.Fill.Size = UDim2.fromScale(math.clamp(seconds / (total or seconds), 0, 1), 1)
+    local tw = TweenService:Create(
+        bar.Fill,
+        TweenInfo.new(seconds, Enum.EasingStyle.Linear),
+        { Size = UDim2.fromScale(0, 1) }
+    )
+    bar.Tween = tw
+    tw.Completed:Once(function()
+        if FuryUI.Timers[ballName] == bar and bar.Tween == tw then
+            FuryUI.ClearTimer(ballName)
+        end
+    end)
+    tw:Play()
+    return true
+end
+
+function FuryUI.UpdateCount(ball, player)
+    local data = FuryUI.Uses[player]
+    if not data then return end
+
+    if data.Counter and data.Counter.Adornee ~= ball then
+        data.Counter:Destroy(); data.Counter = nil
+    end
+
+    if not data.Counter then
+        local gui = Instance.new("BillboardGui")
+        gui.Name = "SOF_ComboCounter"
+        gui:SetAttribute("NoRender_Ignore", true)
+        gui.AlwaysOnTop = true
+        gui.Size = UDim2.fromOffset(120, 60)
+        gui.StudsOffset = Vector3.new(0, 4, 0)
+        gui.AlwaysOnTop = true
+        gui.Adornee = ball
+        gui.Parent = ball
+
+        local label = Instance.new("TextLabel")
+        label.Name = "TextLabel"
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundTransparency = 1
+        label.Font = Enum.Font.GothamBlack
+        label.TextScaled = true
+        label.TextStrokeTransparency = 0.2
+        label.TextStrokeColor3 = Color3.new(0, 0, 0)
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.Text = "0"
+        label.Parent = gui
+
+        local uiscale = Instance.new("UIScale")
+        uiscale.Name = "UIScale"
+        uiscale.Scale = 1
+        uiscale.Parent = label
+
+        data.Counter = gui
+    end
+
+    local label = data.Counter:FindFirstChild("TextLabel")
+    local uiscale = label and label:FindFirstChild("UIScale")
+    if not (label and uiscale) then return end
+    uiscale.Scale = 1.2
+    label.Text = tostring(data.Uses)
+    label.TextColor3 = Color3.new(1, 1, 1):Lerp(
+        Color3.fromHSV((1 - math.min(data.Uses / FURY_UI_MAX, 1)) * 0.16666, 1, 1),
+        math.min(data.Uses / 5, 1)
+    )
+    data.Counter.StudsOffset = Vector3.new(0, 4, 0)
+
+    if data.ScaleTween then data.ScaleTween:Cancel() end
+    if data.PosTween   then data.PosTween:Cancel()   end
+    data.ScaleTween = TweenService:Create(uiscale, TweenInfo.new(0.333, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { Scale = 0.6 })
+    data.PosTween   = TweenService:Create(data.Counter, TweenInfo.new(0.666, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), { StudsOffset = Vector3.new(0, 3, 0) })
+    data.ScaleTween:Play()
+    data.PosTween:Play()
+end
+
+function FuryUI.Sync(plr, isActive, count, ballHint, now)
+    if not isActive or not count then
+        FuryUI.Clear(plr)
+        return
+    end
+    local data = FuryUI.Uses[plr]
+    local char = plr.Character
+    if not data or data.Character ~= char then
+        if data then FuryUI.Clear(plr) end
+        data = { Character = char, Uses = 0, Ball = ballHint }
+        FuryUI.Uses[plr] = data
+    end
+
+    data.Ball = ballHint or data.Ball
+    if count > (data.Uses or 0) then
+        data.Uses = math.min(count, FURY_UI_MAX)
+        if data.Ball and data.Ball.Parent then
+            FuryUI.UpdateCount(data.Ball, plr)
+        end
+    elseif count < (data.Uses or 0) then
+        data.Uses = math.min(count, FURY_UI_MAX)
+    end
+
+    if data.Ball and data.Ball.Parent and data.Uses > 0 and not data.TimerId then
+        local FDur = tonumber(char and char:GetAttribute("AbilityDuration")) or 0
+        local FStart = tonumber(char and char:GetAttribute("AbilityDurationStart")) or now
+        local FRem = FDur - (now - FStart)
+        if FRem > 0 and FuryUI.UpdateTimer(data.Ball.Name, FRem, FURY_UI_MAX) then
+            data.TimerId = data.Ball.Name
+        end
+    end
+end
+
+local Selected_Parry_Type = 'Camera'
+local Speed_Divisor_Multiplier = 1.1
+local Parry_Distance_Buffer = 0
+local Speed_Divide_Base = 2
+local Min_Threshold = 8
+local Min_Parry_Distance = 12
+local Parry_Accuracy_Scale = 0.4
+local Parry_Accuracy_Min_Distance = 4
+
+local function Calculate_Parry_Distance(Velocity, Offset, Ping, Multiplier, Buffer)
+    local Distance = Offset.Magnitude
+    local Approach_Speed = Distance > 0.001 and math.max(Velocity:Dot(Offset / Distance), 0) or Velocity.Magnitude
+
+    local Speed_Component = Approach_Speed / (Speed_Divide_Base * Multiplier)
+
+    if Speed_Component < Min_Parry_Distance then
+        Speed_Component = Min_Parry_Distance
+    end
+
+    local Ping_Lead = Approach_Speed * Ping / 2000
+
+    local Result = (Min_Threshold + Speed_Component + Buffer) * Parry_Accuracy_Scale + Ping_Lead
+    if Result < Parry_Accuracy_Min_Distance then
+        Result = Parry_Accuracy_Min_Distance
+    end
+    return Result
+end
+
+local Immortality_Module = {}
+do
+    local Enabled = false
+    local PreSimConn, HeartbeatConn, RenderConn, CharDescConn = nil, nil, nil, nil
+    local TrueCFrame = nil
+    local JitterRadius = 5
+    local CurrentOffset = Vector3.zero
+    local TargetOffset = Vector3.zero
+    local LastRetarget = 0
+    local OriginalProperties = {}
+    local RETARGET_INTERVAL = 0
+    local FLOOR_NAMES = { PlayerFloor = true, FLOOR = true, INVISIBLE_FLOOR = true }
+
+    local function SetCollisions(part, state)
+        if not part:IsA("BasePart") then return end
+        if state then
+            local orig = OriginalProperties[part]
+            if orig then
+                part.CanTouch, part.CanQuery, part.CanCollide = orig.CanTouch, orig.CanQuery, orig.CanCollide
+                OriginalProperties[part] = nil
+            else
+                part.CanTouch, part.CanQuery, part.CanCollide = true, true, true
+            end
+        else
+            if not OriginalProperties[part] then
+                OriginalProperties[part] = { CanTouch = part.CanTouch, CanQuery = part.CanQuery, CanCollide = part.CanCollide }
+            end
+            part.CanTouch, part.CanQuery, part.CanCollide = false, false, false
+        end
+    end
+
+    local function IsFloor(inst, ny)
+        if not inst then return false end
+        if FLOOR_NAMES[inst.Name] then return true end
+        local p = inst
+        while p and p ~= workspace do
+            if p.Name == 'Map' then return true end
+            p = p.Parent
+        end
+        return inst:IsA('BasePart') and inst.CanCollide and math.abs(ny) > 0.7
+    end
+
+    local function RaycastFloor(char, pos)
+        local params = RaycastParams.new()
+        params.FilterDescendantsInstances = { char }
+        params.FilterType = Enum.RaycastFilterType.Exclude
+        local hit = workspace:Raycast(pos + Vector3.new(0, 10, 0), Vector3.new(0, -100, 0), params)
+        if not hit or hit.Distance > 60 then return false end
+        return IsFloor(hit.Instance, hit.Normal.Y)
+    end
+
+    function Immortality_Module.Start()
+        if Enabled then return end
+        if Env.WantImmortality == false then return end
+        Enabled = true
+        TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
+        pcall(function() setsimulationradius(1e9, 1e9) end)
+
+        local char = Player.Character
+        if char then
+            for _, v in ipairs(char:GetDescendants()) do SetCollisions(v, false) end
+            CharDescConn = char.DescendantAdded:Connect(function(v)
+                if Enabled then SetCollisions(v, false) end
+            end)
+        end
+
+        PreSimConn = RunService.PreSimulation:Connect(function(dt)
+            if not Enabled then return end
+            local c = Player.Character
+            local root = c and c.PrimaryPart
+            if not root then return end
+            if not TrueCFrame then TrueCFrame = root.CFrame end
+
+            local now = os.clock()
+            if now - LastRetarget >= RETARGET_INTERVAL then
+                LastRetarget = now
+                local theta = math.random() * math.pi * 2
+                local r = JitterRadius * (0.5 + 0.5 * math.random())
+                local testOffset = Vector3.new(r * math.cos(theta), 0, r * math.sin(theta))
+                CurrentOffset = RaycastFloor(c, TrueCFrame.Position + testOffset) and testOffset or Vector3.zero
+            end
+
+            root.CFrame = CFrame.new(TrueCFrame.Position + CurrentOffset) * TrueCFrame.Rotation
+        end)
+
+        HeartbeatConn = RunService.Heartbeat:Connect(function()
+            if not Enabled then return end
+            local c = Player.Character
+            if not c or c.Parent ~= AliveFolder then Immortality_Module.Stop(); return end
+            local hum = c:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health <= 0 then Immortality_Module.Stop(); return end
+            local root = c.PrimaryPart
+            if not root then return end
+
+            if not TrueCFrame then
+                TrueCFrame, CurrentOffset, TargetOffset = root.CFrame, Vector3.zero, Vector3.zero
+                return
+            end
+            if root.Position.Y < -50 then
+                if TrueCFrame.Position.Y > -50 then
+                    root.CFrame = TrueCFrame
+                    root.AssemblyLinearVelocity = Vector3.zero
+                else
+                    TrueCFrame = CFrame.new(0, 50, 0)
+                    root.CFrame = TrueCFrame
+                end
+                return
+            end
+            for _, v in ipairs(c:GetDescendants()) do SetCollisions(v, false) end
+            local expected = TrueCFrame.Position + CurrentOffset
+            TrueCFrame = CFrame.new(TrueCFrame.Position + (root.Position - expected)) * root.CFrame.Rotation
+        end)
+
+        RenderConn = RunService:BindToRenderStep("CamFix", Enum.RenderPriority.Camera.Value - 1, function()
+            if not Enabled or not TrueCFrame then return end
+            local c = Player.Character
+            local root = c and c.PrimaryPart
+            if root then root.CFrame = TrueCFrame end
+        end)
+    end
+
+    function Immortality_Module.Stop()
+        Enabled = false
+        if PreSimConn then PreSimConn:Disconnect(); PreSimConn = nil end
+        if HeartbeatConn then HeartbeatConn:Disconnect(); HeartbeatConn = nil end
+        if CharDescConn then CharDescConn:Disconnect(); CharDescConn = nil end
+        pcall(function() RunService:UnbindFromRenderStep("CamFix") end)
+
+        local c = Player.Character
+        if c then
+            pcall(function()
+                for _, v in ipairs(c:GetDescendants()) do SetCollisions(v, true) end
+                local root, hum = c.PrimaryPart, c:FindFirstChildOfClass("Humanoid")
+                if root and TrueCFrame and root.Parent then
+                    local params = RaycastParams.new()
+                    params.FilterDescendantsInstances = { c }
+                    params.FilterType = Enum.RaycastFilterType.Exclude
+                    local hit = workspace:Raycast(TrueCFrame.Position + Vector3.new(0, 10, 0), Vector3.new(0, -100, 0), params)
+                    if hit then
+                        TrueCFrame = CFrame.new(TrueCFrame.Position.X, hit.Position.Y + 3, TrueCFrame.Position.Z) * TrueCFrame.Rotation
+                    end
+                    root.CFrame = TrueCFrame
+                    root.AssemblyLinearVelocity = Vector3.zero
+                    root.AssemblyAngularVelocity = Vector3.zero
+                end
+                if hum then hum:ChangeState(Enum.HumanoidStateType.Running) end
+            end)
+        end
+        TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
+        table.clear(OriginalProperties)
+    end
+
+    function Immortality_Module.SetBaseRadius(v) JitterRadius = v end
+    function Immortality_Module.SetMaxRadius(v) end
+    function Immortality_Module.SetBaseSpeed(v) end
+    function Immortality_Module.SetMaxSpeed(v) end
+    function Immortality_Module.IsEnabled() return Enabled end
+end
+
+local Tornado_Time = nil
+
+local Phantom_Detection_Mode = 'TP to Ball'
+local Phantom_On_Player = false
+local Phantom_End_Time = 0
+local PHANTOM_DEBUFF_DURATION = 5
+
+do
+    local function Is_Phantom_VFX(inst)
+        return inst.Name == 'transmissionpart' or inst.Name == 'maxTransmission'
+    end
+
+    local function Get_Welded_Character(inst)
+        local weld = inst:FindFirstChild('WeldConstraint')
+        if not weld then return nil end
+        local part1 = weld.Part1
+        if not part1 then return nil end
+        local char = part1.Parent
+        if char and char:FindFirstChildOfClass('Humanoid') then
+            return char
+        end
+        return nil
+    end
+
+    Connections_Manager['Phantom_Detection'] = RuntimeFolder.ChildAdded:Connect(function(inst)
+        if _ScriptUnloaded then return end
+        if not Is_Phantom_VFX(inst) then return end
+
+        task.defer(function()
+            if not inst.Parent then return end
+            local welded_char = Get_Welded_Character(inst)
+            if not welded_char then return end
+
+            local my_char = Player.Character
+            if not my_char or welded_char ~= my_char then return end
+
+            Phantom_On_Player = true
+            Phantom_End_Time = os.clock() + PHANTOM_DEBUFF_DURATION
+
+            if Env.Phantom_Detection and Phantom_Detection_Mode == 'TP to Ball' then
+                local ball = Auto_Parry.Get_Targeting_Balls()
+                if not ball then
+                    ball = Auto_Parry.Get_Balls(true)
+                end
+                if ball then
+                    local root = my_char and my_char.PrimaryPart
+                    if root then
+                        local ball_pos = GetBallPosition(ball)
+                        local offset_dir = (root.Position - ball_pos)
+                        if offset_dir.Magnitude > 1 then
+                            offset_dir = offset_dir.Unit * 8
+                        else
+                            offset_dir = Vector3.new(0, 0, 8)
+                        end
+                        root.CFrame = CFrame.new(ball_pos + offset_dir, ball_pos)
+                    end
+                end
+            end
+
+            task.delay(PHANTOM_DEBUFF_DURATION + 0.5, function()
+                if os.clock() >= Phantom_End_Time then
+                    Phantom_On_Player = false
+                end
+            end)
+        end)
+    end)
+end
+
+do
+    Connections_Manager['Anti_Pull'] = RuntimeFolder.ChildAdded:Connect(function(inst)
+        if _ScriptUnloaded then return end
+        if inst.Name ~= 'Pull' and inst.Name ~= 'MaxPull' then return end
+
+        Parried = false
+    end)
+
+    local function Check_Fury_On_Me()
+        local Character = Player.Character
+        if not Character then return false end
+        return Character:FindFirstChild('FuryHighlight') ~= nil
+    end
+
+    Connections_Manager['Anti_Fury'] = AliveFolder.DescendantAdded:Connect(function(inst)
+        if _ScriptUnloaded then return end
+        if inst.Name ~= 'FuryHighlight' or not inst:IsA('Highlight') then return end
+
+        local Character = Player.Character
+        if not Character or inst.Parent ~= Character then return end
+
+        Parried = false
+    end)
+
+    Auto_Parry.Is_Fury_Target = Check_Fury_On_Me
+end
+
+local Immortality_Ability_Names = {
+    'Infinity',
+    'Time Hole',
+    'Death Slash',
+    'Slashes of Fury',
+    'Singularity',
+    'Forcefield',
+    'Invisibility',
+}
+
+local deathslashstate = false
+Connections_Manager['DeathBall'] = ReplicatedStorage.Remotes.DeathBall.OnClientEvent:Connect(function(ball, active)
+    if _ScriptUnloaded then return end
+    deathslashstate = active or false
+end)
+
+function Auto_Parry.Player_Has_Immortality()
+    local Character = Player.Character
+    if not Character then return false, nil end
+
+    local PrimaryPart = Character.PrimaryPart
+    if PrimaryPart and PrimaryPart:FindFirstChild('SingularityCape') then
+        return true, 'Singularity'
+    end
+    
+    if deathslashstate then 
+        return true, 'DeathSlash' 
+    end
+    
+    if Character:GetAttribute('IsInvisible') then
+        return true, 'Invisibility'
+    end
+
+    local Hotbar = Player:FindFirstChild('PlayerGui') and Player.PlayerGui:FindFirstChild('Hotbar')
+    local Ability_Slot = Hotbar and Hotbar:FindFirstChild('Ability')
+    local Duration_Frame = Ability_Slot and Ability_Slot:FindFirstChild('Duration')
+    local Fill = Duration_Frame and Duration_Frame:FindFirstChild('Fill')
+    local Fill_Gradient = Fill and Fill:FindFirstChildOfClass('UIGradient')
+    if not Fill_Gradient then return false, nil end
+
+    local Duration_UI = Duration_Frame.Visible and Fill_Gradient.Offset.Y < 0.920
+    if not Duration_UI then return false, nil end
+
+    if PrimaryPart and PrimaryPart:FindFirstChild('MaxShield') then
+        return true, 'Forcefield'
+    end
+
+    local Abilities = Character:FindFirstChild('Abilities')
+    if Abilities then
+        for _, ability in ipairs(Immortality_Ability_Names) do
+            local AbilityObj = Abilities:FindFirstChild(ability)
+            if AbilityObj and AbilityObj.Enabled then
+                return true, ability
+            end
+        end
+    end
+
+    return false, nil
+end
+
+local function DisconnectConnection(Connection)
+    if typeof(Connection) == 'RBXScriptConnection' then
+        Connection:Disconnect()
+    elseif type(Connection) == 'table' then
+        for _, nested in pairs(Connection) do
+            DisconnectConnection(nested)
+        end
+    end
+end
+
+function DisconnectAllConnections()
+    for _, Connection in pairs(Connections_Manager) do
+        DisconnectConnection(Connection)
+    end
+    table.clear(Connections_Manager)
+    for _, conn in pairs(BallTrailConnections) do
+        DisconnectConnection(conn)
+    end
+    table.clear(BallTrailConnections)
+end
+
+function Clear_Ball_States()
+    table.clear(Server_Ball_Positions)
+    table.clear(ActiveBalls)
+end
+
+function UnloadScript()
+    if Env.Visual_Unload == UnloadScript then Env.Visual_Unload = nil end
+    _ScriptUnloaded = true
+    Env.Parry_On_Fire = nil
+    if Env._WatermarkGui then
+        pcall(function()
+            if Connections_Manager['Watermark_FPS'] then
+                Connections_Manager['Watermark_FPS']:Disconnect()
+                Connections_Manager['Watermark_FPS'] = nil
+            end
+            Env._WatermarkGui:Destroy()
+            Env._WatermarkGui = nil
+        end)
+    end
+    do
+        if Env._Unlock_RunReverters then
+            Env._Unlock_RunReverters()
+        end
+    end
+    do
+        if Env._Restore_FOV then
+            Env._Restore_FOV()
+        end
+    end
+    do
+        if Env._Destroy_Mobile_Spam then
+            Env._Destroy_Mobile_Spam()
+        end
+    end
+    do
+        if Env._Destroy_Mobile_Triggerbot then
+            Env._Destroy_Mobile_Triggerbot()
+        end
+    end
+    do
+        if Env._DeviceSpoofUnload then
+            Env._DeviceSpoofUnload()
+        end
+    end
+    do
+        if Env._TB_Stop then
+            Env._TB_Stop()
+            Env._TB_Stop = nil
+        end
+    end
+    do
+        if Connections_Manager['ThunderDash_Mobile'] then
+            pcall(function() Connections_Manager['ThunderDash_Mobile']:Disconnect() end)
+            Connections_Manager['ThunderDash_Mobile'] = nil
+        end
+    end
+    do
+        if Env._NoRender_Stop then
+            pcall(Env._NoRender_Stop)
+        end
+    end
+    do
+        for _, v in ipairs(workspace:GetChildren()) do
+            local ok, isDestroyed = pcall(function() return v:GetAttribute("NR_LobbyDestroyed") end)
+            if ok and isDestroyed then
+                pcall(function()
+                    v:SetAttribute("NR_LobbyDestroyed", nil)
+                    v.Parent = workspace
+                end)
+            end
+        end
+    end
+    do
+        if Env._AntiLag_Stop then
+            Env._AntiLag_Stop()
+            Env._AntiLag_Stop = nil
+        end
+    end
+
+    local Toggle_Names = {
+        'Auto_Parry_Toggle', 'Auto_Spam_Toggle', 'Manual_Spam_Toggle', 'Watermark_Toggle',
+        'Animation_Fix_Toggle', 'Cooldown_Protection_Toggle',
+        'Auto_Ability_Toggle', 'Phantom_Detection_Toggle', 'Forcefield_Toggle',
+        'No_Render_Toggle', 'Performance_Mode_Toggle', 'Stretch_Screen_Toggle', 'Visualizer_Toggle',
+        'Ball_Glow_Toggle', 'Headless_Only_Toggle',
+        'Korblox_Only_Toggle', 'Avatar_Changer_Toggle', 'Unlock_Enabled_Toggle',
+        'Ability_ESP_Toggle',
+        'Camera_Unlock_Toggle', 'FOV_Toggle',
+        'ShieldFX_Rainbow', 'ShieldFX_Toggle',
+        'SlashFX_Rainbow', 'SlashFX_Toggle',
+        'Show_Wins_Toggle', 'Show_Kills_Toggle',
+        'ThunderDash_NoCD_Toggle', 'Dash_NoCD_Toggle',
+        'Immortality_Toggle',
+        'Triggerbot_Toggle', 'Triggerbot_UI_Toggle',
+        'Manual_Spam_UI_Toggle',
+    }
+
+    if Library then
+        for _, Name in ipairs(Toggle_Names) do
+            local Option = (Library.Toggles and Library.Toggles[Name])
+                or (Library.Options and Library.Options[Name])
+            if Option and Option.SetValue then
+                Option:SetValue(false)
+            end
+        end
+    end
+
+    if Immortality_Module and Immortality_Module.IsEnabled() then
+        Immortality_Module.Stop()
+    end
+
+    for FName in pairs(FuryUI.Timers) do FuryUI.ClearTimer(FName) end
+    for FPlr in pairs(FuryUI.Uses) do FuryUI.Clear(FPlr) end
+
+    DisconnectAllConnections()
+
+    Parried = false
+    Clear_Ball_States()
+    Last_Parry = 0
+    Parries = 0
+
+    Phantom_On_Player = false
+
+    SkinChanger.Cleanup()
+    Phantom_End_Time = 0
+    Env.Phantom_Detection = nil
+
+    
+
+    for plr, Value in pairs(Billboard_Banner) do
+        local Gui = Value and Value.Parent
+        if Gui then
+            Gui:Destroy()
+        end
+        Billboard_Banner[plr] = nil
+    end
+    if ClearAbilityESPPlayer then
+        for plr in pairs(AbilityTrackingContext) do
+            ClearAbilityESPPlayer(plr)
+        end
+    end
+
+    if Env._SOF_Cleanup then
+        pcall(Env._SOF_Cleanup)
+        Env._SOF_Cleanup = nil
+    end
+    if Env._Reveal_Cleanup then
+        pcall(Env._Reveal_Cleanup)
+        Env._Reveal_Cleanup = nil
+    end
+
+    if Library then
+        Library:Unload()
+        Library = nil
+    end
+
+    if Window then
+        Window:Destroy()
+        Window = nil
+    end
+
+    Env.Cooldown_Protection = nil
+    Env.Auto_Ability = nil
+    Env.Animation_Fix = nil
+    Env.ThunderDash_NoCD = nil
+    Env.WantImmortality = nil
+    if Env._PreclickDB_State then
+        Env._PreclickDB_State.Enabled = false
+        Env._PreclickDB_State = nil
+    end
+    if Env._Quasar_State then
+        for key, c in pairs(Connections_Manager) do
+            if type(key) == 'string' and key:sub(1, 6) == 'Quasar' then
+                pcall(function() c:Disconnect() end)
+                Connections_Manager[key] = nil
+            end
+        end
+        Env._Quasar_State.Enabled_Blind = false
+        Env._Quasar_State.Enabled_Disorient = false
+        Env._Quasar_State = nil
+    end
+    Env.Dash_NoCD = nil
+end
+Env.Visual_Unload = UnloadScript
+
+local repo ="https://raw.githubusercontent.com/viseamn/Visual/main/"
+Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+
+ThemeManager = loadstring(game:HttpGet(repo .. "ThemeManager.lua"))()
+SaveManager = loadstring(game:HttpGet(repo .. "SaveManager.lua"))()
+
+Window = Library:CreateWindow({
+    Title = "0118",
+    Size = Vector2.new(700, 480),
+    Layout = "Bottom bar",
+    MenuKey = Enum.KeyCode.RightAlt,
+})
+
+local Tabs = {
+    Main = Window:AddTab("Main", "house"),
+    Client = Window:AddTab("Visuals", "eye"),
+    Sword = Window:AddTab("Swords", "sword"),
+    UISettings = Window:CreateSettingsTab("Settings")
+}
+
+local Main_Group = Tabs.Main:AddLeftGroupbox("Auto Parry", "shield")
+
+local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
+    Text = 'Auto Parry',
+    Default = false,
+    Notify = false,
+    Callback = function(state)
+        if state then
+            Connections_Manager['Auto Parry'] = RunService.PreSimulation:Connect(function()
+                local Character = Player.Character
+                if not Character or Character.Parent ~= AliveFolder then return end
+
+                local Root = Character.PrimaryPart
+                if not Root then 
+                    return 
+                end
+
+                local Ball = Auto_Parry.Get_Targeting_Balls()
+                if not Ball then
+                    return
+                end
+
+                local Zoomies = Ball:FindFirstChild('zoomies')
+                if not Zoomies then return end
+
+                if Parried then return end
+
+                local Preclick_Armed = Env._PreclickDB_State
+                    and Env._PreclickDB_State.Enabled
+                    and Env._PreclickDB_State.On_Player
+                    and os.clock() < Env._PreclickDB_State.End_Time
+
+                local Ball_Velocity = Zoomies.VectorVelocity
+                local Velocity = Ball_Velocity - Root.AssemblyLinearVelocity
+
+                local Time_View = os.clock() - Last_Parry
+                Env.Time_View = Time_View
+
+                local Player_Pos = Root.Position
+                local Ball_Pos = GetBallPosition(Ball)
+                local Offset = Root.Position - Ball_Pos
+                local Distance = Offset.Magnitude
+
+                local Ping = Get_Comp_Ping()
+                local Parry_Accuracy = Calculate_Parry_Distance(Velocity, Offset, Ping, Speed_Divisor_Multiplier, Parry_Distance_Buffer)
+
+                local Parry_Cooldown = Get_Hotbar_Gradient('Block')
+                local Ability_CD = Get_Hotbar_Gradient('Ability')
+
+                if RuntimeFolder:FindFirstChild('Tornado') then
+                    if not Tornado_Time then
+                        Tornado_Time = os.clock()
+                    end
+                    local Tornado_Duration = (RuntimeFolder.Tornado:GetAttribute('TornadoTime') or 1) + 0.314159
+                    if (os.clock() - Tornado_Time) < Tornado_Duration then return end
+                    Debris:AddItem(RuntimeFolder.Tornado, 0)
+                    Tornado_Time = nil
+                end
+
+                if Auto_Parry.Player_Has_Immortality() then
+                    Parries = 0
+                    return
+                end
+
+                local Abilities = Character:FindFirstChild('Abilities')
+                local Used_Ability = false
+
+                local Phantom_Wants_Protect = Env.Phantom_Detection and Phantom_On_Player and Phantom_Detection_Mode == 'Normal'
+                if (Env.Cooldown_Protection or Phantom_Wants_Protect) and Parry_Cooldown and Time_View > 0.5 and Parry_Cooldown.Offset.Y <= 0.4 and Distance <= Parry_Accuracy then
+                    for _, Ability in Protect_Abilities do
+                        local A = Abilities and Abilities:FindFirstChild(Ability)
+                        if A and A.Enabled then
+                            Use_Ability:Fire()
+                            Used_Ability = true
+                            break
+                        end
+                    end
+                end
+
+                if not Used_Ability and Env.Auto_Ability and Ability_CD and Time_View > 0.5 and Ability_CD.Offset.Y == 0.5 and Distance <= Parry_Accuracy then
+                    for _, Ability in Auto_Abilities do
+                        local A = Abilities and Abilities:FindFirstChild(Ability)
+                        if A and A.Enabled then
+                            Use_Ability:Fire()
+                            Used_Ability = true
+                            break
+                        end
+                    end
+                end
+
+                if Used_Ability then
+                    Parried = true
+                    task.delay(0.6, function() Parried = false end)
+                    return
+                end
+
+                local Skip_Curve = Auto_Parry.Is_Fury_Target() or Preclick_Armed
+                if Distance <= Parry_Accuracy and (Skip_Curve or not Auto_Parry.Is_Curved(Offset, Velocity, Ball_Velocity)) then
+                    Auto_Parry.Parry(Selected_Parry_Type)
+                    Last_Parry = os.clock()
+                    Note_Parry(Last_Parry)
+                    Parried = true
+                    task.spawn(function()
+                        local T = os.clock()
+                        repeat RunService.PreSimulation:Wait() until (os.clock() - T) >= 0.6 or not Parried
+                        Parried = false
+                    end)
+                end
+            end)
+        else
+            if Connections_Manager['Auto Parry'] then
+                Connections_Manager['Auto Parry']:Disconnect()
+                Connections_Manager['Auto Parry'] = nil
+            end
+        end
+    end
+})
+
+Auto_Parry_Toggle:AddKeyPicker('Auto_Parry_Keybind', {
+    Text = 'Auto Parry',
+    Mode = 'Toggle',
+})
+
+
+Main_Group:AddDropdown("Parry_Method_Dropdown", {
+    Text = "Parry Method",
+    Values = { "Remote", "Keypress" },
+    Multi = false,
+    Default = 1,
+    Callback = function(Value)
+        if Is_Mobile and Value == "Keypress" then
+            Parry_Input_Method = "Remote"
+            return
+        end
+        Parry_Input_Method = Value
+    end
+})
+
+Main_Group:AddDropdown("Parry_Type_Dropdown", {
+    Text = "Parry Type",
+    Values = { "Camera", "Dot", "Insta Dot", "Backward", "Random", "Random Target"},
+    Multi = false,
+    Default = 1,
+    Callback = function(Value)
+        Selected_Parry_Type = (Value == "Random Target") and "RandomTarget" or (Value == "Insta Dot") and "InstaDot" or Value
+
+        if Auto_Parry_Toggle.Notify then
+            Window:Notify({
+                Title = 'Parry Type',
+                Content = Value,
+                Duration = 1
+            })
+        end
+    end
+})
+
+Main_Group:AddSlider('Parry_Accuracy', {
+	Text = 'Parry Accuracy',
+    Default = 100,
+	Min = 1,
+	Max = 100,
+	Increment = 1,
+	Callback = function(Value)
+        local t = (Value - 1) / 99
+        Parry_Accuracy_Scale = 2.2 - t * 1.8
+        Speed_Divisor_Multiplier = 0.75 + t * 0.25
+	end
+})
+
+Main_Group:AddSlider('Parry_Range', {
+    Text = 'Parry Range',
+    Default = 0,
+    Min = 0,
+    Max = 10,
+    Increment = 1,
+    Callback = function(Value)
+		Parry_Distance_Buffer = Value
+    end
+})
+do
+    local TB = {
+        Enabled = false,
+        Delay = 0,
+        Ignore_Spawn = false,
+        Fired = setmetatable({}, { __mode = 'k' }),
+        ArmedAt = setmetatable({}, { __mode = 'k' }),
+        AP_Was_On = false,
+    }
+
+    local TB_Group = Tabs.Main:AddLeftGroupbox("TriggerBot", "crosshair")
+
+    local LastGlobalFire = 0
+    local GLOBAL_COOLDOWN = 0.003
+
+    local LastTBAnimation = 0
+    local function TB_Fire(Ball)
+        local Character = Player.Character
+        if not Character or Character.Parent ~= AliveFolder then return false end
+        if not Character.PrimaryPart then return false end
+        if Auto_Parry.Player_Has_Immortality() then return false end
+
+        local now = os.clock()
+        if now - LastGlobalFire < GLOBAL_COOLDOWN then return false end
+        LastGlobalFire = now
+
+        local PD = Auto_Parry.Parry_Data(Selected_Parry_Type)
+        Remote:FireServer(Hash, Key, Parry_Token(), PD[1], PD[2], PD[3], PD[4], false)
+
+        if now - LastTBAnimation >= 0.05 then
+            LastTBAnimation = now
+            pcall(Auto_Parry.Parry_Animation)
+        end
+
+        if Parries >= 15 then return false end
+        Parries += 1
+        task.delay(0.04, function() if Parries > 0 then Parries -= 1 end end)
+        return true
+    end
+
+    local function TB_Sweep()
+        if not TB.Enabled then return end
+        if not Player.Character or Player.Character.Parent ~= AliveFolder then return end
+
+        local fired = TB.Fired
+        local armedAt = TB.ArmedAt
+        local now = os.clock()
+
+        for _, Ball in ipairs(BallsFolder:GetChildren()) do
+            if Ball:IsA('BasePart') then
+                if Ball:GetAttribute('realBall') then
+                    local target = Ball:GetAttribute('target')
+
+                    if target == Local_Player_Name then
+                        if not fired[Ball] then
+                            if not armedAt[Ball] then
+                                armedAt[Ball] = now
+                            end
+
+                            local delayReady = (TB.Delay <= 0) or ((now - armedAt[Ball]) >= (TB.Delay / 1000))
+
+                            if delayReady then
+                                if TB.Ignore_Spawn then
+                                    local From = Ball:GetAttribute('from')
+                                    if From and From ~= '' then
+                                        if TB_Fire(Ball) then
+                                            fired[Ball] = true
+                                        end
+                                    end
+                                else
+                                    if TB_Fire(Ball) then
+                                        fired[Ball] = true
+                                    end
+                                end
+                            end
+                        end
+                    else
+                        fired[Ball] = nil
+                        armedAt[Ball] = nil
+                    end
+                else
+                    fired[Ball] = nil
+                    armedAt[Ball] = nil
+                end
+            end
+        end
+
+        if next(fired) then
+            for Ball in fired do
+                if not Ball.Parent then
+                    fired[Ball] = nil
+                    armedAt[Ball] = nil
+                end
+            end
+        end
+    end
+
+    local TB_BallConns = setmetatable({}, { __mode = 'k' })
+
+    local function TB_TryFireBall(Ball)
+        if not TB.Enabled then return end
+        if not Ball or not Ball.Parent or not Ball:IsA('BasePart') then return end
+        if not Ball:GetAttribute('realBall') then return end
+        if Ball:GetAttribute('target') ~= Local_Player_Name then return end
+        if TB.Fired[Ball] then return end
+        if not TB.ArmedAt[Ball] then TB.ArmedAt[Ball] = os.clock() end
+        local delayReady = (TB.Delay <= 0) or ((os.clock() - TB.ArmedAt[Ball]) >= (TB.Delay / 1000))
+        if not delayReady then return end
+        if TB.Ignore_Spawn then
+            local From = Ball:GetAttribute('from')
+            if not From or From == '' then return end
+        end
+        if TB_Fire(Ball) then
+            TB.Fired[Ball] = true
+        end
+    end
+
+    local function TB_WatchBall(Ball)
+        if not Ball:IsA('BasePart') then return end
+        if TB_BallConns[Ball] then return end
+        TB_BallConns[Ball] = Ball:GetAttributeChangedSignal('target'):Connect(function()
+            TB_TryFireBall(Ball)
+        end)
+        TB_TryFireBall(Ball)
+    end
+
+    local function TB_UnwatchBall(Ball)
+        if TB_BallConns[Ball] then
+            pcall(function() TB_BallConns[Ball]:Disconnect() end)
+            TB_BallConns[Ball] = nil
+        end
+        TB.Fired[Ball] = nil
+        TB.ArmedAt[Ball] = nil
+    end
+
+    local function TB_Start()
+        if Connections_Manager['Triggerbot_Sweep'] then return end
+        table.clear(TB.Fired)
+        table.clear(TB.ArmedAt)
+        LastGlobalFire = 0
+        LastTBAnimation = 0
+        Connections_Manager['Triggerbot_Sweep'] = RunService.RenderStepped:Connect(TB_Sweep)
+        Connections_Manager['Triggerbot_PreSim'] = RunService.PreSimulation:Connect(TB_Sweep)
+        for _, Ball in ipairs(BallsFolder:GetChildren()) do TB_WatchBall(Ball) end
+        Connections_Manager['Triggerbot_BallAdded'] = BallsFolder.ChildAdded:Connect(TB_WatchBall)
+        Connections_Manager['Triggerbot_BallRemoved'] = BallsFolder.ChildRemoved:Connect(TB_UnwatchBall)
+    end
+
+    local function TB_Stop()
+        for _, key in ipairs({ 'Triggerbot_Sweep', 'Triggerbot_PreSim', 'Triggerbot_BallAdded', 'Triggerbot_BallRemoved' }) do
+            local c = Connections_Manager[key]
+            if c then pcall(function() c:Disconnect() end); Connections_Manager[key] = nil end
+        end
+        for Ball in pairs(TB_BallConns) do
+            pcall(function() TB_BallConns[Ball]:Disconnect() end)
+        end
+        table.clear(TB_BallConns)
+        table.clear(TB.Fired)
+        table.clear(TB.ArmedAt)
+        LastGlobalFire = 0
+        LastTBAnimation = 0
+    end
+
+    TB_Group:AddToggle('Triggerbot_Toggle', {
+        Text = 'TriggerBot', Default = false, Notify = false,
+        Callback = function(s)
+            TB.Enabled = s
+            if s then
+                TB.AP_Was_On = Library.Toggles.Auto_Parry_Toggle and Library.Toggles.Auto_Parry_Toggle.Value or false
+                if TB.AP_Was_On then
+                    Library.Toggles.Auto_Parry_Toggle:SetValue(false)
+                end
+                TB_Start()
+            else
+                TB_Stop()
+                if TB.AP_Was_On and Library.Toggles.Auto_Parry_Toggle then
+                    Library.Toggles.Auto_Parry_Toggle:SetValue(true)
+                end
+                TB.AP_Was_On = false
+            end
+        end
+    }):AddKeyPicker('Triggerbot_Keybind', { Text = 'TriggerBot', Mode = 'Toggle' })
+
+    TB_Group:AddSlider('Triggerbot_Delay_Slider', {
+        Text = 'Delay (ms)', Default = 0, Min = 0, Max = 200, Increment = 1,
+        Callback = function(v) TB.Delay = v end
+    })
+
+    TB_Group:AddToggle('Triggerbot_Ignore_Spawn_Toggle', {
+        Text = "Don't Parry on Ball Spawn", Default = false,
+        Callback = function(s) TB.Ignore_Spawn = s end
+    })
+
+    do
+        local DRAG_THRESHOLD = 10
+
+        local TB_Gui = Instance.new('ScreenGui')
+        TB_Gui.Name = 'MobileTriggerBotButton'
+        TB_Gui.ResetOnSpawn = false
+        TB_Gui.IgnoreGuiInset = true
+        TB_Gui.DisplayOrder = 100
+        TB_Gui.Enabled = false
+        TB_Gui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+
+        local TB_Button = Instance.new('TextButton')
+        TB_Button.Name = 'TriggerBot'
+        local _tbScale = math.clamp((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y or 1080) / 1080, 0.7, 1.2)
+        TB_Button.AnchorPoint = Vector2.new(0.5, 0.5)
+        TB_Button.Position = UDim2.new(1, -140, 0.5, -100)
+        TB_Button.Size = UDim2.fromOffset(180 * _tbScale, 80 * _tbScale)
+        TB_Button.BackgroundColor3 = Color3.new(0, 0, 0)
+        TB_Button.BackgroundTransparency = 0.3
+        TB_Button.AutoButtonColor = false
+        TB_Button.Font = Enum.Font.GothamMedium
+        TB_Button.TextSize = math.floor(26 * _tbScale)
+        TB_Button.TextColor3 = Color3.new(1, 1, 1)
+        TB_Button.Parent = TB_Gui
+        Instance.new('UICorner', TB_Button).CornerRadius = UDim.new(0, 12)
+
+        local TB_Stroke = Instance.new('UIStroke')
+        TB_Stroke.Thickness = 2
+        TB_Stroke.Color = Color3.fromRGB(80, 20, 20)
+        TB_Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        TB_Stroke.Parent = TB_Button
+
+        local TB_Rainbow_Hue = 0
+        local TB_Rainbow_Conn = nil
+
+        local function Refresh_TB_Button()
+            task.defer(function()
+                pcall(function()
+                    TB_Button.Text = TB.Enabled and 'On' or 'Off'
+                    if TB.Enabled then
+                        TB_Button.BackgroundColor3 = Color3.fromRGB(30, 120, 40)
+                        TB_Button.BackgroundTransparency = 0.15
+                        TB_Stroke.Thickness = 2.5
+                        if not TB_Rainbow_Conn then
+                            TB_Rainbow_Conn = RunService.RenderStepped:Connect(function(dt)
+                                TB_Rainbow_Hue = (TB_Rainbow_Hue + dt * 0.5) % 1
+                                TB_Stroke.Color = Color3.fromHSV(TB_Rainbow_Hue, 0.8, 1)
+                            end)
+                        end
+                    else
+                        TB_Button.BackgroundColor3 = Color3.fromRGB(100, 25, 25)
+                        TB_Button.BackgroundTransparency = 0.3
+                        TB_Stroke.Thickness = 2
+                        TB_Stroke.Color = Color3.fromRGB(80, 20, 20)
+                        if TB_Rainbow_Conn then
+                            TB_Rainbow_Conn:Disconnect()
+                            TB_Rainbow_Conn = nil
+                        end
+                    end
+                end)
+            end)
+        end
+        Refresh_TB_Button()
+
+        TB_Group:AddToggle('Triggerbot_UI_Toggle', {
+            Text = 'UI for Mobile',
+            Default = false,
+            Tooltip = 'Shows a draggable button to toggle TriggerBot',
+            Callback = function(state)
+                TB_Gui.Enabled = state
+                Refresh_TB_Button()
+            end
+        })
+
+        local Drag_Input, Drag_Start, Start_Position, Dragged = nil, nil, nil, false
+
+        Connections_Manager['Mobile_TB_Input'] = TB_Button.InputBegan:Connect(function(Input)
+            if Input.UserInputType ~= Enum.UserInputType.Touch
+                and Input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+                return
+            end
+            Drag_Input, Drag_Start, Start_Position, Dragged = Input, Input.Position, TB_Button.Position, false
+        end)
+
+        Connections_Manager['Mobile_TB_Drag'] = UserInputService.InputChanged:Connect(function(Input)
+            if not Drag_Input then return end
+            if Input ~= Drag_Input and Input.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+
+            local Delta = Input.Position - Drag_Start
+            if not Dragged and Delta.Magnitude < DRAG_THRESHOLD then return end
+            Dragged = true
+            TB_Button.Position = UDim2.new(
+                Start_Position.X.Scale, Start_Position.X.Offset + Delta.X,
+                Start_Position.Y.Scale, Start_Position.Y.Offset + Delta.Y
+            )
+        end)
+
+        Connections_Manager['Mobile_TB_Release'] = UserInputService.InputEnded:Connect(function(Input)
+            if Input ~= Drag_Input then return end
+            Drag_Input = nil
+            if not Dragged then
+                TB.Enabled = not TB.Enabled
+                if TB.Enabled then
+                    TB_Start()
+                else
+                    TB_Stop()
+                end
+                if Library.Toggles.Triggerbot_Toggle then
+                    Library.Toggles.Triggerbot_Toggle:SetValue(TB.Enabled)
+                end
+                Refresh_TB_Button()
+            end
+        end)
+
+        Env._Destroy_Mobile_Triggerbot = function()
+            if TB_Rainbow_Conn then TB_Rainbow_Conn:Disconnect(); TB_Rainbow_Conn = nil end
+            for _, k in ipairs({ 'Mobile_TB_Input', 'Mobile_TB_Drag', 'Mobile_TB_Release' }) do
+                if Connections_Manager[k] then
+                    Connections_Manager[k]:Disconnect()
+                    Connections_Manager[k] = nil
+                end
+            end
+            TB_Gui:Destroy()
+            Env._Destroy_Mobile_Triggerbot = nil
+        end
+    end
+
+    Env._TB_Stop = TB_Stop
+end
+
+do
+    local D = {
+        Enabled = false,
+        On_Player = false,
+        End_Time = 0,
+        Ball_Reset = 0,
+        Chance = 0.5,
+        Watch = nil,
+        Rng = Random.new(),
+        Balls = BallsFolder,
+        Alive = AliveFolder,
+    }
+
+    local function SnapBalls()
+        local pname = Local_Player_Name
+        local list = D.Balls
+        if not list then return nil end
+        local snaps, n = {}, 0
+        for _, b in ipairs(list:GetChildren()) do
+            if b:GetAttribute('realBall') and b:GetAttribute('target') == pname then
+                local z = b:FindFirstChild('zoomies')
+                if z and z.VectorVelocity.Magnitude > 30 then
+                    snaps[b] = GetBallPosition(b)
+                    n += 1
+                end
+            end
+        end
+        return n > 0 and snaps or nil
+    end
+
+    local function AnyMoved(snaps, thr)
+        if not snaps then return false end
+        for b, p1 in pairs(snaps) do
+            if b.Parent and (GetBallPosition(b) - p1).Magnitude > thr then
+                return true
+            end
+        end
+        return false
+    end
+
+    local function IncomingReal()
+        local char = Player.Character
+        if not char then return false end
+        local root = char:FindFirstChild('HumanoidRootPart') or char.PrimaryPart
+        if not root then return false end
+        local pname = Local_Player_Name
+        local list = D.Balls
+        if not list then return false end
+        local ppos = root.Position
+        local plrs = Players:GetPlayers()
+        for _, b in ipairs(list:GetChildren()) do
+            if b:GetAttribute('realBall') and b:GetAttribute('target') == pname then
+                local z = b:FindFirstChild('zoomies')
+                if z then
+                    local v = z.VectorVelocity
+                    if v.Magnitude > 30 then
+                        local bp = GetBallPosition(b)
+                        local to = ppos - bp
+                        if to.Magnitude > 0.5 and v.Unit:Dot(to.Unit) > 0.3 then
+                            return true
+                        end
+                        local held = false
+                        for _, p in ipairs(plrs) do
+                            if p ~= Player and p.Character then
+                                local pr = p.Character:FindFirstChild('HumanoidRootPart')
+                                if pr and (pr.Position - bp).Magnitude < 6 then
+                                    held = true
+                                    break
+                                end
+                            end
+                        end
+                        if not held then return true end
+                    end
+                end
+            end
+        end
+        return false
+    end
+
+    local function Fire()
+        local tv = os.clock() - Last_Parry
+        if tv > 0.5 then
+            pcall(Auto_Parry.Parry_Animation)
+        end
+        Auto_Parry.Parry(Selected_Parry_Type)
+        Last_Parry = os.clock()
+    end
+
+    local function OnFakeHighlight(child)
+        if not D.Enabled or child.Name ~= 'FAKE_HIGHLIGHT' then return end
+        if D.On_Player and os.clock() < D.End_Time then return end
+        if IncomingReal() then return end
+        if os.clock() - D.Ball_Reset < 0.3 then return end
+        if D.Rng:NextNumber() >= D.Chance then return end
+
+        local snaps = SnapBalls()
+        task.delay(0.03, function()
+            if not D.Enabled or not child.Parent then return end
+            if AnyMoved(snaps, 4) then return end
+            D.On_Player = true
+            D.End_Time = math.max(D.End_Time, os.clock() + 2)
+            Fire()
+        end)
+    end
+
+    local function Bind(char)
+        if D.Watch then D.Watch:Disconnect(); D.Watch = nil end
+        if not char then return end
+        D.Watch = char.ChildAdded:Connect(OnFakeHighlight)
+        local existing = char:FindFirstChild('FAKE_HIGHLIGHT')
+        if existing then task.spawn(OnFakeHighlight, existing) end
+    end
+
+    local function Start()
+        if D.Enabled then return end
+        D.Enabled = true
+        Bind(Player.Character)
+        Connections_Manager['PreclickDB_Char'] = Player.CharacterAdded:Connect(Bind)
+        Connections_Manager['PreclickDB_BallAdd'] = BallsFolder.ChildAdded:Connect(function(b)
+            D.Ball_Reset = os.clock()
+            Connections_Manager['PreclickDB_' .. b.Name .. tostring(b:GetDebugId())] =
+                b:GetAttributeChangedSignal('target'):Connect(function()
+                    D.Ball_Reset = os.clock()
+                end)
+        end)
+        for _, b in ipairs(BallsFolder:GetChildren()) do
+            D.Ball_Reset = os.clock()
+        end
+    end
+
+    local function Stop()
+        D.Enabled = false
+        D.On_Player = false
+        D.End_Time = 0
+        if D.Watch then D.Watch:Disconnect(); D.Watch = nil end
+        for k, c in pairs(Connections_Manager) do
+            if type(k) == 'string' and k:sub(1, 11) == 'PreclickDB_' then
+                pcall(function() c:Disconnect() end)
+                Connections_Manager[k] = nil
+            end
+        end
+    end
+
+    Env._PreclickDB_State = D
+
+    local G = Tabs.Main:AddLeftGroupbox("Preclick Dribble", "hand")
+    local T = G:AddToggle('Preclick_DB_Toggle', {
+        Text = 'Preclick Dribble',
+        Default = false,
+        Notify = false,
+        Callback = function(s) if s then Start() else Stop() end end,
+    })
+    T:AddKeyPicker('Preclick_DB_Keybind', { Text = 'Preclick Dribble', Mode = 'Toggle' })
+    G:AddSlider('Preclick_DB_Chance', {
+        Text = 'Chance (%)',
+        Default = 50, Min = 0, Max = 100, Increment = 5,
+        Callback = function(v) D.Chance = v / 100 end,
+    })
+    G:AddSlider('Preclick_DB_Delay', {
+        Text = 'Confirm Delay (ms)',
+        Default = 30, Min = 10, Max = 120, Increment = 5,
+        Callback = function(v) D.ConfirmDelay = v / 1000 end,
+    })
+end
+
+local Auto_Spam_Group = Tabs.Main:AddRightGroupbox("Clashing", "square-mouse-pointer")
+
+local SPAM_BASE, SPAM_MAX_RANGE = 8, 40
+local SPAM_HOLD = 0.12
+local SPAM_PARRIES = 3
+local SPAM_PRESETS = {
+    { Window = 0.6, Lead = 0.12 },
+    { Window = 0.5, Lead = 0.10 },
+    { Window = 0.4, Lead = 0.08 },
+}
+local Spam_Preset = SPAM_PRESETS[2]
+local Spam_Hold_Until, Last_Spam = 0, 0
+local Clash_Ball = nil
+local SPAM_LEAVE_DOT = 0.7
+
+local function Check_Clash(Ball, Info, Root, Move_Direction, Ping, Now, Locked)
+    if not Info or Ball.Parent ~= BallsFolder or not Ball:GetAttribute('realBall') then return 'leave' end
+    local Preset = Spam_Preset
+    if Locked then
+        if Now - Info.Time > Preset.Window then return 'leave' end
+    elseif Recent_Parries(Now, Preset.Window) < SPAM_PARRIES then
+        return 'leave'
+    end
+
+    if Info.Target ~= Local_Player_Name and Info.Previous ~= Local_Player_Name then return 'leave' end
+
+    local Zoomies = Ball:FindFirstChild('zoomies')
+    if not Zoomies then return 'leave' end
+    local Ball_Velocity = Zoomies.VectorVelocity
+    local Offset = Root.Position - GetBallPosition(Ball)
+
+    local Flat = Vector3.new(Offset.X, 0, Offset.Z)
+    if Flat.Magnitude > 0.001 and Move_Direction:Dot(Flat.Unit) > SPAM_LEAVE_DOT then
+        return 'leave'
+    end
+
+    if Info.Target == Local_Player_Name
+        and Auto_Parry.Is_Curved(Offset, Ball_Velocity - Root.AssemblyLinearVelocity, Ball_Velocity) then
+        return 'pause'
+    end
+
+    local Spam_Range = math.min(SPAM_BASE + Ball_Velocity.Magnitude * (Ping / 2000 + Preset.Lead), SPAM_MAX_RANGE)
+    return Offset.Magnitude <= Spam_Range and 'spam' or 'idle'
+end
+
+local Auto_Spam_Toggle = Auto_Spam_Group:AddToggle('Auto_Spam_Toggle', {
+    Text = 'Auto Spam',
+    Default = false,
+    Notify = false,
+
+    Callback = function(state)
+        DisconnectConnection(Connections_Manager['Auto Spam'])
+        Connections_Manager['Auto Spam'] = nil
+        Spam_Hold_Until, Clash_Ball = 0, nil
+        if not state then return end
+
+        local function Spam_Step()
+            local Character = Player.Character
+            if not Character or Character.Parent ~= AliveFolder then return end
+
+            local Root = Character.PrimaryPart
+            if not Root then return end
+
+            if Auto_Parry.Player_Has_Immortality() then
+                Parries = 0
+                Spam_Hold_Until, Clash_Ball = 0, nil
+                return
+            end
+
+            local Now, Ping = os.clock(), Get_Comp_Ping()
+            local Humanoid = Character:FindFirstChildOfClass('Humanoid')
+            local Move_Direction = Humanoid and Humanoid.MoveDirection or Vector3.zero
+
+            if Clash_Ball then
+                local State = Check_Clash(Clash_Ball, Clash_Info[Clash_Ball], Root, Move_Direction, Ping, Now, true)
+                if State == 'spam' then
+                    Spam_Hold_Until = Now + SPAM_HOLD
+                elseif State == 'pause' then
+                    Spam_Hold_Until = 0
+                elseif State == 'leave' then
+                    Spam_Hold_Until, Clash_Ball = 0, nil
+                    table.clear(Parry_Times)
+                    return
+                end
+            end
+
+            if not Clash_Ball then
+                for Ball, Info in Clash_Info do
+                    if Check_Clash(Ball, Info, Root, Move_Direction, Ping, Now, false) == 'spam' then
+                        Clash_Ball, Spam_Hold_Until = Ball, Now + SPAM_HOLD
+                        break
+                    end
+                end
+            end
+            if Now >= Spam_Hold_Until then return end
+
+            Auto_Parry.Parry(Selected_Parry_Type, Now - Last_Spam < SPAM_HOLD)
+            Last_Spam = Now
+
+            if Env.Animation_Fix and Parry_Input_Method ~= 'Keypress' and not Is_Mobile then
+                pcall(function()
+                    keypress(0x46)
+                    keyrelease(0x46)
+                end)
+            end
+        end
+
+        Connections_Manager['Auto Spam'] = {
+            RunService.PreSimulation:Connect(Spam_Step),
+            RunService.PostSimulation:Connect(Spam_Step),
+        }
+    end
+})
+
+Auto_Spam_Toggle:AddKeyPicker('Auto_Spam_Keybind', {
+    Text = 'Auto Spam',
+    Mode = 'Toggle',
+})
+
+Auto_Spam_Group:AddSlider('Auto_Spam_Threshold_Slider', {
+    Text = 'Threshold',
+    Tooltip = '1 = fast, 2 = mid, 3 = slow',
+    Min = 1,
+    Max = 3,
+    Default = 2,
+    Increment = 1,
+    Callback = function(value)
+        Spam_Preset = SPAM_PRESETS[value] or SPAM_PRESETS[2]
+    end,
+})
+
+local Manual_Spam_Toggle
+do
+    local DRAG_THRESHOLD = 10
+
+    local Spam_Gui = Instance.new('ScreenGui')
+    Spam_Gui.Name = 'MobileSpamButton'
+    Spam_Gui.ResetOnSpawn = false
+    Spam_Gui.IgnoreGuiInset = true
+    Spam_Gui.DisplayOrder = 100
+    Spam_Gui.Enabled = false
+    Spam_Gui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+
+    local Spam_Button = Instance.new('TextButton')
+    Spam_Button.Name = 'Spam'
+    local _spamScale = math.clamp((workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize.Y or 1080) / 1080, 0.7, 1.2)
+    Spam_Button.AnchorPoint = Vector2.new(0.5, 0.5)
+    Spam_Button.Position = UDim2.new(1, -140, 0.5, 0)
+    Spam_Button.Size = UDim2.fromOffset(180 * _spamScale, 80 * _spamScale)
+    Spam_Button.BackgroundColor3 = Color3.new(0, 0, 0)
+    Spam_Button.BackgroundTransparency = 0.3
+    Spam_Button.AutoButtonColor = false
+    Spam_Button.Font = Enum.Font.GothamMedium
+    Spam_Button.TextSize = math.floor(26 * _spamScale)
+    Spam_Button.TextColor3 = Color3.new(1, 1, 1)
+    Spam_Button.Parent = Spam_Gui
+    Instance.new('UICorner', Spam_Button).CornerRadius = UDim.new(0, 12)
+
+    local Spam_Stroke = Instance.new('UIStroke')
+    Spam_Stroke.Thickness = 2
+    Spam_Stroke.Color = Color3.fromRGB(80, 20, 20)
+    Spam_Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    Spam_Stroke.Parent = Spam_Button
+
+    local Spam_Rainbow_Hue = 0
+    local Spam_Rainbow_Conn = nil
+
+    local function Refresh_Spam_Button()
+        local on = false
+        if Library and Library.Toggles and Library.Toggles.Manual_Spam_Toggle then
+            on = Library.Toggles.Manual_Spam_Toggle.Value == true
+        else
+            on = Connections_Manager['Manual Spam'] ~= nil
+        end
+        task.defer(function()
+            pcall(function()
+                Spam_Button.Text = on and 'On' or 'Off'
+                if on then
+                    Spam_Button.BackgroundColor3 = Color3.fromRGB(30, 120, 40)
+                    Spam_Button.BackgroundTransparency = 0.15
+                    Spam_Stroke.Thickness = 2.5
+                    if not Spam_Rainbow_Conn then
+                        Spam_Rainbow_Conn = RunService.RenderStepped:Connect(function(dt)
+                            Spam_Rainbow_Hue = (Spam_Rainbow_Hue + dt * 0.5) % 1
+                            Spam_Stroke.Color = Color3.fromHSV(Spam_Rainbow_Hue, 0.8, 1)
+                        end)
+                    end
+                else
+                    Spam_Button.BackgroundColor3 = Color3.fromRGB(100, 25, 25)
+                    Spam_Button.BackgroundTransparency = 0.3
+                    Spam_Stroke.Thickness = 2
+                    Spam_Stroke.Color = Color3.fromRGB(80, 20, 20)
+                    if Spam_Rainbow_Conn then
+                        Spam_Rainbow_Conn:Disconnect()
+                        Spam_Rainbow_Conn = nil
+                    end
+                end
+            end)
+        end)
+    end
+
+    local function Start_Manual_Spam()
+        if Connections_Manager['Manual Spam'] then return end
+        Connections_Manager['Manual Spam'] = RunService.PreRender:Connect(function()
+            local Character = Player.Character
+            if not Character or Character.Parent ~= AliveFolder then
+                return
+            end
+
+            local Ball = Auto_Parry.Get_Balls(true)
+            if not Ball or not Ball:FindFirstChild('zoomies') then
+                return
+            end
+
+            Auto_Parry.Parry(Selected_Parry_Type)
+
+            if Env.Animation_Fix and Parry_Input_Method ~= 'Keypress' and not Is_Mobile then
+                pcall(function()
+                    keypress(0x46)
+                    keyrelease(0x46)
+                end)
+            end
+        end)
+        Refresh_Spam_Button()
+    end
+
+    local function Stop_Manual_Spam()
+        if Connections_Manager['Manual Spam'] then
+            Connections_Manager['Manual Spam']:Disconnect()
+            Connections_Manager['Manual Spam'] = nil
+        end
+        Refresh_Spam_Button()
+    end
+
+    Refresh_Spam_Button()
+
+    Manual_Spam_Toggle = Auto_Spam_Group:AddToggle('Manual_Spam_Toggle', {
+        Text = 'Manual Spam',
+        Default = false,
+        Notify = false,
+        Tooltip = 'On mobile this shows the spam button instead of spamming',
+
+        Callback = function(state)
+            if state then
+                Start_Manual_Spam()
+            else
+                Stop_Manual_Spam()
+            end
+            Refresh_Spam_Button()
+        end
+    })
+
+    Manual_Spam_Toggle:AddKeyPicker('Manual_Spam_Keybind', {
+        Text = 'Manual Spam',
+        Mode = 'Toggle',
+    })
+
+    Auto_Spam_Group:AddToggle('Manual_Spam_UI_Toggle', {
+        Text = 'Manual Spam UI for Mobile',
+        Default = false,
+        Tooltip = 'Shows a draggable button to toggle Manual Spam',
+        Callback = function(state)
+            Spam_Gui.Enabled = state
+            Refresh_Spam_Button()
+        end
+    })
+
+    local Drag_Input, Drag_Start, Start_Position, Dragged = nil, nil, nil, false
+
+    Spam_Button.InputBegan:Connect(function(Input)
+        if Input.UserInputType ~= Enum.UserInputType.Touch
+            and Input.UserInputType ~= Enum.UserInputType.MouseButton1 then
+            return
+        end
+        Drag_Input, Drag_Start, Start_Position, Dragged = Input, Input.Position, Spam_Button.Position, false
+    end)
+
+    Connections_Manager['Mobile_Spam_Drag'] = UserInputService.InputChanged:Connect(function(Input)
+        if not Drag_Input then return end
+        if Input ~= Drag_Input and Input.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+
+        local Delta = Input.Position - Drag_Start
+        if not Dragged and Delta.Magnitude < DRAG_THRESHOLD then return end
+        Dragged = true
+        Spam_Button.Position = UDim2.new(
+            Start_Position.X.Scale, Start_Position.X.Offset + Delta.X,
+            Start_Position.Y.Scale, Start_Position.Y.Offset + Delta.Y
+        )
+    end)
+
+    Connections_Manager['Mobile_Spam_Release'] = UserInputService.InputEnded:Connect(function(Input)
+        if Input ~= Drag_Input then return end
+        Drag_Input = nil
+        if not Dragged then
+            if Library.Toggles.Manual_Spam_Toggle then
+                Library.Toggles.Manual_Spam_Toggle:SetValue(not Library.Toggles.Manual_Spam_Toggle.Value)
+            elseif Connections_Manager['Manual Spam'] then
+                Stop_Manual_Spam()
+            else
+                Start_Manual_Spam()
+            end
+        end
+    end)
+
+    Env._Destroy_Mobile_Spam = function()
+        if Spam_Rainbow_Conn then Spam_Rainbow_Conn:Disconnect(); Spam_Rainbow_Conn = nil end
+        Spam_Gui:Destroy()
+        Env._Destroy_Mobile_Spam = nil
+    end
+end
+
+Auto_Spam_Group:AddDivider()
+
+local Animation_Fix_Toggle = Auto_Spam_Group:AddToggle('Animation_Fix_Toggle', {
+    Text = 'Animation Fix',
+    Default = false,
+
+    Callback = function(state)
+        Env.Animation_Fix = state
+    end
+})
+
+local Phantom_Group = Tabs.Main:AddRightGroupbox("Phantom Detection", "ghost")
+
+Phantom_Group:AddToggle('Phantom_Detection_Toggle', {
+    Text = 'Phantom Detection',
+    Default = false,
+    Notify = false,
+
+    Callback = function(state)
+        Env.Phantom_Detection = state
+    end
+})
+
+Phantom_Group:AddDropdown('Phantom_Detection_Mode_Dropdown', {
+    Text = 'Phantom Mode',
+    Values = { 'TP to Ball', 'Normal' },
+    Multi = false,
+    Default = 1,
+    Callback = function(Value)
+        if Value and Value ~= '' then
+            Phantom_Detection_Mode = Value
+        end
+    end
+})
+
+local CD_Protection_Group = Tabs.Main:AddRightGroupbox("Abilities", "shield-alert")
+
+local Auto_Ability_Toggle = CD_Protection_Group:AddToggle('Auto_Ability_Toggle', {
+    Text = 'Auto Abilities',
+    Default = false,
+    Notify = false,
+
+    Callback = function(state)
+        Env.Auto_Ability = state
+    end
+})
+
+Auto_Ability_Toggle:AddKeyPicker('Auto_Ability_Keybind', {
+    Text = 'Auto Abilities',
+    Mode = 'Toggle',
+})
+
+local Cooldown_Protection_Toggle = CD_Protection_Group:AddToggle('Cooldown_Protection_Toggle', {
+    Text = 'Cooldown Protection',
+    Default = false,
+    Notify = false,
+
+    Callback = function(state)
+        Env.Cooldown_Protection = state
+    end
+})
+
+Cooldown_Protection_Toggle:AddKeyPicker('Cooldown_Protection_Keybind', {
+    Text = 'Cooldown Protection',
+    Mode = 'Toggle',
+})
+
+CD_Protection_Group:AddToggle('ThunderDash_NoCD_Toggle', {
+    Text = 'Thunder Dash No-CD',
+    Default = false,
+    Callback = function(state)
+        Env.ThunderDash_NoCD = state
+        if state then
+            pcall(function()
+                local abilitiesData = require(ReplicatedStorage.Shared.Abilities)
+                local td = abilitiesData.All['Thunder Dash']
+                if td then
+                    Env._TD_OrigCD = td.cooldown
+                    Env._TD_OrigReduction = td.cooldownReductionPerUpgrade
+                    td.cooldown = 0.1
+                    td.cooldownReductionPerUpgrade = 0
+                end
+                if abilitiesData.getAbilityCooldown and not Env._TD_OrigGetCD then
+                    Env._TD_OrigGetCD = abilitiesData.getAbilityCooldown
+                    abilitiesData.getAbilityCooldown = function(player, abilityName, level)
+                        if Env.ThunderDash_NoCD and abilityName == 'Thunder Dash' then return 0.1 end
+                        if Env.Dash_NoCD and abilityName == 'Dash' then return 0.1 end
+                        return Env._TD_OrigGetCD(player, abilityName, level)
+                    end
+                end
+            end)
+            Connections_Manager['ThunderDash_NoCD'] = RunService.Heartbeat:Connect(function()
+                if not Env.ThunderDash_NoCD then return end
+                local Character = Player.Character
+                if not Character then return end
+                pcall(function() Character:SetAttribute('CooldownExpiration', 0) end)
+                pcall(function()
+                    local Hotbar = Player:FindFirstChild('PlayerGui') and Player.PlayerGui:FindFirstChild('Hotbar')
+                    local Ability = Hotbar and Hotbar:FindFirstChild('Ability')
+                    if Ability then
+                        local Red = Ability:FindFirstChild('Red')
+                        if Red then Red.Visible = false end
+                    end
+                end)
+            end)
+            local PlaceGhost
+            pcall(function()
+                local m = ReplicatedStorage.Shared:FindFirstChild('PlaceGhost')
+                if m then PlaceGhost = require(m) end
+            end)
+            Connections_Manager['ThunderDash_NoCD_Input'] = UserInputService.InputBegan:Connect(function(input, gp)
+                if gp then return end
+                if not Env.ThunderDash_NoCD then return end
+                local bound = false
+                pcall(function()
+                    local C = ReplicatedStorage:FindFirstChild('Controllers')
+                    if C then
+                        local ok, Settings = pcall(require, C:FindFirstChild('SettingsController'))
+                        if ok and Settings and Settings.UseBind then
+                            local ok2, ret = pcall(Settings.UseBind, Settings, input, 'Ability')
+                            if ok2 and ret then bound = true end
+                        end
+                    end
+                end)
+                if not bound and input.KeyCode == Enum.KeyCode.Q then bound = true end
+                if not bound then return end
+                local C = Player.Character
+                if not C or C.Parent ~= AliveFolder then return end
+                local HRP = C:FindFirstChild('HumanoidRootPart')
+                local Hum = C:FindFirstChildOfClass('Humanoid')
+                if not HRP or not Hum then return end
+                if Hum.MoveDirection == Vector3.zero then return end
+                local upgradeLevel = 0
+                pcall(function()
+                    local AU = require(ReplicatedStorage.Shared.AbilityUtils)
+                    upgradeLevel = AU.getAbilityUpgrade(Player, 'Thunder Dash') or 0
+                end)
+                local startPos = HRP.Position
+                local ghostColor = upgradeLevel < 2 and Color3.fromRGB(255, 246, 120) or Color3.fromRGB(179, 0, 255)
+                if PlaceGhost then pcall(PlaceGhost, C, {lifetime = 1, animationDelay = 0.5, color = ghostColor}) end
+                task.spawn(function()
+                    task.wait(0.05)
+                    local endPos = HRP.Position
+                    if (endPos - startPos).Magnitude < 2 then return end
+                    pcall(function()
+                        local TDSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Thunder Dash')
+                        if not TDSource then return end
+                        local tdPart = TDSource:FindFirstChild('ThunderDash')
+                        if tdPart then
+                            local fx = tdPart:Clone()
+                            fx.Anchored = true
+                            fx.Position = endPos
+                            pcall(function() fx.WeldConstraint:Destroy() end)
+                            fx.Parent = RuntimeFolder
+                            if upgradeLevel >= 2 then
+                                fx.Attachment.L1.Color = ColorSequence.new(Color3.fromRGB(179, 0, 255))
+                            end
+                            fx.Attachment.L1:Emit(10)
+                            fx.sound1:Play()
+                            if upgradeLevel >= 2 then fx.sound2.PlaybackSpeed = 1.5 end
+                            fx.sound2:Play()
+                            Debris:AddItem(fx, 3)
+                        end
+                        local tdAddon = TDSource:FindFirstChild('ThunderDashAddon')
+                        if tdAddon then
+                            local fx2 = tdAddon:Clone()
+                            fx2.Position = startPos
+                            fx2.Anchored = true
+                            fx2.Parent = RuntimeFolder
+                            if upgradeLevel >= 2 then
+                                fx2.Attachment.L1.Color = ColorSequence.new(Color3.fromRGB(179, 0, 255))
+                            end
+                            fx2.Attachment.L1:Emit(10)
+                            Debris:AddItem(fx2, 3)
+                        end
+                    end)
+                    if PlaceGhost then
+                        task.wait(0.05)
+                        pcall(PlaceGhost, C, {lifetime = 1, animationDelay = 0.5, color = ghostColor})
+                    end
+                end)
+            end)
+        else
+            if Connections_Manager['ThunderDash_NoCD'] then
+                Connections_Manager['ThunderDash_NoCD']:Disconnect()
+                Connections_Manager['ThunderDash_NoCD'] = nil
+            end
+            if Connections_Manager['ThunderDash_NoCD_Input'] then
+                Connections_Manager['ThunderDash_NoCD_Input']:Disconnect()
+                Connections_Manager['ThunderDash_NoCD_Input'] = nil
+            end
+            pcall(function()
+                local abilitiesData = require(ReplicatedStorage.Shared.Abilities)
+                local td = abilitiesData.All['Thunder Dash']
+                if td then
+                    if Env._TD_OrigCD ~= nil then td.cooldown = Env._TD_OrigCD; Env._TD_OrigCD = nil end
+                    if Env._TD_OrigReduction ~= nil then td.cooldownReductionPerUpgrade = Env._TD_OrigReduction; Env._TD_OrigReduction = nil end
+                end
+                if Env._TD_OrigGetCD then
+                    abilitiesData.getAbilityCooldown = Env._TD_OrigGetCD
+                    Env._TD_OrigGetCD = nil
+                end
+            end)
+        end
+    end
+})
+
+CD_Protection_Group:AddToggle('Dash_NoCD_Toggle', {
+    Text = 'Dash No-CD',
+    Default = false,
+    Callback = function(state)
+        Env.Dash_NoCD = state
+        if state then
+            pcall(function()
+                local abilitiesData = require(ReplicatedStorage.Shared.Abilities)
+                local d = abilitiesData.All['Dash']
+                if d then
+                    Env._D_OrigCD = d.cooldown
+                    Env._D_OrigReduction = d.cooldownReductionPerUpgrade
+                    d.cooldown = 0.1
+                    d.cooldownReductionPerUpgrade = 0
+                end
+                if abilitiesData.getAbilityCooldown and not Env._D_OrigGetCD then
+                    Env._D_OrigGetCD = abilitiesData.getAbilityCooldown
+                    abilitiesData.getAbilityCooldown = function(player, abilityName, level)
+                        if Env.Dash_NoCD and abilityName == 'Dash' then return 0.1 end
+                        if Env.ThunderDash_NoCD and abilityName == 'Thunder Dash' then return 0.1 end
+                        return Env._D_OrigGetCD(player, abilityName, level)
+                    end
+                end
+            end)
+            local _ATH = nil
+            pcall(function()
+                _ATH = require(ReplicatedStorage.Shared.AbilityTimelineHandler)
+            end)
+            Connections_Manager['Dash_NoCD'] = RunService.Heartbeat:Connect(function()
+                if not Env.Dash_NoCD then return end
+                local Character = Player.Character
+                if not Character then return end
+                pcall(function() Character:SetAttribute('CooldownExpiration', 0) end)
+                pcall(function()
+                    local Hotbar = Player:FindFirstChild('PlayerGui') and Player.PlayerGui:FindFirstChild('Hotbar')
+                    local Ability = Hotbar and Hotbar:FindFirstChild('Ability')
+                    if Ability then
+                        local Red = Ability:FindFirstChild('Red')
+                        if Red then Red.Visible = false end
+                    end
+                end)
+            end)
+        else
+            if Connections_Manager['Dash_NoCD'] then
+                Connections_Manager['Dash_NoCD']:Disconnect()
+                Connections_Manager['Dash_NoCD'] = nil
+            end
+            pcall(function()
+                local abilitiesData = require(ReplicatedStorage.Shared.Abilities)
+                local d = abilitiesData.All['Dash']
+                if d then
+                    if Env._D_OrigCD ~= nil then d.cooldown = Env._D_OrigCD; Env._D_OrigCD = nil end
+                    if Env._D_OrigReduction ~= nil then d.cooldownReductionPerUpgrade = Env._D_OrigReduction; Env._D_OrigReduction = nil end
+                end
+                if Env._D_OrigGetCD then
+                    abilitiesData.getAbilityCooldown = Env._D_OrigGetCD
+                    Env._D_OrigGetCD = nil
+                end
+            end)
+        end
+    end
+})
+
+do
+    local _DashVFX_LastFire = 0
+
+    local function Dash_NoCD_SpawnVFX(hrp)
+        if not Env.Dash_NoCD then return end
+        local now = tick()
+        if (now - _DashVFX_LastFire) < 0.12 then return end
+        _DashVFX_LastFire = now
+        pcall(function()
+            local DashSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Dash')
+            if not DashSource then return end
+            local dashTemplate = DashSource:FindFirstChild('Dash')
+            if not dashTemplate then return end
+            local fx = dashTemplate:Clone()
+            fx.Name = 'dash'
+            fx.CFrame = hrp.CFrame
+            local weld = fx:FindFirstChild('WeldConstraint')
+            if weld then weld.Part0 = fx; weld.Part1 = hrp end
+            local subpart = fx:FindFirstChild('part')
+            if subpart then
+                local subweld = subpart:FindFirstChild('WeldConstraint')
+                if subweld then subweld.Part0 = subpart; subweld.Part1 = fx end
+                subpart.CFrame = hrp.CFrame * CFrame.new(0, 0, -3.5)
+            end
+            fx.Parent = RuntimeFolder
+            local att = fx:FindFirstChild('Attachment')
+            if att then
+                local dust = att:FindFirstChild('dust')
+                if dust then dust.Enabled = true end
+            end
+            local swoosh = fx:FindFirstChild('Swoosh')
+            if swoosh then swoosh:Play() end
+            local maxswos = fx:FindFirstChild('maxswos')
+            if maxswos then maxswos:Play() end
+            task.delay(0.16, function()
+                pcall(function()
+                    if att then
+                        local dust = att:FindFirstChild('dust')
+                        if dust then dust.Enabled = false end
+                    end
+                end)
+            end)
+            Debris:AddItem(fx, 1.5)
+        end)
+        local ShockwaveEffect
+        pcall(function() ShockwaveEffect = require(ReplicatedStorage.Shared.ShockwaveEffect) end)
+        if ShockwaveEffect then
+            for i = 0, 2 do
+                task.delay(i * 0.1, function()
+                    pcall(function()
+                        ShockwaveEffect({
+                            cframe = CFrame.new(hrp.Position),
+                            diameter = 20,
+                            duration = 0.25,
+                            color = Color3.fromRGB(255, 255, 255),
+                            orientation = 'Vertical',
+                            targetTransparency = 1,
+                        })
+                    end)
+                end)
+            end
+        end
+    end
+
+    local _DashHRP_Conn = nil
+
+    local function Dash_NoCD_BindCharacter(char)
+        if _DashHRP_Conn then _DashHRP_Conn:Disconnect(); _DashHRP_Conn = nil end
+        if not char then return end
+        local hrp = char:WaitForChild('HumanoidRootPart', 5)
+        if not hrp then return end
+        _DashHRP_Conn = hrp.ChildAdded:Connect(function(child)
+            if not Env.Dash_NoCD then return end
+            if child.ClassName ~= 'Attachment' then return end
+            local dashVel = child:FindFirstChild('Dash')
+            if not dashVel then task.wait(); dashVel = child:FindFirstChild('Dash') end
+            if not dashVel or not dashVel:IsA('LinearVelocity') then return end
+            if char:GetAttribute('AbilityActive') then return end
+            Dash_NoCD_SpawnVFX(hrp)
+        end)
+    end
+
+    Dash_NoCD_BindCharacter(Player.Character)
+    Connections_Manager['Dash_NoCD_CharAdded'] = Player.CharacterAdded:Connect(function(char)
+        task.wait(0.1)
+        Dash_NoCD_BindCharacter(char)
+    end)
+end
+
+if Is_Mobile then
+    task.spawn(function()
+        local pg = Player:FindFirstChild('PlayerGui') or Player:WaitForChild('PlayerGui', 10)
+        local hotbar = pg and (pg:FindFirstChild('Hotbar') or pg:WaitForChild('Hotbar', 10))
+        local ability = hotbar and (hotbar:FindFirstChild('Ability') or hotbar:WaitForChild('Ability', 10))
+        if ability and ability:IsA('GuiButton') then
+            Connections_Manager['ThunderDash_Mobile'] = ability.Activated:Connect(function()
+                if _ScriptUnloaded or not Env.ThunderDash_NoCD then return end
+                local C = Player.Character
+                if not C or C.Parent ~= AliveFolder then return end
+                local HRP = C:FindFirstChild('HumanoidRootPart')
+                local Hum = C:FindFirstChildOfClass('Humanoid')
+                if not HRP or not Hum or Hum.MoveDirection == Vector3.zero then return end
+                pcall(function()
+                    local ThunderDashSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Thunder Dash')
+                    if not ThunderDashSource then return end
+                    local tdPart = ThunderDashSource:FindFirstChild('ThunderDash')
+                    if not tdPart then return end
+                    local startPos = HRP.Position
+                    task.spawn(function()
+                        task.wait(0.05)
+                        local endPos = HRP.Position
+                        if (endPos - startPos).Magnitude < 2 then return end
+                        local fx = tdPart:Clone()
+                        fx.Anchored = true
+                        fx.Position = endPos
+                        pcall(function() fx.WeldConstraint:Destroy() end)
+                        fx.Parent = workspace
+                        if fx.Attachment and fx.Attachment.L1 then
+                            fx.Attachment.L1:Emit(10)
+                        end
+                        pcall(function() fx.sound1:Play() end)
+                        pcall(function() fx.sound2:Play() end)
+                        Debris:AddItem(fx, 3)
+                    end)
+                end)
+            end)
+        end
+    end)
+end
+
+Connections_Manager['ThunderDash_NoCD_Input_TopLevel'] = UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if not Env.ThunderDash_NoCD then return end
+    local bound = false
+    pcall(function()
+        local C = ReplicatedStorage:FindFirstChild('Controllers')
+        if C then
+            local ok, Settings = pcall(require, C:FindFirstChild('SettingsController'))
+            if ok and Settings and Settings.UseBind then
+                local ok2, ret = pcall(Settings.UseBind, Settings, input, 'Ability')
+                if ok2 and ret then bound = true end
+            end
+        end
+    end)
+    if not bound and input.KeyCode == Enum.KeyCode.Q then bound = true end
+    if not bound then return end
+
+    local C = Player.Character
+    if not C or C.Parent ~= AliveFolder then return end
+    local HRP = C:FindFirstChild('HumanoidRootPart')
+    local Hum = C:FindFirstChildOfClass('Humanoid')
+    if not HRP or not Hum then return end
+    if Hum.MoveDirection == Vector3.zero then return end
+
+    local upgradeLevel = 0
+    pcall(function()
+        local AU = require(ReplicatedStorage.Shared.AbilityUtils)
+        upgradeLevel = AU.getAbilityUpgrade(Player, 'Thunder Dash') or 0
+    end)
+    local startPos = HRP.Position
+
+    local PlaceGhost
+    pcall(function()
+        local PlaceGhostModule = ReplicatedStorage.Shared:FindFirstChild('PlaceGhost')
+        if PlaceGhostModule then PlaceGhost = require(PlaceGhostModule) end
+    end)
+    local ghostColor = upgradeLevel < 2 and Color3.fromRGB(255, 246, 120) or Color3.fromRGB(179, 0, 255)
+    if PlaceGhost then
+        pcall(PlaceGhost, C, {lifetime = 1, animationDelay = 0.5, color = ghostColor})
+    end
+
+    pcall(function()
+        local ThunderDashSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Thunder Dash')
+        if not ThunderDashSource then return end
+        local tdAddon = ThunderDashSource:FindFirstChild('ThunderDashAddon')
+        if not tdAddon then return end
+        local fx2 = tdAddon:Clone()
+        fx2.Position = startPos
+        fx2.Anchored = true
+        fx2.Parent = workspace
+        if upgradeLevel >= 2 then
+            fx2.Attachment.L1.Color = ColorSequence.new(Color3.fromRGB(179, 0, 255))
+        end
+        fx2.Attachment.L1.Transparency = NumberSequence.new(0)
+        fx2.Attachment.L1.Size = NumberSequence.new(6)
+        fx2.Attachment.L1.Brightness = 3
+        fx2.Attachment.L1.Lifetime = NumberRange.new(0.3, 0.6)
+        fx2.Attachment.L1:Emit(10)
+        Debris:AddItem(fx2, 3)
+    end)
+
+    pcall(function()
+        local ThunderDashSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Thunder Dash')
+        if not ThunderDashSource then return end
+        local tdPart = ThunderDashSource:FindFirstChild('ThunderDash')
+        if not tdPart then return end
+        local snd = tdPart:FindFirstChild('sound1')
+        local snd2 = tdPart:FindFirstChild('sound2')
+        if snd then
+            local s = snd:Clone(); s.Parent = HRP; s:Play()
+            Debris:AddItem(s, 2)
+        end
+        if snd2 then
+            local s = snd2:Clone()
+            if upgradeLevel >= 2 then s.PlaybackSpeed = 1.5 end
+            s.Parent = HRP; s:Play()
+            Debris:AddItem(s, 2)
+        end
+    end)
+
+    task.spawn(function()
+        task.wait(0.05)
+        local endPos = HRP.Position
+        if (endPos - startPos).Magnitude < 2 then return end
+
+        pcall(function()
+            local ThunderDashSource = ReplicatedStorage.Shared.Abilities:FindFirstChild('Thunder Dash')
+            if not ThunderDashSource then return end
+            local tdPart = ThunderDashSource:FindFirstChild('ThunderDash')
+            if not tdPart then return end
+            local fx1 = tdPart:Clone()
+            fx1.Anchored = true
+            fx1.Position = endPos
+            pcall(function() fx1.WeldConstraint:Destroy() end)
+            pcall(function() fx1.sound1:Destroy() end)
+            pcall(function() fx1.sound2:Destroy() end)
+            fx1.Parent = workspace
+            if upgradeLevel >= 2 then
+                fx1.Attachment.L1.Color = ColorSequence.new(Color3.fromRGB(179, 0, 255))
+            end
+            fx1.Attachment.L1.Transparency = NumberSequence.new(0)
+            fx1.Attachment.L1.Size = NumberSequence.new(6)
+            fx1.Attachment.L1.Brightness = 3
+            fx1.Attachment.L1.Lifetime = NumberRange.new(0.3, 0.6)
+            fx1.Attachment.L1:Emit(10)
+            task.wait(0.05)
+            fx1.Attachment.L1:Emit(10)
+            Debris:AddItem(fx1, 3)
+        end)
+        if PlaceGhost then
+            task.wait(0.05)
+            pcall(PlaceGhost, C, {lifetime = 1, animationDelay = 0.5, color = ghostColor})
+        end
+
+        pcall(function()
+            local dir = (endPos - startPos)
+            local dist = dir.Magnitude
+            local segments = math.clamp(math.floor(dist / 4), 5, 12)
+            local flatDir = Vector3.new(dir.X, 0, dir.Z)
+            local perp = flatDir.Magnitude > 0 and flatDir.Unit:Cross(Vector3.new(0, 1, 0)) or Vector3.new(1, 0, 0)
+            local points = {}
+            local boltColor = ColorSequence.new(Color3.fromRGB(180, 0, 160))
+            local zigSign = 1
+            for i = 0, segments do
+                local t = i / segments
+                local pos = startPos:Lerp(endPos, t) + Vector3.new(0, 1, 0)
+                if i > 0 and i < segments then
+                    local amp = math.random(15, 30) / 10
+                    local edgeFade = math.min(t, 1 - t) * 2
+                    pos = pos + perp * (zigSign * amp * math.clamp(edgeFade, 0.3, 1)) + Vector3.new(0, math.random(-3, 3) / 10, 0)
+                    zigSign = -zigSign
+                end
+                table.insert(points, pos)
+            end
+            local container = Instance.new('Folder')
+            container.Name = 'ThunderBolt'
+            container.Parent = workspace
+            for i = 1, #points - 1 do
+                local pA = Instance.new('Part')
+                pA.Anchored, pA.CanCollide, pA.Transparency = true, false, 1
+                pA.Size = Vector3.new(0.1, 0.1, 0.1)
+                pA.Position = points[i]
+                pA.Parent = container
+                local pB = Instance.new('Part')
+                pB.Anchored, pB.CanCollide, pB.Transparency = true, false, 1
+                pB.Size = Vector3.new(0.1, 0.1, 0.1)
+                pB.Position = points[i + 1]
+                pB.Parent = container
+                local a0 = Instance.new('Attachment', pA)
+                local a1 = Instance.new('Attachment', pB)
+                local bolt = Instance.new('Beam')
+                bolt.Attachment0, bolt.Attachment1 = a0, a1
+                bolt.Width0, bolt.Width1 = 1.4, 1.4
+                bolt.LightEmission, bolt.LightInfluence = 1, 0
+                bolt.Brightness = 5
+                bolt.FaceCamera, bolt.Segments = true, 1
+                bolt.Color = boltColor
+                bolt.Transparency = NumberSequence.new(0)
+                bolt.Parent = pA
+            end
+            task.wait(0.15)
+            for _, desc in container:GetDescendants() do
+                if desc:IsA('Beam') then desc.Transparency = NumberSequence.new(0.6) end
+            end
+            task.wait(0.1)
+            for _, desc in container:GetDescendants() do
+                if desc:IsA('Beam') then desc.Transparency = NumberSequence.new(0.9) end
+            end
+            task.wait(0.05)
+            container:Destroy()
+        end)
+    end)
+end)
+
+local Immortality_Group = Tabs.Main:AddRightGroupbox({
+    Name = "Semi-Immortality", 
+    Icon = "shield-check", 
+})
+
+local Immortality_Toggle = Immortality_Group:AddToggle('Immortality_Toggle', {
+    Text = 'Semi-Immortality (BETA)',
+    Default = false,
+    Notify = false,
+
+    Callback = function(state)
+        Env.WantImmortality = state
+        
+        if state then
+            local char = Player.Character
+            if char and char.Parent == AliveFolder then
+                Immortality_Module.Start()
+            end
+        else
+            Immortality_Module.Stop()
+        end
+    end
+})
+
+Connections_Manager['Immortality_AutoStart'] = AliveFolder.ChildAdded:Connect(function(child)
+    if child == Player.Character and Env.WantImmortality then
+        task.wait(1.5)
+        if Env.WantImmortality and Player.Character == child then
+            Immortality_Module.Start()
+        end
+    end
+end)
+
+Immortality_Toggle:AddKeyPicker('Immortality_Keybind', {
+    Text = 'Immortality',
+    Mode = 'Toggle',
+})
+
+Immortality_Group:AddSlider('Immortality_BaseRadius', {
+    Text = 'Base Radius',
+    Default = 5,
+    Min = 3,
+    Max = 50,
+    Increment = 1,
+    Callback = function(Value)
+        Immortality_Module.SetBaseRadius(Value)
+    end
+})
+
+Immortality_Group:AddSlider('Immortality_MaxRadius', {
+    Text = 'Max Radius',
+    Default = 24,
+    Min = 10,
+    Max = 100,
+    Increment = 1,
+    Callback = function(Value)
+        Immortality_Module.SetMaxRadius(Value)
+    end
+})
+
+Immortality_Group:AddSlider('Immortality_MaxSpeed', {
+    Text = 'Max Spin Speed',
+    Default = 90,
+    Min = 30,
+    Max = 400,
+    Increment = 5,
+    Callback = function(Value)
+        Immortality_Module.SetMaxSpeed(Value)
+    end
+})
+
+
+
+do
+local CameraUnlocked = false
+local MaxZoom = 75
+
+local function ApplyCameraSettings()
+    Player.CameraMode = Enum.CameraMode.Classic
+    Player.CameraMinZoomDistance = 0.5
+    Player.CameraMaxZoomDistance = CameraUnlocked and MaxZoom or 70
+end
+
+local Camera_Group = Tabs.Client:AddLeftGroupbox("Camera", "camera")
+
+Camera_Group:AddToggle("Camera_Unlock_Toggle", {
+    Text = "Unlock Camera",
+    Default = true,
+    Callback = function(state)
+        CameraUnlocked = state
+        ApplyCameraSettings()
+    end
+})
+
+Camera_Group:AddSlider("Camera_Zoom_Slider", {
+    Text = "Max Zoom Distance",
+    Default = 75,
+    Min = 5,
+    Max = 200,
+    Increment = 1,
+    Callback = function(Value)
+        MaxZoom = Value
+        if CameraUnlocked then
+            ApplyCameraSettings()
+        end
+    end
+})
+
+ApplyCameraSettings()
+
+local Stretch_Value = 1
+
+Camera_Group:AddToggle("Stretch_Screen_Toggle", {
+    Text = "Stretch Screen",
+    Default = false,
+    Callback = function(state)
+        if state then
+            if not Connections_Manager['Stretch_Screen'] then
+                Connections_Manager['Stretch_Screen'] = RunService.RenderStepped:Connect(
+                    function()
+                        local cam = workspace.CurrentCamera
+                        if not cam then return end
+                        cam.CFrame = cam.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, Stretch_Value, 0, 0, 0, 1)
+                    end
+                )
+            end
+        else
+            if Connections_Manager['Stretch_Screen'] then
+                Connections_Manager['Stretch_Screen']:Disconnect()
+                Connections_Manager['Stretch_Screen'] = nil
+            end
+        end
+    end
+})
+
+Camera_Group:AddSlider("Stretch_Value_Slider", {
+    Text = "Stretch Value",
+    Default = 1,
+    Min = 0.1,
+    Max = 1,
+    Increment = 0.01,
+    Callback = function(Value)
+        Stretch_Value = Value
+    end
+})
+
+local FOV_Enabled = false
+local FOV_Value = 70
+local FOV_Original = nil
+
+local function Restore_FOV()
+    if FOV_Original ~= nil then
+        workspace.CurrentCamera.FieldOfView = FOV_Original
+        FOV_Original = nil
+    end
+end
+Env._Restore_FOV = Restore_FOV
+
+Camera_Group:AddToggle("FOV_Toggle", {
+    Text = "FOV",
+    Default = false,
+    Callback = function(state)
+        FOV_Enabled = state
+        if state then
+            if FOV_Original == nil then
+                FOV_Original = workspace.CurrentCamera.FieldOfView
+            end
+            workspace.CurrentCamera.FieldOfView = FOV_Value
+        else
+            Restore_FOV()
+        end
+    end
+})
+
+Camera_Group:AddSlider("FOV_Slider", {
+    Text = "FOV",
+    Default = 70,
+    Min = 70,
+    Max = 120,
+    Increment = 1,
+    Callback = function(Value)
+        FOV_Value = Value
+        if FOV_Enabled then
+            workspace.CurrentCamera.FieldOfView = Value
+        end
+    end
+})
+end
+do
+    local Viz_Group = Tabs.Client:AddLeftGroupbox("Visualizer", "wallpaper")
+    local VizEnabled, VizColor = false, Color3.new(0, 1, 0)
+    local RING_COUNT = 30
+    local Viz, VizFolder = table.create(RING_COUNT), nil
+    local Viz_CFrame, Viz_Radius = CFrame.new(), 15
+
+    local OFFSETS, ROTATIONS = table.create(RING_COUNT), table.create(RING_COUNT)
+    for i = 1, RING_COUNT do
+        local angle = (i / RING_COUNT) * math.pi * 2
+        OFFSETS[i] = Vector3.new(math.cos(angle), 0, math.sin(angle))
+        ROTATIONS[i] = CFrame.Angles(0, -angle - math.pi / 2, 0)
+    end
+
+    local function DestroyVizParts()
+        if VizFolder then VizFolder:Destroy() VizFolder = nil end
+        table.clear(Viz)
+        Viz_CFrame, Viz_Radius = CFrame.new(), 15
+    end
+
+    local function CreateVizParts()
+        DestroyVizParts()
+        VizFolder = Instance.new("Folder")
+        VizFolder.Name = "ParryVizFolder"
+        VizFolder:SetAttribute("NoRender_Ignore", true)
+        VizFolder.Parent = workspace
+
+        for i = 1, RING_COUNT do
+            local p = Instance.new("Part")
+            p.Name, p.Material, p.Color = "Viz_" .. i, Enum.Material.Neon, VizColor
+            p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch, p.Massless = true, false, false, false, true
+            p.Size = Vector3.zero
+            p.Parent = VizFolder
+            Viz[i] = p
+        end
+    end
+
+    local function CalcVizRadius()
+        local ball = Auto_Parry.Get_Targeting_Balls() or Auto_Parry.Get_Balls(true)
+        local zoomies = ball and ball:FindFirstChild('zoomies')
+        local character = Player.Character
+        local root = character and character.PrimaryPart
+        if zoomies and root then
+            return Calculate_Parry_Distance(zoomies.VectorVelocity - root.AssemblyLinearVelocity, root.Position - GetBallPosition(ball), Get_Comp_Ping(), Speed_Divisor_Multiplier, Parry_Distance_Buffer)
+        end
+        return 15
+    end
+
+    local function StopVisualizer()
+        if Connections_Manager['Visualizer'] then
+            Connections_Manager['Visualizer']:Disconnect()
+            Connections_Manager['Visualizer'] = nil
+        end
+        if Connections_Manager['Viz_CharacterAdded'] then
+            Connections_Manager['Viz_CharacterAdded']:Disconnect()
+            Connections_Manager['Viz_CharacterAdded'] = nil
+        end
+        DestroyVizParts()
+    end
+
+    local function StartVisualizer()
+        if not Connections_Manager['Viz_CharacterAdded'] then
+            Connections_Manager['Viz_CharacterAdded'] = Player.CharacterAdded:Connect(function(char)
+                DestroyVizParts()
+                if VizEnabled then CreateVizParts() end
+                char:WaitForChild('Humanoid').Died:Once(DestroyVizParts)
+            end)
+        end
+
+        if not Connections_Manager['Visualizer'] then
+            Connections_Manager['Visualizer'] = RunService.RenderStepped:Connect(function(dt)
+                local root = Player.Character and Player.Character.PrimaryPart
+                if not root then return end
+
+                local Target_Radius = CalcVizRadius()
+                if Target_Radius > Viz_Radius then
+                    Viz_Radius = Target_Radius
+                else
+                    Viz_Radius = Viz_Radius + (Target_Radius - Viz_Radius) * math.min(1, dt * 8)
+                end
+                Viz_CFrame = CFrame.new(root.Position)
+
+                local partLength = (math.pi * 2 * Viz_Radius) / RING_COUNT
+                local partSize = Vector3.new(partLength, 0.20, 0.4)
+
+                for i = 1, RING_COUNT do
+                    local part = Viz[i]
+                    if part then
+                        part.Size = partSize
+                        part.CFrame = Viz_CFrame * CFrame.new(OFFSETS[i] * Viz_Radius) * ROTATIONS[i]
+                    end
+                end
+            end)
+        end
+    end
+
+    local Visualizer_Toggle = Viz_Group:AddToggle('Visualizer_Toggle', {
+        Text = 'Visualizer', Tooltip = 'Shows parry range visualization', Default = false,
+        Callback = function(state)
+            VizEnabled = state
+            if state then
+                CreateVizParts()
+                StartVisualizer()
+            else
+                StopVisualizer()
+            end
+        end
+    })
+
+    Visualizer_Toggle:AddColorPicker({
+        SaveId = "Visualizer_Color", Name = "Visualizer Color", Default = Color3.new(0, 1, 0),
+        Callback = function(color)
+            VizColor = color
+            for i = 1, RING_COUNT do
+                if Viz[i] then Viz[i].Color = color end
+            end
+        end
+    })
+end
+do
+do
+local VFX_Group = Tabs.Client:AddRightGroupbox("VFX","sparkles")
+local NR_Enabled = false
+local NR_Gen = 0
+local NR_Store = {}
+local NR_Pinned = {}
+local NR_HIDDEN = { Decoration = true }
+local NR_Terrain = workspace.Terrain
+local NR_Render = settings().Rendering
+local NR_HiddenParts = {}
+local NR_HiddenGuis2 = {}
+local NR_HiddenGuis = {}
+local NR_LightingSeen = {}
+local NR_ZERO_LIFETIME = NumberRange.new(0)
+
+NR_Pinned[Lighting] = true
+NR_Pinned[NR_Terrain] = true
+if NR_Render then NR_Pinned[NR_Render] = true end
+
+local NR_MAP_FOLDER_NAMES = {
+    Map=true,LobbySpawnPlate=true,Spawn=true,Leaderboards=true,
+    Drones=true,ZombieCrownClash=true,PixelKillEvent=true,
+    SummerEventBB=true,FriendCrate=true,MapBounds=true,
+}
+local NR_DIRECT_WORKSPACE_PARTS = { FakeSky=true }
+local NR_LOBBY_GUI_NAMES = {
+    LobbyTickets=true,LobbyLTMPack=true,LobbyJoinIssue=true,
+    MobileLobbyPrompt=true,ServerBrowser=true,ServerBrowserOld=true,
+    ServerSelection=true,ServerSelectionNew=true,ChooseMap=true,
+    MapSelector=true,RankedQueue=true,RankedSelection=true,
+    MatchFound=true,ChooserUI=true,WaitingScreen=true,
+    TournamentWaiting=true,CutsceneWaiting=true,spawnTut=true,
+}
+local NR_LIGHTING = {
+    GlobalShadows=false,Brightness=1,ClockTime=14,
+    ExposureCompensation=0,EnvironmentDiffuseScale=0,
+    EnvironmentSpecularScale=0,FogStart=math.huge,FogEnd=math.huge,
+    ShadowSoftness=0,
+    Ambient=Color3.fromRGB(70,70,70),
+    OutdoorAmbient=Color3.fromRGB(70,70,70),
+}
+local NR_CONNECTIONS = {
+    'NR_Descendant','NR_DescDrain','NR_LightingChild','NR_LightingProp',
+    'NR_Runtime','NR_MapDescendant','NR_GuiAdded','NR_GraySkyForce','NR_MapChanged','NR_MapRemoved','NR_MatchCheck',
+}
+
+local function NR_IsGameplayAncestor(inst)
+    local p = inst
+    while p and p ~= workspace do
+        if p == BallsFolder or p == AliveFolder or p == RuntimeFolder then return true end
+        p = p.Parent
+    end
+    return false
+end
+
+local function NR_IsIgnored(inst)
+    local p = inst
+    while p and p ~= workspace do
+        if p:GetAttribute('NoRender_Ignore') then return true end
+        p = p.Parent
+    end
+    return false
+end
+
+local function NR_IsMapDescendant(part)
+    local p = part.Parent
+    while p and p ~= workspace do
+        if NR_MAP_FOLDER_NAMES[p.Name] then return true end
+        p = p.Parent
+    end
+    return part.Anchored and not NR_IsGameplayAncestor(part)
+end
+
+local function NR_Get(inst, prop) return inst[prop] end
+local function NR_Put(inst, prop, value) inst[prop] = value end
+
+local function NR_Set(inst, prop, value)
+    local get, put = NR_Get, NR_Put
+    if NR_HIDDEN[prop] then get, put = gethiddenproperty, sethiddenproperty end
+    if not (get and put) then return end
+    local ok, cur = true, get(inst, prop)
+    if not ok or cur == value then return end
+    put(inst, prop, value)
+    local props = NR_Store[inst]
+    if not props then props = {}; NR_Store[inst] = props end
+    if props[prop] == nil then props[prop] = cur end
+end
+
+local function NR_RestoreAll()
+    for inst, props in pairs(NR_Store) do
+        if NR_Pinned[inst] or inst.Parent ~= nil then
+            for prop, value in pairs(props) do
+                local put = NR_HIDDEN[prop] and sethiddenproperty or NR_Put
+                if put then put(inst, prop, value) end
+            end
+        end
+    end
+    table.clear(NR_Store)
+end
+
+local function NR_Prune()
+    for inst in pairs(NR_Store) do
+        if not NR_Pinned[inst] and inst.Parent == nil then NR_Store[inst] = nil end
+    end
+end
+
+local function NR_Off(obj) NR_Set(obj, 'Enabled', false) end
+local function NR_Hide(obj) NR_Set(obj, 'Transparency', 1) end
+local function NR_OffAndClear(obj) NR_Set(obj, 'Enabled', false); obj:Clear() end
+
+local NR_HANDLERS = {
+    ParticleEmitter = function(obj) NR_Set(obj,'Lifetime',NR_ZERO_LIFETIME); NR_OffAndClear(obj) end,
+    Trail=NR_OffAndClear,
+    Beam=NR_Off,Smoke=NR_Off,Fire=NR_Off,Sparkles=NR_Off,
+    Highlight=NR_Off,Clouds=NR_Off,
+    PointLight=NR_Off,SpotLight=NR_Off,SurfaceLight=NR_Off,
+    BloomEffect=NR_Off,BlurEffect=NR_Off,ColorCorrectionEffect=NR_Off,
+    DepthOfFieldEffect=NR_Off,SunRaysEffect=NR_Off,ColorGradingEffect=NR_Off,
+    Decal=NR_Hide,Texture=NR_Hide,
+    Explosion=function(obj) NR_Set(obj,'Visible',false) end,
+    Atmosphere=function(obj)
+        NR_Set(obj,'Density',0); NR_Set(obj,'Haze',0); NR_Set(obj,'Glare',0)
+    end,
+    Sky=function(obj)
+        NR_Set(obj,'CelestialBodiesShown',false); NR_Set(obj,'StarCount',0)
+    end,
+}
+
+local function NR_Apply(obj)
+    if NR_IsIgnored(obj) then return end
+    local handler = NR_HANDLERS[obj.ClassName]
+    if handler and not NR_IsGameplayAncestor(obj) then handler(obj) end
+end
+
+local function NR_ApplyLighting(prop)
+    NR_Set(Lighting, prop, NR_LIGHTING[prop])
+    local ok, now = true, NR_Get(Lighting, prop)
+    if ok then NR_LightingSeen[prop] = now end
+end
+
+local function NR_OptimizeWorld()
+    for prop in pairs(NR_LIGHTING) do NR_ApplyLighting(prop) end
+    for _, c in ipairs(Lighting:GetChildren()) do NR_Apply(c) end
+    NR_Set(NR_Terrain,'Decoration',false)
+    NR_Set(NR_Terrain,'WaterWaveSize',0)
+    NR_Set(NR_Terrain,'WaterWaveSpeed',0)
+    NR_Set(NR_Terrain,'WaterReflectance',0)
+    NR_Set(NR_Terrain,'WaterTransparency',1)
+    if NR_Render then NR_Set(NR_Render,'QualityLevel',Enum.QualityLevel.Level01) end
+end
+
+local function NR_OnLightingChanged(prop)
+    if NR_LIGHTING[prop] == nil then return end
+    local ok, now = true, NR_Get(Lighting, prop)
+    if not ok or now == NR_LightingSeen[prop] then return end
+    local props = NR_Store[Lighting]
+    if props then props[prop] = now end
+    NR_ApplyLighting(prop)
+end
+
+local function NR_ClearRuntime(v)
+    local name = v.Name
+    if name:find('PortalFor_',1,true) or name:find('WaypointFor_',1,true) then return end
+    Debris:AddItem(v, 0)
+end
+
+local NR_FloorParts = {}
+
+local function NR_FindFloor()
+    table.clear(NR_FloorParts)
+    local Map = workspace:FindFirstChild('Map')
+    if not Map then return false end
+    local found = false
+    for _, v in ipairs(Map:GetDescendants()) do
+        if v:IsA('BasePart') and (v.Name == 'FLOOR' or v.Name == 'INVISIBLE_FLOOR') then
+            NR_FloorParts[v] = true
+            found = true
+        end
+    end
+    return found
+end
+
+local function NR_RescanFloorAndUnhide()
+    if not NR_Enabled then return end
+    table.clear(NR_FloorParts)
+    local Map = workspace:FindFirstChild('Map')
+    if Map then
+        for _, v in ipairs(Map:GetDescendants()) do
+            if v:IsA('BasePart') and (v.Name == 'FLOOR' or v.Name == 'INVISIBLE_FLOOR') then
+                NR_FloorParts[v] = true
+                if NR_HiddenParts[v] ~= nil then
+                    v.Transparency = NR_HiddenParts[v]
+                    NR_HiddenParts[v] = nil
+                end
+            end
+        end
+    end
+    for part in pairs(NR_HiddenParts) do
+        if part and part.Parent == nil then
+            NR_HiddenParts[part] = nil
+        end
+    end
+end
+
+local NR_FloorScanToken = 0
+
+local function NR_WatchMapForFloor()
+    NR_FloorScanToken += 1
+    local token = NR_FloorScanToken
+    task.spawn(function()
+        for _ = 1, 60 do
+            if token ~= NR_FloorScanToken or not NR_Enabled then return end
+            if NR_FindFloor() then
+                NR_RescanFloorAndUnhide()
+                return
+            end
+            task.wait(0.1)
+        end
+        if token == NR_FloorScanToken and NR_Enabled then
+            NR_RescanFloorAndUnhide()
+        end
+    end)
+end
+
+
+local function NR_HideMapPart(part)
+    if not part:IsA('BasePart') then return end
+    if NR_IsGameplayAncestor(part) then return end
+    if part.Name == 'FLOOR' or part.Name == 'INVISIBLE_FLOOR' then
+        NR_FloorParts[part] = true
+        return
+    end
+    if NR_FloorParts[part] then return end
+    if NR_HiddenParts[part] ~= nil then return end
+    if part.Parent == workspace and NR_DIRECT_WORKSPACE_PARTS[part.Name] then
+        NR_HiddenParts[part] = part.Transparency
+        part.Transparency = 1
+        return
+    end
+    if not NR_IsMapDescendant(part) then return end
+    NR_HiddenParts[part] = part.Transparency
+    part.Transparency = 1
+end
+
+local function NR_RestoreMapParts()
+    for part, t in pairs(NR_HiddenParts) do
+        if part and part.Parent then part.Transparency = t end
+    end
+    table.clear(NR_HiddenParts)
+end
+
+local function NR_HideMapGui(obj)
+    if not (obj:IsA('BillboardGui') or obj:IsA('SurfaceGui') or obj:IsA('SelectionBox')) then return end
+    if NR_IsGameplayAncestor(obj) or NR_IsIgnored(obj) then return end
+    if NR_HiddenGuis2[obj] ~= nil then return end
+    NR_HiddenGuis2[obj] = obj.Enabled
+    obj.Enabled = false
+end
+
+local function NR_RestoreMapGuis()
+    for obj, enabled in pairs(NR_HiddenGuis2) do
+        if obj and obj.Parent then obj.Enabled = enabled end
+    end
+    table.clear(NR_HiddenGuis2)
+end
+
+local function NR_HideLobbyGuis()
+    local PlayerGui = Player:FindFirstChild('PlayerGui')
+    if not PlayerGui then return end
+    for _, gui in ipairs(PlayerGui:GetChildren()) do
+        if NR_LOBBY_GUI_NAMES[gui.Name] and gui:IsA('ScreenGui') and gui.Enabled then
+            NR_HiddenGuis[gui] = true
+            gui.Enabled = false
+        end
+    end
+end
+
+local function NR_RestoreLobbyGuis()
+    for gui in pairs(NR_HiddenGuis) do
+        if gui and gui.Parent then gui.Enabled = true end
+    end
+    table.clear(NR_HiddenGuis)
+end
+
+local NR_LOBBY_FOLDERS = {
+    Spawn = true,
+    Leaderboards = true,
+    LobbySpawnPlate = true,
+    Drones = true,
+    ZombieCrownClash = true,
+    PixelKillEvent = true,
+    SummerEventBB = true,
+    FriendCrate = true,
+}
+
+local NR_LobbyDestroyed = {}
+local NR_InMatch = false
+
+local function NR_IsInMatch()
+    local char = Player.Character
+    if not char or not char.Parent then return false end
+    return char.Parent == AliveFolder
+end
+
+local function NR_DestroyLobby()
+    for _, v in ipairs(workspace:GetChildren()) do
+        if NR_LOBBY_FOLDERS[v.Name] and not v:GetAttribute("NR_LobbyDestroyed") then
+            v:SetAttribute("NR_LobbyDestroyed", true)
+            NR_LobbyDestroyed[#NR_LobbyDestroyed + 1] = v
+            v.Parent = nil
+        end
+    end
+end
+
+local function NR_RestoreLobby()
+    for _, v in ipairs(NR_LobbyDestroyed) do
+        if v then
+            local ok, isDestroyed = pcall(function() return v:GetAttribute("NR_LobbyDestroyed") end)
+            if ok and isDestroyed then
+                pcall(function()
+                    v:SetAttribute("NR_LobbyDestroyed", nil)
+                    v.Parent = workspace
+                end)
+            end
+        end
+    end
+    table.clear(NR_LobbyDestroyed)
+end
+
+local function NR_CheckMatchState()
+    if not NR_Enabled then return end
+    local inMatch = NR_IsInMatch()
+    if inMatch and not NR_InMatch then
+        NR_InMatch = true
+        NR_DestroyLobby()
+    elseif not inMatch and NR_InMatch then
+        NR_InMatch = false
+        NR_RestoreLobby()
+    end
+end
+
+local function NR_IsGraySkyOn()
+    local ok, result = pcall(function()
+        return Player.PlayerGui.Settings.Frame.Frame['Misc/Gray Sky'].Button.TextLabel.Text == 'Active'
+    end)
+    return ok and result
+end
+
+local function NR_ApplyGraySky()
+    if not NR_IsGraySkyOn() then return end
+    Lighting.Ambient = Color3.fromRGB(70,70,70)
+    Lighting.OutdoorAmbient = Color3.fromRGB(70,70,70)
+    Lighting.Brightness = 1
+    Lighting.ClockTime = 12
+    Lighting.FogStart = math.huge
+    Lighting.FogEnd = math.huge
+    for _, c in ipairs(Lighting:GetChildren()) do
+        if c:IsA('Sky') then
+            c.CelestialBodiesShown = true
+            c.StarCount = 3000
+        elseif c:IsA('Atmosphere') then
+            c.Density = 0; c.Haze = 0; c.Glare = 0
+        elseif c:IsA('BloomEffect') or c:IsA('BlurEffect')
+            or c:IsA('ColorCorrectionEffect') or c:IsA('SunRaysEffect')
+            or c:IsA('DepthOfFieldEffect') then
+            c.Enabled = false
+        end
+    end
+end
+
+local function NR_ProcessObj(v)
+    if NR_IsIgnored(v) then return end
+    if v:IsA("BillboardGui") and v.Name == "SOF_ComboCounter" then return end
+    NR_Apply(v)
+    NR_HideMapPart(v)
+    NR_HideMapGui(v)
+end
+
+local function NR_Enable()
+    if NR_Enabled then return end
+    NR_Enabled = true
+    NR_Gen += 1
+    local gen = NR_Gen
+    local NR_DescQueue, NR_DescIdx = {}, 0
+    local NR_MatchCheckAt, NR_GraySkyAt = 0, 0
+
+    NR_OptimizeWorld()
+    NR_HideLobbyGuis()
+    NR_ApplyGraySky()
+    NR_FindFloor()
+    Connections_Manager['NR_MapChanged'] = workspace:FindFirstChild('Map').ChildAdded:Connect(function(child)
+        if not NR_Enabled then return end
+        if not child:IsA('Model') then return end
+        task.defer(NR_WatchMapForFloor)
+    end)
+    Connections_Manager['NR_MapRemoved'] = workspace:FindFirstChild('Map').ChildRemoved:Connect(function(child)
+        if not NR_Enabled then return end
+        if not child:IsA('Model') then return end
+        task.defer(NR_RescanFloorAndUnhide)
+    end)
+
+
+    Connections_Manager['NR_GraySkyForce'] = Lighting.Changed:Connect(function()
+        if not NR_Enabled then return end
+        local now = os.clock()
+        if now - NR_GraySkyAt < 0.25 then return end
+        NR_GraySkyAt = now
+        task.defer(NR_ApplyGraySky)
+    end)
+    Connections_Manager['NR_GuiAdded'] = Player.PlayerGui.ChildAdded:Connect(function(gui)
+        if not NR_Enabled then return end
+        if NR_LOBBY_GUI_NAMES[gui.Name] and gui:IsA('ScreenGui') and gui.Enabled then
+            NR_HiddenGuis[gui] = true
+            gui.Enabled = false
+        end
+    end)
+    Connections_Manager['NR_Descendant'] = workspace.DescendantAdded:Connect(function(v)
+        NR_DescQueue[#NR_DescQueue + 1] = v
+    end)
+    Connections_Manager['NR_DescDrain'] = RunService.Heartbeat:Connect(function()
+        if NR_DescIdx >= #NR_DescQueue then
+            if #NR_DescQueue > 0 then
+                table.clear(NR_DescQueue)
+                NR_DescIdx = 0
+            end
+            return
+        end
+        local deadline = os.clock() + 0.003
+        while NR_DescIdx < #NR_DescQueue and os.clock() < deadline do
+            NR_DescIdx += 1
+            local v = NR_DescQueue[NR_DescIdx]
+            if v and v.Parent then pcall(NR_ProcessObj, v) end
+        end
+        if NR_DescIdx >= #NR_DescQueue then
+            table.clear(NR_DescQueue)
+            NR_DescIdx = 0
+        end
+    end)
+    Connections_Manager['NR_LightingChild'] = Lighting.ChildAdded:Connect(NR_Apply)
+    Connections_Manager['NR_LightingProp'] = Lighting.Changed:Connect(NR_OnLightingChanged)
+    Connections_Manager['NR_Runtime'] = RuntimeFolder.ChildAdded:Connect(NR_ClearRuntime)
+    Connections_Manager['NR_MapDescendant'] = nil
+    Connections_Manager['NR_MatchCheck'] = RunService.Heartbeat:Connect(function()
+        local now = os.clock()
+        if now - NR_MatchCheckAt < 0.5 then return end
+        NR_MatchCheckAt = now
+        NR_CheckMatchState()
+    end)
+
+    for _, v in ipairs(RuntimeFolder:GetChildren()) do NR_ClearRuntime(v) end
+
+    task.spawn(function()
+        local list = workspace:GetDescendants()
+        local deadline = os.clock() + 0.004
+        for i = 1, #list do
+            if NR_Gen ~= gen then return end
+            NR_ProcessObj(list[i])
+            if i % 64 == 0 and os.clock() > deadline then
+                task.wait()
+                deadline = os.clock() + 0.004
+            end
+        end
+        list = nil
+        task.spawn(function()
+            for _ = 1, 20 do
+                if NR_Gen ~= gen then return end
+                NR_RescanFloorAndUnhide()
+                task.wait(0.25)
+            end
+        end)
+        while NR_Gen == gen do
+            task.wait(10)
+            NR_Prune()
+        end
+    end)
+end
+
+local function NR_Disable()
+    if not NR_Enabled then return end
+    NR_Enabled = false
+    NR_Gen += 1
+    for _, key in ipairs(NR_CONNECTIONS) do
+        local conn = Connections_Manager[key]
+        if conn then conn:Disconnect(); Connections_Manager[key] = nil end
+    end
+    NR_RestoreAll()
+    NR_RestoreLobbyGuis()
+    NR_RestoreLobby()
+    NR_RestoreMapParts()
+    NR_RestoreMapGuis()
+    NR_InMatch = false
+    table.clear(NR_FloorParts)
+    table.clear(NR_LightingSeen)
+end
+
+VFX_Group:AddToggle('No_Render_Toggle', {
+    Text    = 'No Render',
+    Tooltip = 'Disables all effects, post-processing and lighting detail, and drops render quality',
+    Default = false,
+    Callback = function(state)
+        if state then NR_Enable() else NR_Disable() end
+    end,
+})
+
+Env._NoRender_Stop = function()
+    pcall(NR_Disable)
+    if Env._NoRender_Stop then Env._NoRender_Stop = nil end
+end
+
+Env._AntiLag_Stop = (function()
+    local enabled = false
+    local cache = {}
+    local conns = {}
+    local hidden = { Decoration = true }
+    local terrain = workspace.Terrain
+    local render = settings().Rendering
+
+    local function put(inst, prop, value)
+        local get, set = inst[prop], nil
+        if hidden[prop] then
+            if not gethiddenproperty or not sethiddenproperty then return end
+            get = gethiddenproperty(inst, prop)
+            if get == value then return end
+            sethiddenproperty(inst, prop, value)
+        else
+            if get == value then return end
+            inst[prop] = value
+        end
+        local props = cache[inst]
+        if not props then props = {}; cache[inst] = props end
+        if props[prop] == nil then props[prop] = get end
+    end
+
+    local function off(obj) put(obj, 'Enabled', false) end
+
+    local function apply(obj)
+        local cls = obj.ClassName
+        if cls == 'Atmosphere' then
+            put(obj, 'Density', 0); put(obj, 'Haze', 0); put(obj, 'Glare', 0)
+        elseif cls == 'Clouds' or cls == 'BloomEffect' or cls == 'BlurEffect'
+            or cls == 'DepthOfFieldEffect' or cls == 'SunRaysEffect'
+            or cls == 'ColorCorrectionEffect' or cls == 'ColorGradingEffect' then
+            off(obj)
+        end
+    end
+
+    local function applyChild(obj)
+        if not enabled then return end
+        apply(obj)
+        if obj:IsA('BloomEffect') or obj:IsA('BlurEffect') or obj:IsA('DepthOfFieldEffect')
+            or obj:IsA('SunRaysEffect') or obj:IsA('ColorCorrectionEffect')
+            or obj:IsA('ColorGradingEffect') or obj:IsA('Clouds') then
+            conns[#conns + 1] = obj:GetPropertyChangedSignal('Enabled'):Connect(function()
+                if enabled and obj.Parent and obj.Enabled then obj.Enabled = false end
+            end)
+        end
+    end
+
+    local function scan(root)
+        if not root then return end
+        for _, c in ipairs(root:GetChildren()) do applyChild(c) end
+    end
+
+    local function restore()
+        for inst, props in pairs(cache) do
+            if inst.Parent ~= nil then
+                for prop, value in pairs(props) do
+                    if hidden[prop] then
+                        if sethiddenproperty then pcall(sethiddenproperty, inst, prop, value) end
+                    else
+                        pcall(function() inst[prop] = value end)
+                    end
+                end
+            end
+        end
+        table.clear(cache)
+    end
+
+    local function clearConns()
+        for _, c in ipairs(conns) do pcall(function() c:Disconnect() end) end
+        table.clear(conns)
+    end
+
+    local function start()
+        if enabled then return end
+        enabled = true
+        put(render, 'QualityLevel', Enum.QualityLevel.Level01)
+        put(Lighting, 'GlobalShadows', false)
+        put(Lighting, 'EnvironmentDiffuseScale', 0)
+        put(Lighting, 'EnvironmentSpecularScale', 0)
+        put(terrain, 'WaterWaveSize', 0)
+        put(terrain, 'WaterWaveSpeed', 0)
+        put(terrain, 'WaterReflectance', 0)
+        scan(Lighting)
+        scan(terrain)
+        scan(workspace.CurrentCamera)
+        Connections_Manager['AntiLag_LightingChild'] = Lighting.ChildAdded:Connect(applyChild)
+        Connections_Manager['AntiLag_CameraChild'] = workspace.CurrentCamera.ChildAdded:Connect(applyChild)
+        Connections_Manager['AntiLag_CameraChanged'] = workspace:GetPropertyChangedSignal('CurrentCamera'):Connect(function()
+            local cam = workspace.CurrentCamera
+            if cam and enabled then scan(cam) end
+        end)
+        Connections_Manager['AntiLag_TerrainChild'] = terrain.ChildAdded:Connect(applyChild)
+    end
+
+    local function stop()
+        if not enabled then return end
+        enabled = false
+        clearConns()
+        for _, key in ipairs({ 'AntiLag_LightingChild', 'AntiLag_CameraChild', 'AntiLag_CameraChanged', 'AntiLag_TerrainChild' }) do
+            local c = Connections_Manager[key]
+            if c then pcall(function() c:Disconnect() end) Connections_Manager[key] = nil end
+        end
+        restore()
+    end
+
+    VFX_Group:AddToggle('Performance_Mode_Toggle', {
+        Text = 'Performance Mode',
+        Tooltip = 'Lowers render quality, disables shadows and post-processing; fully reversible',
+        Default = false,
+        Callback = function(state)
+            if state then start() else stop() end
+        end,
+    })
+
+    return stop
+end)()
+
+
+local Ball_Glow_Toggle = VFX_Group:AddToggle('Ball_Glow_Toggle', {
+    Text = 'Long Trail',
+    Default = false,
+
+    Callback = function(state)
+        SetBallGlow(state)
+    end
+})
+end
+local Leaderboard_Group = Tabs.Client:AddRightGroupbox("Leaderboard", "trophy")
+
+local Reveal_Stats = {
+    Wins  = { Attribute = 'PlayerWins',  Enabled = false },
+    Elims = { Attribute = 'PlayerElims', Enabled = false },
+}
+
+local Reveal_Server  = setmetatable({}, { __mode = 'k' })
+local Reveal_Written = setmetatable({}, { __mode = 'k' })
+local Reveal_Hooked  = setmetatable({}, { __mode = 'k' })
+local Reveal_Conns   = {}
+
+local function Reveal_Choose(serverValue, realValue)
+    return realValue
+end
+
+local function Reveal_Apply(player, statName)
+    local ls = player:FindFirstChild('leaderstats')
+    local stat = ls and ls:FindFirstChild(statName)
+    if not (stat and stat:IsA('IntValue')) then return end
+
+    local info = Reveal_Stats[statName]
+    if Reveal_Server[stat] == nil then Reveal_Server[stat] = stat.Value end
+
+    local target = Reveal_Server[stat]
+    local real = player:GetAttribute(info.Attribute)
+    if info.Enabled and type(real) == 'number' then
+        target = Reveal_Choose(Reveal_Server[stat], real)
+    end
+
+    if type(target) == 'number' and stat.Value ~= target then
+        Reveal_Written[stat] = target
+        stat.Value = target
+    end
+end
+
+local function Reveal_HookStat(player, stat)
+    if Reveal_Hooked[stat] or not Reveal_Stats[stat.Name] then return end
+    Reveal_Hooked[stat] = true
+
+    table.insert(Reveal_Conns, stat.Changed:Connect(function(value)
+        if value == Reveal_Written[stat] then
+            Reveal_Written[stat] = nil
+            return
+        end
+        Reveal_Server[stat] = value
+        Reveal_Apply(player, stat.Name)
+    end))
+    Reveal_Apply(player, stat.Name)
+end
+
+local function Reveal_HookPlayer(player)
+    local function HookLeaderstats(ls)
+        for _, stat in ipairs(ls:GetChildren()) do Reveal_HookStat(player, stat) end
+        table.insert(Reveal_Conns, ls.ChildAdded:Connect(function(stat) Reveal_HookStat(player, stat) end))
+    end
+
+    local ls = player:FindFirstChild('leaderstats')
+    if ls then HookLeaderstats(ls) end
+    table.insert(Reveal_Conns, player.ChildAdded:Connect(function(child)
+        if child.Name == 'leaderstats' then HookLeaderstats(child) end
+    end))
+
+    for statName, info in pairs(Reveal_Stats) do
+        table.insert(Reveal_Conns, player:GetAttributeChangedSignal(info.Attribute):Connect(function()
+            Reveal_Apply(player, statName)
+        end))
+    end
+end
+
+local function Reveal_Refresh()
+    local active = Reveal_Stats.Wins.Enabled or Reveal_Stats.Elims.Enabled
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        for statName in pairs(Reveal_Stats) do Reveal_Apply(player, statName) end
+    end
+
+    if active and not Connections_Manager['Reveal_Stats'] then
+        for _, player in ipairs(Players:GetPlayers()) do Reveal_HookPlayer(player) end
+        Connections_Manager['Reveal_Stats'] = Players.PlayerAdded:Connect(Reveal_HookPlayer)
+    elseif not active and Connections_Manager['Reveal_Stats'] then
+        Connections_Manager['Reveal_Stats']:Disconnect()
+        Connections_Manager['Reveal_Stats'] = nil
+        for _, conn in ipairs(Reveal_Conns) do conn:Disconnect() end
+        table.clear(Reveal_Conns)
+        table.clear(Reveal_Hooked)
+        table.clear(Reveal_Server)
+        table.clear(Reveal_Written)
+    end
+end
+
+Leaderboard_Group:AddToggle('Show_Wins_Toggle', {
+    Text    = 'Show Wins',
+    Default = false,
+    Callback = function(state)
+        Reveal_Stats.Wins.Enabled = state
+        Reveal_Refresh()
+    end,
+})
+
+Leaderboard_Group:AddToggle('Show_Kills_Toggle', {
+    Text    = 'Show Elims',
+    Default = false,
+    Callback = function(state)
+        Reveal_Stats.Elims.Enabled = state
+        Reveal_Refresh()
+    end,
+})
+
+Env._Reveal_Cleanup = function()
+    for _, conn in ipairs(Reveal_Conns) do
+        pcall(function() conn:Disconnect() end)
+    end
+    table.clear(Reveal_Conns)
+    table.clear(Reveal_Hooked)
+    table.clear(Reveal_Server)
+    table.clear(Reveal_Written)
+end
+
+local Appearance_Group = Tabs.Client:AddRightGroupbox("Appearance", "person-standing")
+
+local function CreateSkinToggle(group, toggleName, text, presetName)
+    group:AddToggle(toggleName, {
+        Text = text,
+        Default = false,
+        Callback = function(state)
+            local connKey = 'Skin_' .. presetName
+            
+            if state then
+                local char = Player.Character
+                if char then
+                    SkinChanger.SetPreset(char, presetName, true)
+                end
+                
+                Connections_Manager[connKey] = Player.CharacterAppearanceLoaded:Connect(function(newChar)
+                    task.defer(function()
+                        SkinChanger.SetPreset(newChar, presetName, true)
+                    end)
+                end)
+            else
+                if Connections_Manager[connKey] then
+                    Connections_Manager[connKey]:Disconnect()
+                    Connections_Manager[connKey] = nil
+                end
+                
+                if Player.Character then
+                    SkinChanger.SetPreset(Player.Character, presetName, false)
+                end
+            end
+        end,
+    })
+end
+
+CreateSkinToggle(Appearance_Group, 'Headless_Only_Toggle', 'Headless', 'Headless')
+CreateSkinToggle(Appearance_Group, 'Korblox_Only_Toggle', 'Korblox', 'Korblox')
+
+local Forcefield_Original = setmetatable({}, { __mode = 'k' })
+local R6_PARTS = { 'Head', 'Torso', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg' }
+
+local function Apply_Forcefield(character, color)
+    if not character then return end
+    color = color or Color3.fromRGB(0, 170, 255)
+
+    for _, name in ipairs(R6_PARTS) do
+        local part = character:FindFirstChild(name)
+        if part and part:IsA('BasePart') then
+            if not Forcefield_Original[part] then
+                Forcefield_Original[part] = {
+                    Material = part.Material,
+                    Color = part.Color,
+                    Reflectance = part.Reflectance,
+                    Transparency = part.Transparency,
+                }
+            end
+            part.Material = Enum.Material.ForceField
+            part.Color = color
+            part.Reflectance  = 0
+            part.Transparency = Forcefield_Original[part].Transparency
+        end
+    end
+
+    for _, acc in ipairs(character:GetChildren()) do
+        if acc:IsA('Accessory') then
+            local handle = acc:FindFirstChild('Handle')
+            if handle and handle:IsA('BasePart') then
+                if not Forcefield_Original[handle] then
+                    Forcefield_Original[handle] = {
+                        Material = handle.Material,
+                        Color = handle.Color,
+                        Reflectance  = handle.Reflectance,
+                        Transparency = handle.Transparency,
+                    }
+                end
+                handle.Material = Enum.Material.ForceField
+                handle.Color = color
+                handle.Reflectance  = 0
+                handle.Transparency = Forcefield_Original[handle].Transparency
+            end
+        end
+    end
+end
+
+local function Remove_Forcefield(character)
+    if not character then return end
+    for part, orig in pairs(Forcefield_Original) do
+        if part and part:IsDescendantOf(character) then
+            part.Material     = orig.Material
+            part.Color = orig.Color
+            part.Reflectance  = orig.Reflectance
+            part.Transparency = orig.Transparency
+            Forcefield_Original[part] = nil
+        end
+    end
+end
+
+local Forcefield_Color = Color3.fromRGB(0, 170, 255)
+
+local Forcefield_Toggle = Appearance_Group:AddToggle('Forcefield_Toggle', {
+    Text    = 'Forcefield',
+    Default = false,
+
+    Callback = function(state)
+        local connKey = 'Forcefield_Appearance'
+        
+        if state then
+            local char = Player.Character
+            if char then
+                Apply_Forcefield(char, Forcefield_Color)
+            end
+            
+            Connections_Manager[connKey] = Player.CharacterAppearanceLoaded:Connect(function(newChar)
+                task.defer(function()
+                    Apply_Forcefield(newChar, Forcefield_Color)
+                end)
+            end)
+        else
+            if Connections_Manager[connKey] then
+                Connections_Manager[connKey]:Disconnect()
+                Connections_Manager[connKey] = nil
+            end
+            
+            if Player.Character then
+                Remove_Forcefield(Player.Character)
+            end
+        end
+    end,
+})
+
+Forcefield_Toggle:AddColorPicker({
+    SaveId = 'Forcefield_Color',
+    Default = Color3.fromRGB(0, 170, 255),
+    Name = 'Forcefield Color',
+    Transparency = 0,
+    Callback = function(color)
+        Forcefield_Color = color
+        if Forcefield_Toggle.Value then
+            Apply_Forcefield(Player.Character, color)
+        end
+    end,
+})
+
+Appearance_Group:AddDivider()
+
+local Avatar_Changer_Toggle = Appearance_Group:AddToggle('Avatar_Changer_Toggle', {
+    Text = 'Avatar Changer',
+    Default = false,
+
+    Callback = function(state)
+        if state then
+            task.spawn(function()
+                local Character = Player.Character or Player.CharacterAdded:Wait()
+                if Character and SkinConfig.Current_User_ID then
+                    SkinChanger.ApplyCustomAvatar(Character, SkinConfig.Current_User_ID)
+                end
+            end)
+
+            Connections_Manager['Avatar Changer'] = Player.CharacterAppearanceLoaded:Connect(function()
+                if SkinConfig.Current_User_ID then
+                    local Character = Player.Character
+                    if Character then
+                        SkinChanger.ApplyCustomAvatar(Character, SkinConfig.Current_User_ID)
+                    end
+                end
+            end)
+        else
+            SkinChanger.RestoreCharacter(Player.Character)
+            if Connections_Manager['Avatar Changer'] then
+                Connections_Manager['Avatar Changer']:Disconnect()
+                Connections_Manager['Avatar Changer'] = nil
+            end
+        end
+    end,
+})
+
+Appearance_Group:AddInput('Avatar_Changer_Textbox', {
+    Text = 'Avatar ID/Username',
+    Default = '',
+    Placeholder = 'Username or UserID',
+    Numeric = false,
+    Finished = true,
+
+    Callback = function(Value)
+        if not Value or Value == '' then
+            return
+        end
+
+        task.spawn(function()
+            local ID = tonumber(Value)
+
+            if not ID then
+                local success, result
+                for _ = 1, 5 do
+                    success, result = true, Players:GetUserIdFromNameAsync(Value)
+                    if success and result then break end
+                    task.wait(0.5)
+                end
+
+                if not (success and result) then
+                    if Window then
+                        Window:Notify({
+                            Title = 'Avatar Changer',
+                            Content = 'Could not find user: ' .. tostring(Value),
+                            Duration = 2,
+                        })
+                    end
+                    return
+                end
+
+                ID = result
+            end
+
+            SkinChanger.SetCustomAvatar(ID)
+
+            if Library.Toggles.Avatar_Changer_Toggle and Library.Toggles.Avatar_Changer_Toggle.Value then
+                local Character = Player.Character or Player.CharacterAdded:Wait()
+                if Character then
+                    local ok = SkinChanger.ApplyCustomAvatar(Character, ID)
+                    if Window then
+                        Window:Notify({
+                            Title = 'Avatar Changer',
+                            Content = ok and ('Applied avatar (ID ' .. tostring(ID) .. ')') or 'Failed to apply avatar',
+                            Duration = 3,
+                        })
+                    end
+                end
+            end
+        end)
+    end
+})
+end
+local Passive_Abilities = {
+    ['Quad Jump'] = true, 
+    ['Luck'] = true, 
+    ['Reaper'] = true,  
+    ['Misfortune'] = true,  
+    ['Martyrdom'] = true,  
+    ['Golden Ball'] = true,  
+    ['Tact'] = true,  
+    ['Scopophobia'] = true,  
+    ['Bounty'] = true,  
+    ['Qi-Charge'] = true,
+    ['Virus'] = true,
+}
+
+local Charge_Abilities = {
+    ['Guardian Angel'] = {
+        ChargeAttr = 'GuardianAngelParriesLeft',
+        MaxCharges = 2,
+        MaxChargesByLevel = { [0] = 1, [1] = 2 },
+        NextUseAttr = 'GuardianAngelNextUse'
+    },
+    ['Quantum Arena'] = {
+        ChargeAttr = 'QuantumArenaCharge',
+        MaxCharges = 3,
+    },
+    ['Necromancer'] = {
+        ChargeAttr = 'NecromancersLeft',
+        MaxChargesAttr = 'NecromancersMax',
+    },
+}
+
+task.spawn(function()
+    local TextChatService = game:GetService("TextChatService")
+    local HttpService = game:GetService("HttpService")
+    local PlayerGui = Player:WaitForChild("PlayerGui")
+    local UnlockSavePath = "Vanana/unlock_save.json"
+    local UnlockSettings = { FinisherEquipped = {}, FakeFavorites = {}, FakeDeleted = {}, EmoteSlots = {} }
+    local CanPersistUnlockSettings = (typeof(writefile) == "function")
+        and (typeof(readfile) == "function")
+        and (typeof(isfile) == "function")
+
+    local RestoreCallbacks, DisabledGameConnections = {}, {}
+    local UnlockConnections = {}
+    local SuspendCallbacks = {}
+    local IsUnlockSuspended = false
+    local IsUnlockDisposed = false
+    local ClearFinisherClones
+    local StopFinisherPlayback
+    local IsAccessoryVisibilityLoopCancelled = false
+    local AccessoryVisibilityGeneration = 0
+    local SelectedExplosionName
+    local LastFakeSwordName
+
+    local function EnsureUnlockSaveFolder()
+        if typeof(isfolder) == "function" and typeof(makefolder) == "function" and not isfolder("Vanana") then
+            makefolder("Vanana")
+        end
+    end
+    local FavoriteOverrides = UnlockSettings.FakeFavorites
+    local function LoadUnlockSettings()
+        if not CanPersistUnlockSettings then
+            return
+        end
+        EnsureUnlockSaveFolder()
+        if isfile(UnlockSavePath) then
+            local ok, data = pcall(HttpService.JSONDecode, HttpService, readfile(UnlockSavePath))
+            if ok and type(data) == "table" then
+                UnlockSettings.FinisherEquipped = data.FinisherEquipped or {}
+                local loadedFavs = data.FakeFavorites or {}
+                for k, v in pairs(loadedFavs) do
+                    FavoriteOverrides[k] = v
+                end
+                UnlockSettings.FakeFavorites = FavoriteOverrides
+                if data.FakeShowAccessoryPerSword then
+                    UnlockSettings.FakeShowAccessoryPerSword = data.FakeShowAccessoryPerSword
+                end
+                if data.FakeDeleted then
+                    UnlockSettings.FakeDeleted = data.FakeDeleted
+                end
+                if type(data.EmoteSlots) == "table" then
+                    UnlockSettings.EmoteSlots = data.EmoteSlots
+                end
+                if data.LastSword then
+                    UnlockSettings.LastSword = data.LastSword
+                    LastFakeSwordName = data.LastSword
+                end
+                if data.LastExplosion then
+                    UnlockSettings.LastExplosion = data.LastExplosion
+                end
+            end
+        end
+        for name, on in pairs(UnlockSettings.FinisherEquipped) do
+            Env.FinisherEquipped[name] = on
+        end
+    end
+
+    local SaveUnlockSettings
+    do
+        local pending = false
+        SaveUnlockSettings = function()
+            if not CanPersistUnlockSettings or pending then
+                return
+            end
+            pending = true
+            task.delay(0.3, function()
+                pending = false
+                EnsureUnlockSaveFolder()
+                UnlockSettings.FinisherEquipped = Env.FinisherEquipped
+                UnlockSettings.FakeFavorites = FavoriteOverrides or UnlockSettings.FakeFavorites or {}
+                UnlockSettings.FakeDeleted = UnlockSettings.FakeDeleted or {}
+                if Env.Unlock_Enabled and not IsUnlockSuspended then
+                    UnlockSettings.LastSword = LastFakeSwordName or UnlockSettings.LastSword
+                    UnlockSettings.LastExplosion = SelectedExplosionName or UnlockSettings.LastExplosion
+                end
+                writefile(UnlockSavePath, HttpService:JSONEncode(UnlockSettings))
+            end)
+        end
+    end
+
+    LoadUnlockSettings()
+
+    local function RegisterRestoreCallback(fn)
+        table.insert(RestoreCallbacks, fn)
+    end
+    local function RegisterSuspendCallback(fn)
+        table.insert(SuspendCallbacks, fn)
+    end
+    local function DisableGameConnection(c)
+        if _ScriptUnloaded or IsUnlockDisposed then
+            return
+        end
+        if c and c.Disable then
+            table.insert(DisabledGameConnections, c)
+            if Env.Unlock_Enabled and not IsUnlockSuspended then
+                c:Disable()
+            end
+        end
+    end
+    local function ConnectUnlockSignal(signal, callback)
+        if _ScriptUnloaded or IsUnlockDisposed then
+            if not callback and signal then
+                signal:Disconnect()
+            end
+            return nil
+        end
+        local c = signal
+        if callback then
+            c = signal:Connect(function(...)
+                if _ScriptUnloaded or not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                    return
+                end
+                return callback(...)
+            end)
+        end
+        if c then
+            table.insert(UnlockConnections, c)
+        end
+        return c
+    end
+    local function DisconnectSignals(connections)
+        for _, connection in pairs(connections) do
+            if connection and connection.Disconnect then
+                connection:Disconnect()
+            end
+        end
+        table.clear(connections)
+    end
+    local function DisableTrackedGameConnections()
+        for _, c in ipairs(DisabledGameConnections) do
+            do
+                if c.Disable then
+                    c:Disable()
+                end
+            end
+        end
+    end
+    local function SuspendUnlockAll()
+        if IsUnlockSuspended then
+            return
+        end
+        IsUnlockSuspended = true
+        IsAccessoryVisibilityLoopCancelled = true
+        AccessoryVisibilityGeneration += 1
+        for _, c in ipairs(DisabledGameConnections) do
+            do
+                if c.Enable then
+                    c:Enable()
+                end
+            end
+        end
+        if StopFinisherPlayback then
+            StopFinisherPlayback()
+        end
+        if ClearFinisherClones then
+            ClearFinisherClones()
+        end
+        for i = #SuspendCallbacks, 1, -1 do
+            SuspendCallbacks[i]()
+        end
+    end
+    local function ResumeUnlockAll()
+        if _ScriptUnloaded or IsUnlockDisposed then
+            return
+        end
+        IsUnlockSuspended = false
+        IsAccessoryVisibilityLoopCancelled = false
+        DisableTrackedGameConnections()
+    end
+    local function DisposeUnlockAll()
+        if IsUnlockDisposed then
+            return
+        end
+        Env.Unlock_Enabled = false
+        IsUnlockDisposed = true
+        SuspendUnlockAll()
+        DisconnectSignals(UnlockConnections)
+        if Env._Unlock_RestoreTextChatHook then
+            Env._Unlock_RestoreTextChatHook()
+        end
+        for i = #RestoreCallbacks, 1, -1 do
+            RestoreCallbacks[i]()
+        end
+    end
+    Env._Unlock_RunReverters = DisposeUnlockAll
+    local function RunUnlockStep(name, fn)
+        if type(fn) ~= "function" then
+            return
+        end
+        local ok, err = pcall(fn)
+        if not ok then
+            warn("[Unlocker] " .. name .. " failed: " .. tostring(err))
+        end
+    end
+
+    do
+        local EmoteSession, EmoteSessionGeneration, AreEmotesDisposed = nil, 0, false
+        local function IsEmoteUnlockEnabled()
+            return not _ScriptUnloaded
+                and not IsUnlockDisposed
+                and not IsUnlockSuspended
+                and not AreEmotesDisposed
+                and Env.Unlock_Enabled
+        end
+        local function StopEmotePlayback(CurrentEmoteSession)
+            local EmotePlayback = CurrentEmoteSession.Playback
+            CurrentEmoteSession.Playback = nil
+            if not EmotePlayback then
+                return
+            end
+            DisconnectSignals(EmotePlayback.Connections)
+            EmotePlayback.Trove:Destroy()
+            do
+                if EmotePlayback.Character:GetAttribute("Emoting") == EmotePlayback.Name then
+                    EmotePlayback.Character:SetAttribute("Emoting", EmotePlayback.PreviousEmoting)
+                end
+            end
+        end
+        local function DisposeEmoteSession()
+            EmoteSessionGeneration = EmoteSessionGeneration + 1
+            local CurrentEmoteSession = EmoteSession
+            EmoteSession = nil
+            if not CurrentEmoteSession then
+                return
+            end
+            StopEmotePlayback(CurrentEmoteSession)
+            DisconnectSignals(CurrentEmoteSession.Connections)
+            for _, hook in ipairs(CurrentEmoteSession.Hooks) do
+                if hook.Module[hook.Method] == hook.Wrapper then
+                    hook.Module[hook.Method] = hook.Original
+                end
+            end
+            for button, snapshot in pairs(CurrentEmoteSession.OriginalButtons) do
+                if button.Parent then
+                    for _, attribute in ipairs({ "EmoteId", "EmoteName", "Icon" }) do
+                        button:SetAttribute(attribute, snapshot[attribute])
+                    end
+                    if button:IsA("ImageButton") or button:IsA("ImageLabel") then
+                        button.Image = snapshot.Image
+                    end
+                    local vector = button:FindFirstChild("Vector")
+                    if vector and snapshot.VectorImage then
+                        vector.Image = snapshot.VectorImage
+                    end
+                    local title = button:FindFirstChild("Title")
+                    if title and snapshot.TitleText then
+                        title.Text = snapshot.TitleText
+                    end
+                end
+            end
+            if CurrentEmoteSession.View and type(CurrentEmoteSession.View.Destroy) == "function" then
+                CurrentEmoteSession.View:Destroy()
+            end
+            if CurrentEmoteSession.Container then
+                CurrentEmoteSession.Container:Destroy()
+            end
+            if CurrentEmoteSession.Source then
+                CurrentEmoteSession.Source.Visible = CurrentEmoteSession.SourceVisible
+            end
+            for _, method in ipairs({ "UpdateHolderEmotes", "UpdateMenuContentEmotes", "updateCenterText" }) do
+                if type(CurrentEmoteSession.Wheel[method]) == "function" then
+                    CurrentEmoteSession.Wheel[method](CurrentEmoteSession.Wheel)
+                end
+            end
+        end
+        local function InitializeEmoteUnlocks()
+            if not IsEmoteUnlockEnabled() then
+                return
+            end
+            if EmoteSession then
+                if EmoteSession.Gui and EmoteSession.Gui.Parent then
+                    EmoteSession.Refresh()
+                    return
+                end
+                DisposeEmoteSession()
+            end
+            EmoteSessionGeneration = EmoteSessionGeneration + 1
+            local EmoteInitializationGeneration = EmoteSessionGeneration
+            local function BuildEmoteCatalog()
+                if
+                    EmoteInitializationGeneration ~= EmoteSessionGeneration
+                    or not IsEmoteUnlockEnabled()
+                    or EmoteSession
+                then
+                    return true
+                end
+                local EmoteWheelGui = PlayerGui:FindFirstChild("EmoteWheel")
+                local EmoteWheelList = EmoteWheelGui and EmoteWheelGui:FindFirstChild("List")
+                local OriginalEmoteContent = EmoteWheelList and EmoteWheelList:FindFirstChild("Content")
+                local EmoteCardTemplate = OriginalEmoteContent
+                    and OriginalEmoteContent:FindFirstChild("TEMPLATE", true)
+                local MiscFolder = ReplicatedStorage:FindFirstChild("Misc")
+                local EmotesFolder = MiscFolder and MiscFolder:FindFirstChild("Emotes")
+                if not EmoteWheelGui or not OriginalEmoteContent or not EmotesFolder then
+                    return false
+                end
+                local controllers = ReplicatedStorage:FindFirstChild("Controllers")
+                local shared = ReplicatedStorage:FindFirstChild("Shared")
+                local packages = ReplicatedStorage:FindFirstChild("Packages")
+                local wheelModule = controllers and controllers:FindFirstChild("EmoteWheelController")
+                local controllerModule = controllers and controllers:FindFirstChild("EmoteController")
+                local sharedModule = shared and shared:FindFirstChild("EmotesShared")
+                local troveModule = packages and packages:FindFirstChild("Trove")
+                if not wheelModule or not controllerModule or not sharedModule or not troveModule then
+                    return false
+                end
+                local EmoteWheelController = require(wheelModule)
+                local EmoteController = require(controllerModule)
+                local EmotesModule = require(sharedModule)
+                local TroveModule = require(troveModule)
+                local itemInfoModule = shared:FindFirstChild("ItemInfo")
+                local EmoteItemInfo = itemInfoModule and require(itemInfoModule).Emote or {}
+                if type(EmotesModule.Play) ~= "function" then
+                    return false
+                end
+                if EmoteInitializationGeneration ~= EmoteSessionGeneration or not IsEmoteUnlockEnabled() then
+                    return true
+                end
+                local CurrentEmoteSession = {
+                    Gui = EmoteWheelGui,
+                    Wheel = EmoteWheelController,
+                    Source = OriginalEmoteContent,
+                    SourceVisible = OriginalEmoteContent.Visible,
+                    Connections = {},
+                    Hooks = {},
+                    Catalog = {},
+                    Cards = {},
+                    OriginalButtons = {},
+                }
+                EmoteSession = CurrentEmoteSession
+                local function IsCurrentEmoteSession()
+                    return EmoteSession == CurrentEmoteSession
+                        and EmoteInitializationGeneration == EmoteSessionGeneration
+                        and IsEmoteUnlockEnabled()
+                end
+                local function ConnectEmoteSignal(signal, callback)
+                    local connection = signal:Connect(function(...)
+                        if IsCurrentEmoteSession() then
+                            return callback(...)
+                        end
+                    end)
+                    CurrentEmoteSession.Connections[#CurrentEmoteSession.Connections + 1] = connection
+                end
+                local catalog = {}
+                if #EmotesFolder:GetChildren() == 0 then
+                    EmoteSession = nil
+                    return false
+                end
+                for _, EmoteAnimation in ipairs(EmotesFolder:GetChildren()) do
+                    if
+                        EmoteAnimation:IsA("Animation")
+                        and EmoteAnimation.AnimationId ~= ""
+                        and EmoteAnimation.AnimationId ~= "rbxassetid://0"
+                    then
+                        CurrentEmoteSession.Catalog[EmoteAnimation.Name] = EmoteAnimation
+                        catalog[#catalog + 1] = EmoteAnimation
+                    end
+                end
+                if #catalog == 0 then
+                    EmoteSession = nil
+                    return false
+                end
+                table.sort(catalog, function(a, b)
+                    local an, bn =
+                        a:GetAttribute("EmoteName") or a.Name, b:GetAttribute("EmoteName") or b.Name
+                    return an == bn and a.Name < b.Name or an < bn
+                end)
+                local slots = {}
+                for key, name in
+                    pairs(type(UnlockSettings.EmoteSlots) == "table" and UnlockSettings.EmoteSlots or {})
+                do
+                    local slot = tonumber(key)
+                    if
+                        slot
+                        and slot == math.floor(slot)
+                        and slot >= 1
+                        and slot <= 40
+                        and type(name) == "string"
+                        and CurrentEmoteSession.Catalog[name]
+                    then
+                        slots[tostring(slot)] = name
+                    end
+                end
+                UnlockSettings.EmoteSlots = slots
+                local function UpdateEmoteButton(button, EmoteAnimation)
+                    local info = EmoteItemInfo[EmoteAnimation.Name] or {}
+                    local name = EmoteAnimation:GetAttribute("EmoteName")
+                        or info.DisplayName
+                        or EmoteAnimation.Name
+                    local icon = EmoteAnimation:GetAttribute("Icon") or info.Icon or ""
+                    button:SetAttribute("EmoteId", EmoteAnimation.Name)
+                    button:SetAttribute("EmoteName", name)
+                    button:SetAttribute("Icon", icon)
+                    local vector = button:FindFirstChild("Vector")
+                    if vector then
+                        vector.Image = icon
+                    elseif button:IsA("ImageButton") then
+                        button.Image = icon
+                    end
+                    local label = button:FindFirstChild("ItemName")
+                        or button:FindFirstChild("Title")
+                        or button:FindFirstChild("Text")
+                    if label and label:IsA("TextLabel") then
+                        label.Text = name
+                    end
+                end
+                local function UpdateEmoteSlot(button, animation)
+                    if not CurrentEmoteSession.OriginalButtons[button] then
+                        local vector = button:FindFirstChild("Vector")
+                        local title = button:FindFirstChild("Title")
+                        CurrentEmoteSession.OriginalButtons[button] = {
+                            EmoteId = button:GetAttribute("EmoteId"),
+                            EmoteName = button:GetAttribute("EmoteName"),
+                            Icon = button:GetAttribute("Icon"),
+                            Image = (button:IsA("ImageButton") or button:IsA("ImageLabel")) and button.Image,
+                            VectorImage = vector and vector.Image,
+                            TitleText = title and title.Text,
+                        }
+                    end
+                    UpdateEmoteButton(button, animation)
+                end
+                CurrentEmoteSession.Refresh = function()
+                    if not IsCurrentEmoteSession() then
+                        return
+                    end
+                    local wheelGui, menu =
+                        EmoteWheelGui:FindFirstChild("Wheel"), EmoteWheelGui:FindFirstChild("Menu")
+                    local holder = wheelGui and wheelGui:FindFirstChild("Holder")
+                    local menuContent = menu and menu:FindFirstChild("Content")
+                    local page = math.clamp(math.floor(tonumber(EmoteWheelController.page) or 1), 1, 5)
+                    for key, name in pairs(UnlockSettings.EmoteSlots) do
+                        local slot, EmoteAnimation = tonumber(key), CurrentEmoteSession.Catalog[name]
+                        if slot and EmoteAnimation then
+                            if holder and math.floor((slot - 1) / 8) + 1 == page then
+                                local button = holder:FindFirstChild(tostring((slot - 1) % 8 + 1))
+                                if button then
+                                    UpdateEmoteSlot(button, EmoteAnimation)
+                                end
+                            end
+                            local button = menuContent and menuContent:FindFirstChild(tostring(slot))
+                            if button then
+                                UpdateEmoteSlot(button, EmoteAnimation)
+                            end
+                        end
+                    end
+                end
+                local function PlayEmote(name)
+                    if not IsCurrentEmoteSession() then
+                        return
+                    end
+                    local EmoteCharacter, EmoteAnimation = Player.Character, CurrentEmoteSession.Catalog[name]
+                    local EmoteHumanoid = EmoteCharacter and EmoteCharacter:FindFirstChildOfClass("Humanoid")
+                    if
+                        not EmoteAnimation
+                        or not EmoteHumanoid
+                        or EmoteHumanoid.Health <= 0
+                        or EmoteHumanoid.MoveDirection.Magnitude > 0
+                    then
+                        return
+                    end
+                    StopEmotePlayback(CurrentEmoteSession)
+                    local EmotePlayback = {
+                        Character = EmoteCharacter,
+                        Trove = TroveModule.new(),
+                        Connections = {},
+                        Name = EmoteAnimation:GetAttribute("EmoteName") or name,
+                        PreviousEmoting = EmoteCharacter:GetAttribute("Emoting"),
+                    }
+                    CurrentEmoteSession.Playback = EmotePlayback
+                    EmoteCharacter:SetAttribute("Emoting", EmotePlayback.Name)
+                    local function WatchEmotePlayback(signal, callback)
+                        EmotePlayback.Connections[#EmotePlayback.Connections + 1] = signal:Connect(callback)
+                    end
+                    WatchEmotePlayback(EmoteHumanoid:GetPropertyChangedSignal("MoveDirection"), function()
+                        if
+                            CurrentEmoteSession.Playback == EmotePlayback
+                            and EmoteHumanoid.MoveDirection.Magnitude > 0
+                        then
+                            StopEmotePlayback(CurrentEmoteSession)
+                        end
+                    end)
+                    WatchEmotePlayback(EmoteHumanoid.Died, function()
+                        if CurrentEmoteSession.Playback == EmotePlayback then
+                            StopEmotePlayback(CurrentEmoteSession)
+                        end
+                    end)
+                    EmotesModule:Play(
+                        EmoteCharacter,
+                        EmotePlayback.Trove,
+                        name,
+                        true,
+                        workspace:GetServerTimeNow(),
+                        1,
+                        nil,
+                        false
+                    )
+                    if
+                        CurrentEmoteSession.Playback == EmotePlayback
+                        and (not IsCurrentEmoteSession() or Player.Character ~= EmoteCharacter)
+                    then
+                        StopEmotePlayback(CurrentEmoteSession)
+                    end
+                end
+                local function HookEmoteMethod(module, method, wrap)
+                    local original = module[method]
+                    if type(original) ~= "function" then
+                        return
+                    end
+                    local wrapper = wrap(original)
+                    CurrentEmoteSession.Hooks[#CurrentEmoteSession.Hooks + 1] =
+                        { Module = module, Method = method, Original = original, Wrapper = wrapper }
+                    module[method] = wrapper
+                end
+                local excluded = {}
+                for _, child in ipairs(OriginalEmoteContent:GetChildren()) do
+                    if child:IsA("GuiObject") then
+                        excluded[child] = child.Archivable
+                        child.Archivable = false
+                    end
+                end
+                for _, child in ipairs(OriginalEmoteContent:GetDescendants()) do
+                    if child:IsA("GuiButton") and excluded[child] == nil then
+                        excluded[child] = child.Archivable
+                        child.Archivable = false
+                    end
+                end
+                local sourceArchivable = OriginalEmoteContent.Archivable
+                OriginalEmoteContent.Archivable = true
+                local EmoteCatalogContainer = OriginalEmoteContent:Clone()
+                OriginalEmoteContent.Archivable = sourceArchivable
+                for child, archivable in pairs(excluded) do
+                    child.Archivable = archivable
+                end
+                if not EmoteCatalogContainer then
+                    DisposeEmoteSession()
+                    return true
+                end
+                CurrentEmoteSession.Container = EmoteCatalogContainer
+                EmoteCatalogContainer.Name = "UnlockAllEmoteContent"
+                local IsScrollingContainer = EmoteCatalogContainer:IsA("ScrollingFrame")
+                if IsScrollingContainer then
+                    EmoteCatalogContainer.CanvasPosition = Vector2.zero
+                    EmoteCatalogContainer.AutomaticCanvasSize = Enum.AutomaticSize.None
+                    EmoteCatalogContainer.ScrollingDirection = Enum.ScrollingDirection.Y
+                    EmoteCatalogContainer.ScrollingEnabled = true
+                    EmoteCatalogContainer.ScrollBarThickness =
+                        math.max(OriginalEmoteContent.ScrollBarThickness, 6)
+                end
+                EmoteCatalogContainer.Visible = true
+                EmoteCatalogContainer.Parent = OriginalEmoteContent.Parent
+                OriginalEmoteContent.Visible = false
+                ConnectEmoteSignal(OriginalEmoteContent:GetPropertyChangedSignal("Visible"), function()
+                    if OriginalEmoteContent.Visible then
+                        OriginalEmoteContent.Visible = false
+                    end
+                end)
+                local grid = EmoteCatalogContainer:FindFirstChildWhichIsA("UIGridLayout")
+                if not grid then
+                    grid = Instance.new("UIGridLayout")
+                    grid.CellSize = UDim2.fromOffset(100, 100)
+                    grid.CellPadding = UDim2.fromOffset(8, 8)
+                    grid.SortOrder = Enum.SortOrder.LayoutOrder
+                    grid.Parent = EmoteCatalogContainer
+                end
+                local function ResizeCanvas()
+                    if grid and IsScrollingContainer then
+                        EmoteCatalogContainer.CanvasSize = UDim2.fromOffset(0, grid.AbsoluteContentSize.Y + 8)
+                    end
+                end
+                if grid then
+                    ConnectEmoteSignal(grid:GetPropertyChangedSignal("AbsoluteContentSize"), ResizeCanvas)
+                end
+                local search = EmoteWheelList:FindFirstChild("SearchInput", true)
+                local function Filter()
+                    local query = string.lower(search and search.Text or ""):match("^%s*(.-)%s*$")
+                    for _, entry in ipairs(CurrentEmoteSession.Cards) do
+                        entry.Button.Visible = query == "" or string.find(entry.Search, query, 1, true) ~= nil
+                    end
+                    ResizeCanvas()
+                end
+                if search then
+                    ConnectEmoteSignal(search:GetPropertyChangedSignal("Text"), Filter)
+                end
+                local SelectedEmoteSlot = 1
+                local function WatchEmoteSlots(container)
+                    if not container then
+                        return
+                    end
+                    for _, button in ipairs(container:GetChildren()) do
+                        local slot = tonumber(button.Name)
+                        if slot and button:IsA("GuiButton") then
+                            ConnectEmoteSignal(button.Activated, function()
+                                SelectedEmoteSlot = slot
+                            end)
+                        end
+                    end
+                end
+                local wheel = EmoteWheelGui:FindFirstChild("Wheel")
+                local menu = EmoteWheelGui:FindFirstChild("Menu")
+                WatchEmoteSlots(wheel and wheel:FindFirstChild("Holder"))
+                WatchEmoteSlots(menu and menu:FindFirstChild("Content"))
+                local function ApplySelectedEmote(name)
+                    if not IsCurrentEmoteSession() or not CurrentEmoteSession.Catalog[name] then
+                        return
+                    end
+                    local slot = math.floor(tonumber(EmoteWheelController.selected) or SelectedEmoteSlot)
+                    if EmoteWheelController.type == "Menu" then
+                        slot = math.clamp(slot, 1, 40)
+                    else
+                        local page = math.clamp(math.floor(tonumber(EmoteWheelController.page) or 1), 1, 5)
+                        slot = math.clamp(slot, 1, 8) + (page - 1) * 8
+                    end
+                    local key = tostring(slot)
+                    if UnlockSettings.EmoteSlots[key] ~= name then
+                        UnlockSettings.EmoteSlots[key] = name
+                        SaveUnlockSettings()
+                    end
+                    CurrentEmoteSession.Refresh()
+                    if type(EmoteWheelController.updateCenterText) == "function" then
+                        EmoteWheelController.updateCenterText(EmoteWheelController)
+                    end
+                end
+                local YieldDeadline = os.clock() + 0.002
+                local function YieldIfBusy()
+                    if os.clock() >= YieldDeadline then
+                        RunService.Heartbeat:Wait()
+                        YieldDeadline = os.clock() + 0.002
+                    end
+                    return IsCurrentEmoteSession()
+                end
+                local function BuildFallbackCards()
+                    for index, EmoteAnimation in ipairs(catalog) do
+                        if not YieldIfBusy() then
+                            return false
+                        end
+                        local EmoteCard
+                        if EmoteCardTemplate and EmoteCardTemplate:IsA("GuiObject") then
+                            local archivable = EmoteCardTemplate.Archivable
+                            EmoteCardTemplate.Archivable = true
+                            EmoteCard = EmoteCardTemplate:Clone()
+                            EmoteCardTemplate.Archivable = archivable
+                        else
+                            EmoteCard = Instance.new("ImageButton")
+                            EmoteCard.Size = UDim2.fromOffset(100, 100)
+                            EmoteCard.BackgroundTransparency = 1
+                            local label = Instance.new("TextLabel")
+                            label.Name = "Title"
+                            label.Size = UDim2.new(1, 0, 0, 24)
+                            label.Position = UDim2.new(0, 0, 1, -24)
+                            label.BackgroundTransparency = 1
+                            label.TextColor3 = Color3.new(1, 1, 1)
+                            label.TextScaled = true
+                            label.Parent = EmoteCard
+                        end
+                        EmoteCard.Name = "UnlockEmote_" .. EmoteAnimation.Name
+                        EmoteCard.LayoutOrder = index
+                        UpdateEmoteButton(EmoteCard, EmoteAnimation)
+                        for _, childName in ipairs({ "Lock", "Favorite", "Delete" }) do
+                            local child = EmoteCard:FindFirstChild(childName)
+                            if child and child:IsA("GuiObject") then
+                                child.Visible = false
+                            end
+                        end
+                        EmoteCard.Visible = true
+                        EmoteCard.Parent = EmoteCatalogContainer
+                        CurrentEmoteSession.Cards[#CurrentEmoteSession.Cards + 1] = {
+                            Button = EmoteCard,
+                            Search = string.lower(
+                                (EmoteAnimation:GetAttribute("EmoteName") or EmoteAnimation.Name)
+                                    .. " "
+                                    .. EmoteAnimation.Name
+                            ),
+                        }
+                        local button = EmoteCard:IsA("GuiButton") and EmoteCard
+                            or EmoteCard:FindFirstChildWhichIsA("GuiButton", true)
+                        if button then
+                            ConnectEmoteSignal(button.Activated, function()
+                                ApplySelectedEmote(EmoteAnimation.Name)
+                            end)
+                        end
+                    end
+                    return true
+                end
+                HookEmoteMethod(EmoteController, "Play", function(original)
+                    return function(self, name, ...)
+                        if IsCurrentEmoteSession() and CurrentEmoteSession.Catalog[name] then
+                            return PlayEmote(name)
+                        end
+                        return original(self, name, ...)
+                    end
+                end)
+                for _, method in ipairs({ "UpdateHolderEmotes", "UpdateMenuContentEmotes", "updatePage" }) do
+                    HookEmoteMethod(EmoteWheelController, method, function(original)
+                        return function(self, ...)
+                            local results = table.pack(original(self, ...))
+                            CurrentEmoteSession.Refresh()
+                            return table.unpack(results, 1, results.n)
+                        end
+                    end)
+                end
+                ConnectEmoteSignal(Player.CharacterAdded, function()
+                    StopEmotePlayback(CurrentEmoteSession)
+                end)
+                ConnectEmoteSignal(Player.CharacterAppearanceLoaded, function()
+                    CurrentEmoteSession.Refresh()
+                end)
+                ConnectEmoteSignal(EmoteWheelGui.AncestryChanged, function()
+                    if not EmoteWheelGui.Parent then
+                        DisposeEmoteSession()
+                    end
+                end)
+                local inventoryModule = shared:FindFirstChild("Inventory")
+                local inventorySharedModule = inventoryModule and inventoryModule:FindFirstChild("Shared")
+                local trading = controllers:FindFirstChild("Trading")
+                local inventoryControllerModule = trading and trading:FindFirstChild("InventoryController")
+                if inventoryModule and inventorySharedModule and inventoryControllerModule then
+                    local InventoryClient = require(inventoryModule).Client
+                    local InventoryShared = require(inventorySharedModule)
+                    local InventoryController = require(inventoryControllerModule)
+                    local inventory = InventoryClient:GetInventory()
+                    local emoteInventory = table.clone(inventory.Emote or {})
+                    local ownedNames = {}
+                    for _, owned in pairs(emoteInventory) do
+                        if type(owned) == "table" and owned.Name then
+                            ownedNames[owned.Name] = true
+                        end
+                    end
+                    local itemsByName, itemsList, idsByKey = {}, {}, {}
+                    for _, animation in ipairs(catalog) do
+                        if not ownedNames[animation.Name] then
+                            local item = { Name = animation.Name, Id = "UnlockAll:Emote:" .. animation.Name, CreatedAt = 0 }
+                            itemsByName[item.Name] = item
+                            itemsList[#itemsList + 1] = item
+                            local key = InventoryShared:ItemToKey("Emote", item, { "Id" })
+                            idsByKey[key] = item.Id
+                        end
+                    end
+                    HookEmoteMethod(InventoryClient, "GetInventory", function(original)
+                        return function(self, ...)
+                            local real = original(self, ...)
+                            if not IsCurrentEmoteSession() then
+                                return real
+                            end
+                            local merged = table.clone(real)
+                            merged.Emote = table.clone(real.Emote or {})
+                            for _, item in pairs(itemsByName) do
+                                merged.Emote[item.Id] = item
+                            end
+                            return merged
+                        end
+                    end)
+                    HookEmoteMethod(InventoryClient, "GetItem", function(original)
+                        return function(self, itemType, id, ...)
+                            local name = itemType == "Emote" and tostring(id):match("^UnlockAll:Emote:(.+)$")
+                            if IsCurrentEmoteSession() and name and itemsByName[name] then
+                                return itemsByName[name]
+                            end
+                            return original(self, itemType, id, ...)
+                        end
+                    end)
+                    HookEmoteMethod(InventoryClient, "FindItemsWithKey", function(original)
+                        return function(self, itemType, key, ...)
+                            if IsCurrentEmoteSession() and itemType == "Emote" and idsByKey[key] then
+                                return { idsByKey[key] }
+                            end
+                            return original(self, itemType, key, ...)
+                        end
+                    end)
+                    if type(InventoryShared.CreateFakeReplion) == "function"
+                        and type(InventoryController.CreateInventory) == "function"
+                        and type(EmoteWheelController.populateEmoteList) == "function" then
+                        local replion = InventoryShared.CreateFakeReplion()
+                        replion.Data = { Inventory = { Emote = emoteInventory } }
+                        local caller = { Replion = replion }
+                        HookEmoteMethod(InventoryController, "CreateInventory", function(original)
+                            return function(self, config, ...)
+                                if not IsCurrentEmoteSession() or config.InventoryType ~= "Emote" then
+                                    return original(self, config, ...)
+                                end
+                                if CurrentEmoteSession.View then
+                                    return CurrentEmoteSession.View
+                                end
+                                local options = table.clone(config)
+                                options.Caller = caller
+                                options.Container = EmoteCatalogContainer
+                                options.WatchOnChange = false
+                                options.FindItemsWithKey = function(itemType, key)
+                                    local id = itemType == "Emote" and idsByKey[key]
+                                    if id then
+                                        return emoteInventory[id] and { id } or {}
+                                    end
+                                    return InventoryShared:FindItemsWithKey(caller, itemType, key)
+                                end
+                                local onSlotCreated = options.OnSlotCreated
+                                options.OnSlotCreated = function(itemType, item, key, button, trove)
+                                    if onSlotCreated then
+                                        onSlotCreated(itemType, item, key, button, trove)
+                                    end
+                                    if item and itemsByName[item.Name] and button then
+                                        if typeof(getconnections) == "function" then
+                                            for _, connection in ipairs(getconnections(button.Activated)) do
+                                                connection:Disconnect()
+                                            end
+                                        end
+                                        ConnectEmoteSignal(button.Activated, function()
+                                            ApplySelectedEmote(item.Name)
+                                        end)
+                                    end
+                                end
+                                CurrentEmoteSession.View = original(self, options, ...)
+                                return CurrentEmoteSession.View
+                            end
+                        end)
+                        local createSortOptions = InventoryController.CreateSortOptions
+                        if type(createSortOptions) == "function" then
+                            InventoryController.CreateSortOptions = function() end
+                        end
+                        local populated = pcall(EmoteWheelController.populateEmoteList, EmoteWheelController)
+                        InventoryController.CreateSortOptions = createSortOptions
+                        if populated and CurrentEmoteSession.View then
+                            local view = CurrentEmoteSession.View
+                            if type(view.TriggerUpdate) == "function" then
+                                for _, item in ipairs(itemsList) do
+                                    if not YieldIfBusy() then
+                                        return true
+                                    end
+                                    if not emoteInventory[item.Id] then
+                                        emoteInventory[item.Id] = item
+                                        view.TriggerUpdate(item, "Insert")
+                                    end
+                                end
+                            end
+                            EmoteCatalogContainer.Visible = true
+                            OriginalEmoteContent.Visible = false
+                        end
+                    end
+                end
+                if not CurrentEmoteSession.View then
+                    if not BuildFallbackCards() then
+                        return true
+                    end
+                    Filter()
+                end
+                CurrentEmoteSession.Refresh()
+                return true
+            end
+            local function TryBuild()
+                local ok, built = pcall(BuildEmoteCatalog)
+                if ok then
+                    return built
+                end
+                warn("[Unlocker] Emote unlock failed: " .. tostring(built))
+                DisposeEmoteSession()
+                return true
+            end
+            if TryBuild() then
+                return
+            end
+            task.spawn(function()
+                while
+                    EmoteInitializationGeneration == EmoteSessionGeneration
+                    and IsEmoteUnlockEnabled()
+                    and not EmoteSession
+                do
+                    if TryBuild() then
+                        return
+                    end
+                    task.wait(0.25)
+                end
+            end)
+        end
+        Env._Unlock_InitializeEmotes = InitializeEmoteUnlocks
+        RegisterSuspendCallback(DisposeEmoteSession)
+        RegisterRestoreCallback(function()
+            AreEmotesDisposed = true
+            DisposeEmoteSession()
+            if Env._Unlock_InitializeEmotes == InitializeEmoteUnlocks then
+                Env._Unlock_InitializeEmotes = nil
+            end
+        end)
+        ConnectUnlockSignal(PlayerGui.ChildAdded, function(child)
+            if child.Name == "EmoteWheel" then
+                task.defer(InitializeEmoteUnlocks)
+            end
+        end)
+    end
+
+    local function IsLocalPlayerName(name)
+        return type(name) == "string" and (name == Player.DisplayName or name == Player.Name)
+    end
+    local function GetEquippedFinisherName()
+        if not Env.Unlock_Enabled then
+            return false
+        end
+        local sword = Env.Sword_Name
+        return (sword and Env.FinisherEquipped[sword]) and sword or false
+    end
+
+    local FinishersController = require(ReplicatedStorage.Controllers.FinishersController)
+    local RecentKillWindowSeconds = 4
+    local LastVictimClone, LastKillTime, IsFinisherPlaying = nil, 0, false
+    local FinisherClonesByName, LastVictimName = {}, nil
+    local CachedOpponentCharacters = {}
+
+    local function TrackOpponentCharacter(OpponentPlayer)
+        if OpponentPlayer == Player then
+            return
+        end
+        if OpponentPlayer.Character then
+            CachedOpponentCharacters[OpponentPlayer] = OpponentPlayer.Character
+        end
+        ConnectUnlockSignal(OpponentPlayer.CharacterAdded, function(OpponentCharacter)
+            CachedOpponentCharacters[OpponentPlayer] = OpponentCharacter
+        end)
+    end
+    for _, OpponentPlayer in ipairs(Players:GetPlayers()) do
+        TrackOpponentCharacter(OpponentPlayer)
+    end
+    ConnectUnlockSignal(Players.PlayerAdded, TrackOpponentCharacter)
+    ConnectUnlockSignal(Players.PlayerRemoving, function(OpponentPlayer)
+        CachedOpponentCharacters[OpponentPlayer] = nil
+    end)
+
+    local function CreateFinisherCharacterClone(character)
+        local clone = character:Clone()
+        for _, desc in ipairs(clone:GetDescendants()) do
+            if desc:IsA("Script") or desc:IsA("LocalScript") then
+                desc:Destroy()
+            end
+        end
+        for _, child in ipairs(clone:GetChildren()) do
+            if child:IsA("Tool") then
+                child:Destroy()
+            end
+        end
+        local OpponentHumanoid = clone:FindFirstChildOfClass("Humanoid")
+        if OpponentHumanoid then
+            OpponentHumanoid.Health, OpponentHumanoid.BreakJointsOnDeath = OpponentHumanoid.MaxHealth, false
+            if not OpponentHumanoid:FindFirstChildOfClass("Animator") then
+                Instance.new("Animator").Parent = OpponentHumanoid
+            end
+        end
+        local CloneRoot = clone:FindFirstChild("HumanoidRootPart")
+        if CloneRoot then
+            clone.PrimaryPart = CloneRoot
+        end
+        for _, desc in ipairs(clone:GetDescendants()) do
+            if desc:IsA("BasePart") then
+                desc.Anchored, desc.CanCollide, desc.Massless = false, false, true
+            end
+        end
+        clone.Parent = workspace
+        return clone
+    end
+
+    local function CacheFinisherClone(name, displayName, clone)
+        local entry = { clone = clone }
+        FinisherClonesByName[name] = entry
+        if displayName then
+            FinisherClonesByName[displayName] = entry
+        end
+    end
+
+    local function EnsureFinisherClone(victimName)
+        local entry = FinisherClonesByName[victimName]
+        if entry and entry.clone and entry.clone.Parent then
+            return
+        end
+        for _, OpponentPlayer in ipairs(Players:GetPlayers()) do
+            if
+                OpponentPlayer ~= Player
+                and (OpponentPlayer.Name == victimName or OpponentPlayer.DisplayName == victimName)
+            then
+                local OpponentCharacter, OpponentHumanoid =
+                    OpponentPlayer.Character,
+                    OpponentPlayer.Character and OpponentPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if OpponentCharacter and OpponentHumanoid and OpponentHumanoid.Health > 0 then
+                    if entry and entry.clone then
+                        entry.clone:Destroy()
+                    end
+                    local clone = CreateFinisherCharacterClone(OpponentCharacter)
+                    local CloneRoot = clone:FindFirstChild("HumanoidRootPart")
+                    if CloneRoot then
+                        CloneRoot.Anchored = true
+                        CloneRoot.CFrame = CFrame.new(0, -500, 0)
+                    end
+                    CacheFinisherClone(OpponentPlayer.Name, OpponentPlayer.DisplayName, clone)
+                end
+                break
+            end
+        end
+    end
+
+    ClearFinisherClones = function()
+        for k, entry in pairs(FinisherClonesByName) do
+            if entry and entry.clone then
+                entry.clone:Destroy()
+            end
+            FinisherClonesByName[k] = nil
+        end
+    end
+
+    local function TakeFinisherClone(victimName)
+        local entry = FinisherClonesByName[victimName]
+        if not entry or not entry.clone or not entry.clone.Parent then
+            return nil
+        end
+        for k, v in pairs(FinisherClonesByName) do
+            if v == entry then
+                FinisherClonesByName[k] = nil
+            end
+        end
+        return entry.clone
+    end
+
+    local function FindVictimCharacter(victimName)
+        local victim = Players:FindFirstChild(victimName)
+        if victim then
+            return victim.Character or CachedOpponentCharacters[victim]
+        end
+        for OpponentPlayer, OpponentCharacter in pairs(CachedOpponentCharacters) do
+            if
+                (OpponentPlayer.Name == victimName or OpponentPlayer.DisplayName == victimName)
+                and OpponentCharacter
+            then
+                return OpponentCharacter
+            end
+        end
+    end
+
+    local OriginalTeleportHandlers = {}
+    for _, c in getconnections(ReplicatedStorage.Remotes.LocalTeleport.OnClientEvent) do
+        if c and c.Function then
+            table.insert(OriginalTeleportHandlers, { conn = c, func = c.Function })
+            DisableGameConnection(c)
+        end
+    end
+    local DeferredTeleportArguments = nil
+    local FinisherPlaybackState = nil
+    StopFinisherPlayback = function(expectedState, replayTeleport)
+        if expectedState and FinisherPlaybackState ~= expectedState then
+            return false
+        end
+        local state = FinisherPlaybackState
+        FinisherPlaybackState = nil
+        IsFinisherPlaying = false
+        local teleport = DeferredTeleportArguments
+        DeferredTeleportArguments = nil
+        if state then
+            do
+                if state.Root and state.Root.Parent then
+                    state.Root.CFrame = state.CFrame
+                    state.Root.Anchored = state.Anchored
+                end
+            end
+            state.VictimClone:Destroy()
+            state.KillerClone:Destroy()
+        end
+        if LastVictimClone then
+            LastVictimClone:Destroy()
+        end
+        LastVictimClone, LastVictimName = nil, nil
+        if replayTeleport ~= false and teleport then
+            for _, entry in ipairs(OriginalTeleportHandlers) do
+                entry.func(table.unpack(teleport, 1, teleport.n))
+            end
+        end
+        return true
+    end
+    ConnectUnlockSignal(ReplicatedStorage.Remotes.LocalTeleport.OnClientEvent, function(...)
+        if Env.Unlock_Enabled and IsFinisherPlaying then
+            DeferredTeleportArguments = table.pack(...)
+            return
+        end
+        for _, entry in ipairs(OriginalTeleportHandlers) do
+            entry.func(...)
+        end
+    end)
+
+    ConnectUnlockSignal(Player.CharacterAdded, function()
+        StopFinisherPlayback(nil, false)
+        ClearFinisherClones()
+    end)
+
+    local PlayFinisherRemote = ReplicatedStorage.Packages._Index["sleitnick_net@0.1.0"].net["RE/PlayFinisher"]
+    local HasServerFinisherPlayed = false
+    for _, c in getconnections(PlayFinisherRemote.OnClientEvent) do
+        if c and c.Function then
+            local originalHandler = c.Function
+            DisableGameConnection(c)
+            ConnectUnlockSignal(
+                PlayFinisherRemote.OnClientEvent,
+                function(finisherName, killerPlayer, victimPlayer, ...)
+                    local EquippedFinisherName = GetEquippedFinisherName()
+                    if killerPlayer == Player and EquippedFinisherName then
+                        HasServerFinisherPlayed = true
+                        originalHandler(EquippedFinisherName, killerPlayer, victimPlayer, ...)
+                    else
+                        originalHandler(finisherName, killerPlayer, victimPlayer, ...)
+                    end
+                end
+            )
+            break
+        end
+    end
+
+    ConnectUnlockSignal(ReplicatedStorage.Remotes.Killed.OnClientEvent, function(victimName)
+        if not GetEquippedFinisherName() or IsLocalPlayerName(victimName) then
+            return
+        end
+        LastVictimName = victimName
+        EnsureFinisherClone(victimName)
+        local victimChar = FindVictimCharacter(victimName)
+        if not victimChar then
+            return
+        end
+        local prevClone = LastVictimClone
+        if prevClone then
+            task.delay(0.6, function()
+                if prevClone ~= LastVictimClone then
+                    prevClone:Destroy()
+                end
+            end)
+        end
+        local clone = CreateFinisherCharacterClone(victimChar)
+        do
+            local CloneRoot = clone:FindFirstChild("HumanoidRootPart")
+            if CloneRoot then
+                CloneRoot.Anchored = true
+                CloneRoot.CFrame = CFrame.new(0, -500, 0)
+            end
+        end
+        LastVictimClone, LastKillTime, HasServerFinisherPlayed = clone, os.clock(), false
+    end)
+
+    ConnectUnlockSignal(ReplicatedStorage.Remotes.WinnerText.OnClientEvent, function(text)
+        if IsFinisherPlaying then
+            return
+        end
+        if type(text) ~= "string" then
+            return
+        end
+        local winner = string.match(text, "^(.-)%s+[Ww]ins?!?$")
+        if not winner then
+            winner = (text:gsub("%s*[Ww]ins?!?%s*$", ""))
+        end
+        winner = winner and winner:match("^%s*(.-)%s*$")
+        if not IsLocalPlayerName(winner) then
+            return
+        end
+        local activeFinisher = GetEquippedFinisherName()
+        if not activeFinisher then
+            return
+        end
+        if HasServerFinisherPlayed then
+            HasServerFinisherPlayed = false
+            return
+        end
+
+        local lastVictim = TakeFinisherClone(LastVictimName)
+        if not lastVictim then
+            EnsureFinisherClone(LastVictimName)
+            lastVictim = TakeFinisherClone(LastVictimName)
+        end
+        if not lastVictim then
+            for name in pairs(FinisherClonesByName) do
+                lastVictim = TakeFinisherClone(name)
+                if lastVictim then
+                    break
+                end
+            end
+        end
+        if not lastVictim and not LastVictimClone then
+            return
+        end
+        if not lastVictim and (os.clock() - LastKillTime) > RecentKillWindowSeconds then
+            LastVictimClone:Destroy()
+            LastVictimClone = nil
+            return
+        end
+
+        local killerChar = Player.Character
+        if not killerChar then
+            return
+        end
+        local killerClone = CreateFinisherCharacterClone(killerChar)
+        local victimClone = lastVictim or LastVictimClone
+        local vhrp = victimClone:FindFirstChild("HumanoidRootPart")
+        if vhrp then
+            vhrp.Anchored = false
+        end
+        if lastVictim and LastVictimClone then
+            LastVictimClone:Destroy()
+        end
+        LastVictimClone = nil
+        IsFinisherPlaying = true
+
+        local centerCFrame
+        local balls = workspace:FindFirstChild("Balls")
+        if balls then
+            local bp = balls:FindFirstChildWhichIsA("BasePart", true)
+            if bp then
+                centerCFrame = CFrame.new(bp.Position + Vector3.new(0, 3, 0))
+            end
+        end
+        if not centerCFrame then
+            local CloneRoot = killerChar:FindFirstChild("HumanoidRootPart")
+            centerCFrame = CloneRoot and CFrame.new(CloneRoot.Position) or CFrame.new(0, 50, 0)
+        end
+        do
+            local vh = victimClone:FindFirstChild("HumanoidRootPart")
+            if vh then
+                vh.CFrame = centerCFrame
+            end
+        end
+        do
+            local kh = killerClone:FindFirstChild("HumanoidRootPart")
+            if kh then
+                kh.CFrame = centerCFrame * CFrame.new(0, 0, 4)
+            end
+        end
+
+        local realHRP = killerChar:FindFirstChild("HumanoidRootPart")
+        local state = {
+            Root = realHRP,
+            CFrame = realHRP and realHRP.CFrame,
+            Anchored = realHRP and realHRP.Anchored,
+            KillerClone = killerClone,
+            VictimClone = victimClone,
+        }
+        FinisherPlaybackState = state
+        if realHRP then
+            realHRP.Anchored = true
+            realHRP.CFrame = CFrame.new(0, -500, 0)
+        end
+        local played = pcall(
+            FinishersController.PlayFinisher,
+            FinishersController,
+            activeFinisher,
+            killerClone,
+            victimClone,
+            centerCFrame,
+            workspace:GetServerTimeNow()
+        )
+        if FinisherPlaybackState ~= state then
+            return
+        end
+        if
+            not played
+            or _ScriptUnloaded
+            or not Env.Unlock_Enabled
+            or IsUnlockSuspended
+            or IsUnlockDisposed
+        then
+            StopFinisherPlayback(state)
+            return
+        end
+
+        task.spawn(function()
+            local duration = 5
+            do
+                local df = ReplicatedStorage.Misc.DataFinishers:FindFirstChild(activeFinisher)
+                if df then
+                    duration = df:GetAttribute("Duration") or 5
+                end
+            end
+            task.wait(duration + 0.5)
+            if not StopFinisherPlayback(state) then
+                return
+            end
+            if _ScriptUnloaded or not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                return
+            end
+            if Env.Sword_Name and Player.Character == killerChar then
+                task.defer(function()
+                    if _ScriptUnloaded or not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                        return
+                    end
+                    local KillerCharacter = Player.Character
+                    if KillerCharacter ~= killerChar then
+                        return
+                    end
+                    for _, child in ipairs(KillerCharacter:GetChildren()) do
+                        if child:IsA("Tool") then
+                            child:Destroy()
+                        end
+                    end
+                    task.wait()
+                    if
+                        _ScriptUnloaded
+                        or not Env.Unlock_Enabled
+                        or IsUnlockSuspended
+                        or IsUnlockDisposed
+                        or Player.Character ~= KillerCharacter
+                    then
+                        return
+                    end
+                    local Swords = require(ReplicatedStorage.Shared.ReplicatedInstances.Swords)
+                    Swords:ForceEquipSwordTo(KillerCharacter, Env.Sword_Name)
+                    if Env._Sword_Function then
+                        Env._Sword_Function(Env.Sword_Name)
+                    end
+                end)
+            end
+        end)
+    end)
+
+    local IsInventoryUnlockInitialized = false
+    local function InitializeInventoryUnlocks()
+        if _ScriptUnloaded or IsUnlockDisposed or IsInventoryUnlockInitialized or not Env.Unlock_Enabled then
+            return
+        end
+        IsInventoryUnlockInitialized = true
+        local ShopController = require(ReplicatedStorage.Controllers.UI.ShopController)
+        local InventoryController = require(ReplicatedStorage.Controllers.Trading.InventoryController)
+        local function RefreshInventoryPage(itemType)
+            local page = ShopController._inventoryPages and ShopController._inventoryPages[itemType]
+            if not page then
+                return
+            end
+            if page.MarkDirty then
+                page.MarkDirty(nil, true, true)
+            elseif page.Scroll and page.Scroll.Sort then
+                page.Scroll.Sort()
+            end
+        end
+
+        local InventoryUnlockGeneration = 0
+        local IsInventoryUnlockWorkerRunning = false
+
+        local function DisableSignalAndGetOriginalHandler(signal)
+            local fn
+            for _, c in getconnections(signal) do
+                if c and c.Function then
+                    fn = fn or c.Function
+                    if c.Disable then
+                        DisableGameConnection(c)
+                    end
+                end
+            end
+            return fn
+        end
+
+        local UnlockableItemTypes = { Sword = true, Explosion = true }
+        local UnlockableItemCategories = { "Sword", "Explosion" }
+        local OriginalOwnershipByItem = {}
+        local InventoryClient = require(ReplicatedStorage.Shared.Inventory).Client
+        local CatalogLoadTimes = {}
+
+        local function ReadItemField(Value, field)
+            local value = Value[field]
+            if type(value) == "table" and type(value.Get) == "function" then
+                return value:Get()
+            end
+            return value
+        end
+
+        local function WriteItemField(Value, field, value)
+            local state = Value[field]
+            if type(state) == "table" and type(state.Set) == "function" then
+                state:Set(value)
+            else
+                Value[field] = value
+            end
+        end
+
+        local function LoadUnlockableCatalogs()
+            for _, Category in ipairs(UnlockableItemCategories) do
+                if not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                    return
+                end
+                local now = os.clock()
+                local list = ShopController._virtualItems and ShopController._virtualItems[Category]
+                if
+                    not CatalogLoadTimes[Category]
+                    or ((not list or next(list) == nil) and now - CatalogLoadTimes[Category] >= 2)
+                then
+                    CatalogLoadTimes[Category] = now
+                    if type(ShopController._loadInventoryPage) == "function" then
+                        ShopController._loadInventoryPage(Category)
+                    end
+                end
+            end
+        end
+
+        local function AreUnlockableCatalogsLoaded()
+            for _, Category in ipairs(UnlockableItemCategories) do
+                local list = ShopController._virtualItems and ShopController._virtualItems[Category]
+                if not list or next(list) == nil then
+                    return false
+                end
+            end
+            return true
+        end
+
+        local function ApplyLocalOwnership()
+            local updates = 0
+            if not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                return updates
+            end
+            for _, Category in ipairs(UnlockableItemCategories) do
+                local Shop_List = ShopController._virtualItems and ShopController._virtualItems[Category]
+                if not Shop_List then
+                    continue
+                end
+                local page = ShopController._inventoryPages and ShopController._inventoryPages[Category]
+                local items, seen = {}, {}
+                for _, Value in pairs(Shop_List) do
+                    if type(Value) == "table" and not seen[Value] then
+                        seen[Value] = true
+                        items[#items + 1] = Value
+                    end
+                end
+                for _, Value in ipairs(items) do
+                    if Value.Name == "Base Sword" or Value.Name == "Explosion Normal" then
+                        continue
+                    end
+                    local owned = ReadItemField(Value, "OwnsItem") == true
+                    if not owned or OriginalOwnershipByItem[Value] then
+                        if
+                            UnlockSettings.FakeDeleted
+                            and UnlockSettings.FakeDeleted[Category]
+                            and UnlockSettings.FakeDeleted[Category][Value.Name]
+                        then
+                            continue
+                        end
+                        local entry = OriginalOwnershipByItem[Value]
+                        if not entry then
+                            entry = {
+                                type = Category,
+                                OwnsItem = ReadItemField(Value, "OwnsItem"),
+                                Section = ReadItemField(Value, "Section"),
+                                ForceHide = ReadItemField(Value, "ForceHide"),
+                                InventoryKey = Value.InventoryKey,
+                                Key = Value.Key,
+                                Aliases = {},
+                            }
+                            OriginalOwnershipByItem[Value] = entry
+                        end
+                        if not entry.CanonicalKey or entry.Item ~= Value.Item or entry.Name ~= Value.Name then
+                            local ok, key = pcall(InventoryClient.ItemToKey, InventoryClient, Category, Value.Item)
+                            entry.CanonicalKey = ok and key or Value.Name
+                            entry.Item = Value.Item
+                            entry.Name = Value.Name
+                            entry.Hidden = string.find(Value.Name or "", "Awakened", 1, true) ~= nil
+                        end
+                        local key, hidden = entry.CanonicalKey, entry.Hidden
+                        local changed = not owned
+                            or ReadItemField(Value, "Section") ~= "Owned"
+                            or ReadItemField(Value, "ForceHide") ~= hidden
+                            or Value.InventoryKey ~= key
+                            or Value.Key ~= key
+                        if key and Shop_List[key] ~= Value then
+                            if Shop_List[key] == nil then
+                                entry.Aliases[#entry.Aliases + 1] = { List = Shop_List, Key = key }
+                                Shop_List[key] = Value
+                                changed = true
+                            end
+                        end
+                        if changed then
+                            updates += 1
+                            Value.InventoryKey = key
+                            Value.Key = key
+                            WriteItemField(Value, "OwnsItem", true)
+                            WriteItemField(Value, "Section", "Owned")
+                            WriteItemField(Value, "ForceHide", hidden)
+                        end
+                        if page and page.MarkDirty and (changed or entry.LastPage ~= page) then
+                            updates += 1
+                            page.MarkDirty(Value, false, true)
+                            entry.LastPage = page
+                        end
+                    end
+                end
+            end
+            return updates
+        end
+
+        local function RefreshInventoryUnlocks()
+            if
+                IsInventoryUnlockWorkerRunning
+                or not Env.Unlock_Enabled
+                or IsUnlockSuspended
+                or IsUnlockDisposed
+            then
+                return
+            end
+            IsInventoryUnlockWorkerRunning = true
+            InventoryUnlockGeneration += 1
+            local myToken = InventoryUnlockGeneration
+            task.spawn(function()
+                local reportedError, idlePasses = false, 0
+                while
+                    myToken == InventoryUnlockGeneration
+                    and Env.Unlock_Enabled
+                    and not IsUnlockSuspended
+                    and not IsUnlockDisposed
+                do
+                    local ok, updates = pcall(function()
+                        LoadUnlockableCatalogs()
+                        if myToken ~= InventoryUnlockGeneration then
+                            return 0
+                        end
+                        return ApplyLocalOwnership()
+                    end)
+                    if not ok and not reportedError then
+                        warn("[Unlocker] Inventory refresh failed: " .. tostring(updates))
+                    end
+                    reportedError = not ok
+                    if ok and updates == 0 and AreUnlockableCatalogsLoaded() then
+                        idlePasses += 1
+                        if idlePasses >= 3 then
+                            break
+                        end
+                    else
+                        idlePasses = 0
+                    end
+                    task.wait(1)
+                end
+                if myToken == InventoryUnlockGeneration then
+                    IsInventoryUnlockWorkerRunning = false
+                end
+            end)
+        end
+        Env._Unlock_DoUnlockAll = RefreshInventoryUnlocks
+
+        do
+            local GuiHandler = require(ReplicatedStorage.ClientGameModules.GuiHandler)
+            if GuiHandler and GuiHandler.OnGuiOpen then
+                ConnectUnlockSignal(GuiHandler:OnGuiOpen("Shop", function()
+                    if not Env.Unlock_Enabled then
+                        return
+                    end
+                    task.delay(0.3, function()
+                        if not Env.Unlock_Enabled then
+                            return
+                        end
+                        RefreshInventoryUnlocks()
+                        if Env._Unlock_ReapplyFavorites then
+                            Env._Unlock_ReapplyFavorites()
+                        end
+                    end)
+                end))
+            end
+        end
+
+        local OriginalSwordName = nil
+        local function RememberOriginalSword()
+            if OriginalSwordName then
+                return
+            end
+            local char = Player.Character
+            OriginalSwordName = (char and char:GetAttribute("CurrentlyEquippedSword")) or "Base Sword"
+        end
+        RememberOriginalSword()
+        Env._Unlock_CaptureOriginalSword = function()
+            OriginalSwordName = nil
+            RememberOriginalSword()
+        end
+        RegisterSuspendCallback(function()
+            InventoryUnlockGeneration += 1
+            table.clear(CatalogLoadTimes)
+            IsInventoryUnlockWorkerRunning = false
+            for Value, entry in pairs(OriginalOwnershipByItem) do
+                WriteItemField(Value, "OwnsItem", entry.OwnsItem)
+                WriteItemField(Value, "Section", entry.Section)
+                WriteItemField(Value, "ForceHide", entry.ForceHide)
+                Value.InventoryKey = entry.InventoryKey
+                Value.Key = entry.Key
+                for _, alias in ipairs(entry.Aliases) do
+                    if alias.List[alias.Key] == Value then
+                        alias.List[alias.Key] = nil
+                    end
+                end
+                local page = ShopController._inventoryPages and ShopController._inventoryPages[entry.type]
+                if page and page.MarkDirty then
+                    page.MarkDirty(Value, false, true)
+                end
+            end
+            table.clear(OriginalOwnershipByItem)
+            for _, Category in ipairs(UnlockableItemCategories) do
+                RefreshInventoryPage(Category)
+            end
+            ShopController._selectedItem = nil
+        end)
+
+        local function MergeUnlockedInventoryItems(inventoryType, requested, real, keyed)
+            local result = type(real) == "table" and real or {}
+            if requested ~= nil and #result > 0 then
+                return result
+            end
+            local list = ShopController._virtualItems and ShopController._virtualItems[inventoryType]
+            local deleted = UnlockSettings.FakeDeleted and UnlockSettings.FakeDeleted[inventoryType] or {}
+            if requested ~= nil then
+                local item = list and list[requested]
+                local name = item and item.Name or requested
+                if deleted[name] then
+                    return {}
+                end
+                return { requested }
+            end
+            local merged, seen = {}, {}
+            for _, item in ipairs(result) do
+                merged[#merged + 1] = item
+                local key = type(item) == "table" and (item.Key or item.Name) or item
+                if key then
+                    seen[key] = true
+                end
+            end
+            for _, item in pairs(list or {}) do
+                local key = keyed and (item.InventoryKey or item.Key or item.Name) or item.Name
+                if key and not seen[key] and not deleted[item.Name] then
+                    merged[#merged + 1] = key
+                    seen[key] = true
+                end
+            end
+            return merged
+        end
+
+        local Inventory_Shared = require(ReplicatedStorage.Shared.Inventory.Shared)
+        if typeof(Inventory_Shared.FindItems) == "function" then
+            local realFindItems
+            realFindItems = hookfunction(
+                Inventory_Shared.FindItems,
+                function(self, caller, inventoryType, itemName, filter)
+                    if not Env.Unlock_Enabled or not UnlockableItemTypes[inventoryType] then
+                        return realFindItems(self, caller, inventoryType, itemName, filter)
+                    end
+                    local real = realFindItems(self, caller, inventoryType, itemName, filter)
+                    return MergeUnlockedInventoryItems(inventoryType, itemName, real, false)
+                end
+            )
+            RegisterRestoreCallback(function()
+                hookfunction(Inventory_Shared.FindItems, realFindItems)
+            end)
+        end
+
+        local function HookInventoryLookup(method, keyed)
+            local original = InventoryClient[method]
+            if type(original) ~= "function" then
+                return
+            end
+            local wrapper = function(self, inventoryType, requested, ...)
+                if not Env.Unlock_Enabled or not UnlockableItemTypes[inventoryType] then
+                    return original(self, inventoryType, requested, ...)
+                end
+                local real = original(self, inventoryType, requested, ...)
+                return MergeUnlockedInventoryItems(inventoryType, requested, real, keyed)
+            end
+            InventoryClient[method] = wrapper
+            RegisterRestoreCallback(function()
+                if InventoryClient[method] == wrapper then
+                    InventoryClient[method] = original
+                end
+            end)
+        end
+        HookInventoryLookup("FindItems", false)
+        HookInventoryLookup("FindItemsWithKey", true)
+        if Env.Unlock_Enabled then
+            RefreshInventoryUnlocks()
+        end
+
+        local Shop = PlayerGui:WaitForChild("Shop")
+        local EquipItemButton = Shop.Holder.InfoBG.BuyButton
+        local Swords = require(ReplicatedStorage.Shared.ReplicatedInstances.Swords)
+        local FavoriteButton = Shop.Holder.Favorite
+        local DeleteButton = Shop.Holder.InfoBG.Delete
+        local EquipFinisherButton = Shop.Holder.InfoBG.Equips.Finisher
+        local EquipAccessoryButton = Shop.Holder.InfoBG.Equips.EquipAccessory
+        local FavoriteItemTypes = { Sword = true, Explosion = true, Ability = true }
+        local OriginalFavoriteFields = {}
+        local FavoriteButtonIcons = {
+            [true] = { Image = "rbxassetid://15697987058", HoverImage = "rbxassetid://15697983062" },
+            [false] = { Image = "rbxassetid://15697981750", HoverImage = "rbxassetid://15697987058" },
+        }
+
+        local function FindVirtualItem(itemType, name)
+            for key, item in pairs(ShopController._virtualItems[itemType] or {}) do
+                if item and (item.Name == name or key == name) then
+                    return item
+                end
+            end
+        end
+
+        local function IsFavorite(itemType, name)
+            local names = FavoriteOverrides[itemType]
+            if Env.Unlock_Enabled and names and names[name] ~= nil then
+                return names[name] == true
+            end
+            for _, item in pairs(ShopController._virtualItems[itemType] or {}) do
+                if item.Name == name and item.IsFavorited == true then
+                    return true
+                end
+            end
+            return false
+        end
+
+        local function RefreshFavoriteButton()
+            if not Env.Unlock_Enabled then
+                return
+            end
+            local SelectedItem = ShopController._selectedItem
+            if not SelectedItem or not FavoriteItemTypes[SelectedItem.type] then
+                return
+            end
+            for k, v in pairs(FavoriteButtonIcons[IsFavorite(SelectedItem.type, SelectedItem.name)]) do
+                FavoriteButton[k] = v
+            end
+        end
+
+        local function ApplyFavoriteOverrides(itemType)
+            local names = FavoriteOverrides[itemType]
+            if not names then
+                return false
+            end
+            local changed = false
+            for _, item in pairs(ShopController._virtualItems[itemType] or {}) do
+                local state = names[item.Name]
+                if state ~= nil then
+                    if not OriginalFavoriteFields[item] then
+                        OriginalFavoriteFields[item] = {
+                            Name_ = item.Name_,
+                            LayoutOrder = item.LayoutOrder,
+                            IsFavorited = item.IsFavorited,
+                        }
+                    end
+                    if state then
+                        item.IsFavorited = true
+                        item.Name_ = "#\0|" .. (item.Name or "")
+                        item.LayoutOrder = -1000000000
+                    else
+                        local orig = OriginalFavoriteFields[item]
+                        item.IsFavorited = false
+                        item.Name_ = (orig.Name_ or item.Name or ""):gsub("^#", "")
+                        item.LayoutOrder = orig.LayoutOrder
+                        if item.Type == "Ability" and orig.IsFavorited then
+                            item.LayoutOrder = (item.OriginalLayoutOrder or 0)
+                        end
+                    end
+                    changed = true
+                end
+            end
+            return changed
+        end
+
+        local FavoritePages = {}
+        local function WatchFavoritePage(itemType)
+            local page = ShopController._inventoryPages[itemType]
+            if not page or FavoritePages[page] then
+                return
+            end
+            local original = page.MarkDirty
+            local queued = false
+            local wrapper
+            wrapper = function(...)
+                original(...)
+                if not Env.Unlock_Enabled or queued then
+                    return
+                end
+                queued = true
+                task.defer(function()
+                    queued = false
+                    if not Env.Unlock_Enabled or page.MarkDirty ~= wrapper then
+                        return
+                    end
+                    if ApplyFavoriteOverrides(itemType) then
+                        original(nil, false, true)
+                    end
+                    RefreshFavoriteButton()
+                end)
+            end
+            FavoritePages[page] = original
+            page.MarkDirty = wrapper
+            RegisterRestoreCallback(function()
+                if page.MarkDirty == wrapper then
+                    page.MarkDirty = original
+                end
+            end)
+        end
+
+        local function SortInventoryPage(itemType)
+            WatchFavoritePage(itemType)
+            RefreshInventoryPage(itemType)
+        end
+
+        local function SetFavoriteOverride(itemType, name, state, skipSave)
+            FavoriteOverrides[itemType] = FavoriteOverrides[itemType] or {}
+            FavoriteOverrides[itemType][name] = state == true
+            ApplyFavoriteOverrides(itemType)
+            SortInventoryPage(itemType)
+            RefreshFavoriteButton()
+            if not skipSave then
+                SaveUnlockSettings()
+            end
+        end
+
+        Env._Unlock_ReapplyFavorites = function()
+            if not Env.Unlock_Enabled then
+                return
+            end
+            for itemType in pairs(FavoriteItemTypes) do
+                SortInventoryPage(itemType)
+            end
+            RefreshFavoriteButton()
+        end
+
+        RegisterSuspendCallback(function()
+            for item, orig in pairs(OriginalFavoriteFields) do
+                item.Name_ = orig.Name_
+                item.LayoutOrder = orig.LayoutOrder
+                item.IsFavorited = orig.IsFavorited
+            end
+            table.clear(OriginalFavoriteFields)
+            for itemType in pairs(FavoriteItemTypes) do
+                local page = ShopController._inventoryPages[itemType]
+                local original = page and FavoritePages[page]
+                if original then
+                    original(nil, true, true)
+                end
+            end
+        end)
+
+        if Env.Unlock_Enabled then
+            Env._Unlock_ReapplyFavorites()
+        end
+
+        local RefreshSelectedItemUI
+        local IsSelectedItemRefreshPending = false
+        local function QueueSelectedItemRefresh()
+            if IsSelectedItemRefreshPending then
+                return
+            end
+            IsSelectedItemRefreshPending = true
+            task.defer(function()
+                IsSelectedItemRefreshPending = false
+                if Env.Unlock_Enabled and not IsUnlockDisposed and RefreshSelectedItemUI then
+                    RefreshSelectedItemUI()
+                end
+            end)
+        end
+        ConnectUnlockSignal(ShopController.itemSelected, QueueSelectedItemRefresh)
+        local OriginalFavoriteHandler = DisableSignalAndGetOriginalHandler(FavoriteButton.Activated)
+        ConnectUnlockSignal(FavoriteButton.Activated, function(...)
+            if not Env.Unlock_Enabled then
+                if OriginalFavoriteHandler then
+                    OriginalFavoriteHandler(...)
+                end
+                return
+            end
+            local SelectedItem = ShopController._selectedItem
+            if not SelectedItem or not FavoriteItemTypes[SelectedItem.type] then
+                if OriginalFavoriteHandler then
+                    OriginalFavoriteHandler(...)
+                end
+                return
+            end
+            SetFavoriteOverride(
+                SelectedItem.type,
+                SelectedItem.name,
+                not IsFavorite(SelectedItem.type, SelectedItem.name)
+            )
+            RefreshFavoriteButton()
+        end)
+
+        local DeleteItemPromptController = require(ReplicatedStorage.Controllers.DeleteItemPromptController)
+        local ItemInfo = require(ReplicatedStorage.Shared.ItemInfo)
+        do
+            local VC = require(ReplicatedStorage.Common.Utils.Utilities.ValueConvertor)
+            if VC and VC.ShrinkNumber then
+                local realShrink = VC.ShrinkNumber
+                local shrinkWrapper = function(self, n, ...)
+                    if type(n) == "table" and type(n.Get) == "function" then
+                        n = n:Get()
+                    end
+                    if type(n) == "number" then
+                        return realShrink(self, n, ...)
+                    end
+                    return ""
+                end
+                VC.ShrinkNumber = shrinkWrapper
+                RegisterRestoreCallback(function()
+                    if VC.ShrinkNumber == shrinkWrapper then
+                        VC.ShrinkNumber = realShrink
+                    end
+                end)
+            end
+        end
+        local OriginalDeleteHandler = DisableSignalAndGetOriginalHandler(DeleteButton.Activated)
+
+        local function RemoveVirtualItem(itemType, name)
+            local list = ShopController._virtualItems[itemType]
+            if not list then
+                return
+            end
+            local removed = {}
+            for key, item in pairs(list) do
+                if item and (item.Name == name or key == name) then
+                    removed[item] = true
+                end
+            end
+            for key, item in pairs(list) do
+                if removed[item] then
+                    list[key] = nil
+                end
+            end
+            for item in pairs(removed) do
+                OriginalOwnershipByItem[item] = nil
+                if item.Trove then
+                    item.Trove:Destroy()
+                end
+            end
+            RefreshInventoryPage(itemType)
+        end
+
+        local function DeleteLocalInventoryItem(itemType, name)
+            if itemType == "Sword" and Env.Sword_Name == name then
+                Env.Sword_Name = "Base Sword"
+                LastFakeSwordName = "Base Sword"
+                UnlockSettings.LastSword = LastFakeSwordName
+                Env.FinisherEquipped[name] = nil
+                Env.Selected_Finisher = Env.FinisherEquipped["Base Sword"] and "Base Sword" or false
+                local Base = Swords:GetSword("Base Sword")
+                if Base then
+                    Swords:ForceEquipSwordTo(Player.Character, Base.Name)
+                    if Env._Sword_Function then
+                        Env._Sword_Function(Base.Name)
+                    end
+                end
+            else
+                Env.FinisherEquipped[name] = nil
+            end
+            UnlockSettings.FakeDeleted[itemType] = UnlockSettings.FakeDeleted[itemType] or {}
+            UnlockSettings.FakeDeleted[itemType][name] = true
+            SaveUnlockSettings()
+            RemoveVirtualItem(itemType, name)
+            ShopController._selectedItem = nil
+        end
+
+        ConnectUnlockSignal(DeleteButton.Activated, function(...)
+            if not Env.Unlock_Enabled then
+                if OriginalDeleteHandler then
+                    return OriginalDeleteHandler(...)
+                end
+                return
+            end
+            local SelectedItem = ShopController._selectedItem
+            if not SelectedItem or (SelectedItem.type ~= "Sword" and SelectedItem.type ~= "Explosion") then
+                return
+            end
+            local SelectedItemType, SelectedItemName = SelectedItem.type, SelectedItem.name
+            local info = ItemInfo[SelectedItemType] and ItemInfo[SelectedItemType][SelectedItemName]
+            DeleteItemPromptController:PromptConfirmation({
+                PromptType = "Single",
+                Description = `Are you sure you want to delete x1 {(info and info.DisplayName) or SelectedItemName}? This cannot be undone.`,
+            }, function(confirmed)
+                if confirmed then
+                    DeleteLocalInventoryItem(SelectedItemType, SelectedItemName)
+                end
+            end)
+        end)
+
+        local realCanDelete = ShopController._canDelete
+        ShopController._canDelete = function(self, itemType, itemKey)
+            if not Env.Unlock_Enabled then
+                return realCanDelete(self, itemType, itemKey)
+            end
+            local hasReal = false
+            do
+                local DeleteInventoryClient = require(ReplicatedStorage.Shared.Inventory).Client
+                local items = DeleteInventoryClient:FindItemsWithKey(itemType, itemKey)
+                hasReal = items and #items > 0
+            end
+            if not hasReal then
+                if itemKey == "Base Sword" or itemKey == "Explosion Normal" then
+                    return false, "Cannot delete base items"
+                end
+                return true
+            end
+            return realCanDelete(self, itemType, itemKey)
+        end
+
+        local realAddToMultiDelete = ShopController._addToMultiDelete
+        ShopController._addToMultiDelete = function(self, itemType, inventoryKey)
+            if not Env.Unlock_Enabled then
+                return realAddToMultiDelete(self, itemType, inventoryKey)
+            end
+            local hasReal = false
+            do
+                local DeleteInventoryClient = require(ReplicatedStorage.Shared.Inventory).Client
+                local items = DeleteInventoryClient:FindItemsWithKey(itemType, inventoryKey)
+                hasReal = items and #items > 0
+            end
+            if hasReal then
+                return realAddToMultiDelete(self, itemType, inventoryKey)
+            end
+            if inventoryKey == "Base Sword" or inventoryKey == "Explosion Normal" then
+                return
+            end
+            if not self._multiDelete or not self._multiDelete[itemType] then
+                return
+            end
+            local bucket = self._multiDelete[itemType][inventoryKey]
+            if bucket and #bucket >= 1 then
+                return
+            end
+            if not bucket then
+                self._multiDelete[itemType][inventoryKey] = {}
+            end
+            table.insert(self._multiDelete[itemType][inventoryKey], inventoryKey)
+            local VirtualItem = self._virtualItems[itemType] and self._virtualItems[itemType][inventoryKey]
+            if VirtualItem then
+                if VirtualItem.InDeleteMulti then
+                    VirtualItem.InDeleteMulti:Set(#self._multiDelete[itemType][inventoryKey])
+                end
+                VirtualItem.ForceHide:Set(true)
+            end
+            self:_updateMultiDelete()
+        end
+
+        local realUpdateMultiDelete = ShopController._updateMultiDelete
+        ShopController._updateMultiDelete = function(self)
+            if not Env.Unlock_Enabled or not self._multiDelete then
+                realUpdateMultiDelete(self)
+                return
+            end
+            local ScrollingFrame = Shop.Holder.DeleteItems.List.ContentsCanvas.ScrollingFrame
+            for _, child in ipairs(ScrollingFrame:GetChildren()) do
+                if child:IsA("GuiObject") and child:GetAttribute("_FakeEntry") then
+                    local fType = child:GetAttribute("_FakeType")
+                    local fKey = child.Name
+                    if
+                        not fType
+                        or not self._multiDelete[fType]
+                        or not self._multiDelete[fType][fKey]
+                        or #self._multiDelete[fType][fKey] <= 0
+                    then
+                        child:Destroy()
+                    end
+                end
+            end
+            for iType, keys in pairs(self._multiDelete) do
+                for key, ids in pairs(keys) do
+                    if #ids <= 0 then
+                        continue
+                    end
+                    local isFake = false
+                    do
+                        local DeleteInventoryClient = require(ReplicatedStorage.Shared.Inventory).Client
+                        local items = DeleteInventoryClient:FindItemsWithKey(iType, key)
+                        isFake = not items or #items <= 0
+                    end
+                    if not isFake then
+                        continue
+                    end
+                    local existing = ScrollingFrame:FindFirstChild(key)
+                    if existing and not existing:GetAttribute("_FakeEntry") then
+                        existing = nil
+                    end
+                    if not existing then
+                        local template = ScrollingFrame:FindFirstChild("UIListLayout")
+                            and ScrollingFrame.UIListLayout:FindFirstChild("Template")
+                        if template then
+                            local entry = template:Clone()
+                            entry.Name = key
+                            entry.Visible = true
+                            entry:SetAttribute("_FakeEntry", true)
+                            entry:SetAttribute("_FakeType", iType)
+                            entry:SetAttribute("InventoryType", iType)
+                            local function removeOne()
+                                if
+                                    not self._multiDelete
+                                    or not self._multiDelete[iType]
+                                    or not self._multiDelete[iType][key]
+                                then
+                                    return
+                                end
+                                table.remove(self._multiDelete[iType][key], 1)
+                                if #self._multiDelete[iType][key] <= 0 then
+                                    self._multiDelete[iType][key] = nil
+                                    entry:Destroy()
+                                    local VirtualItem = self._virtualItems[iType]
+                                        and self._virtualItems[iType][key]
+                                    if VirtualItem then
+                                        VirtualItem.ForceHide:Set(false)
+                                        VirtualItem.Section:Set("Owned")
+                                    end
+                                end
+                                local VirtualItem = self._virtualItems[iType]
+                                    and self._virtualItems[iType][key]
+                                if VirtualItem and VirtualItem.InDeleteMulti then
+                                    local remaining = (
+                                        self._multiDelete[iType] and self._multiDelete[iType][key]
+                                    )
+                                            and #self._multiDelete[iType][key]
+                                        or 0
+                                    VirtualItem.InDeleteMulti:Set(remaining)
+                                end
+                                self:_updateMultiDelete()
+                            end
+                            ConnectUnlockSignal(entry.Button.Activated, removeOne)
+                            ConnectUnlockSignal(entry.Button.Item.Activated, removeOne)
+                            entry.Parent = ScrollingFrame
+                            existing = entry
+                        end
+                    end
+                    if existing then
+                        local info = ItemInfo[iType] and ItemInfo[iType][key]
+                        local displayName = (info and info.DisplayName) or key
+                        existing.Button.Label.Text = displayName
+                        existing.Button.Item.Label.Text = "x" .. #ids
+                        if info and info.Icon then
+                            existing.Button.Item.Vector.Image = info.Icon
+                        end
+                    end
+                end
+            end
+            realUpdateMultiDelete(self)
+        end
+
+        local realConfirmHandler = nil
+        do
+            local ConfirmDeleteButton = Shop.Holder.DeleteItems.List.Buttons.Delete
+            local CancelDeleteButton = Shop.Holder.DeleteItems.List.Buttons.Cancel
+            for _, c in getconnections(ConfirmDeleteButton.Activated) do
+                if c and c.Function then
+                    realConfirmHandler = c.Function
+                    DisableGameConnection(c)
+                    break
+                end
+            end
+            ConnectUnlockSignal(ConfirmDeleteButton.Activated, function()
+                if not Env.Unlock_Enabled or not ShopController._multiDelete then
+                    if realConfirmHandler then
+                        return realConfirmHandler()
+                    end
+                    return
+                end
+                local LocalItemsToDelete = {}
+                local OwnedItemsToDelete = {}
+                local LocalDeleteCount, OwnedDeleteCount = 0, 0
+                for itemType, keys in pairs(ShopController._multiDelete) do
+                    for key, ids in pairs(keys) do
+                        if #ids <= 0 then
+                            continue
+                        end
+                        local isFake = false
+                        do
+                            local DeleteInventoryClient = require(ReplicatedStorage.Shared.Inventory).Client
+                            local items = DeleteInventoryClient:FindItemsWithKey(itemType, key)
+                            isFake = not items or #items <= 0
+                        end
+                        if isFake then
+                            table.insert(LocalItemsToDelete, { type = itemType, name = key })
+                            LocalDeleteCount += 1
+                        else
+                            if not OwnedItemsToDelete[itemType] then
+                                OwnedItemsToDelete[itemType] = {}
+                            end
+                            for _, id in ipairs(ids) do
+                                table.insert(OwnedItemsToDelete[itemType], id)
+                            end
+                            OwnedDeleteCount += #ids
+                        end
+                    end
+                end
+                local DeleteCount = LocalDeleteCount + OwnedDeleteCount
+                if DeleteCount == 0 then
+                    ShopController._multiDelete = nil
+                    ShopController:_updateMultiDeleteVisbility()
+                    ShopController:_updateMultiDelete()
+                    return
+                end
+                DeleteItemPromptController:PromptConfirmation({
+                    PromptType = "Single",
+                    Description = "Are you sure you want to delete x"
+                        .. DeleteCount
+                        .. " items? This cannot be undone.",
+                }, function(confirmed)
+                    if confirmed then
+                        for _, item in ipairs(LocalItemsToDelete) do
+                            DeleteLocalInventoryItem(item.type, item.name)
+                        end
+                        if OwnedDeleteCount > 0 then
+                            do
+                                local Net = require(ReplicatedStorage.Packages.Net)
+                                Net:Invoke("RequestDelete", OwnedItemsToDelete)
+                            end
+                        end
+                    else
+                        for _, item in ipairs(LocalItemsToDelete) do
+                            local VirtualItem = ShopController._virtualItems[item.type]
+                                and ShopController._virtualItems[item.type][item.name]
+                            if VirtualItem then
+                                VirtualItem.ForceHide:Set(false)
+                                VirtualItem.InDeleteMulti:Set(0)
+                                VirtualItem.Section:Set("Owned")
+                            end
+                        end
+                    end
+                    ShopController._multiDelete = nil
+                    ShopController:_updateMultiDeleteVisbility()
+                    ShopController:_updateMultiDelete()
+                end)
+            end)
+            local realCancelHandler = nil
+            for _, c in getconnections(CancelDeleteButton.Activated) do
+                if c and c.Function then
+                    realCancelHandler = c.Function
+                    DisableGameConnection(c)
+                    break
+                end
+            end
+            ConnectUnlockSignal(CancelDeleteButton.Activated, function()
+                if not Env.Unlock_Enabled then
+                    if realCancelHandler then
+                        return realCancelHandler()
+                    end
+                    return
+                end
+                if ShopController._multiDelete then
+                    for itemType, keys in pairs(ShopController._multiDelete) do
+                        for key, ids in pairs(keys) do
+                            if #ids <= 0 then
+                                continue
+                            end
+                            local isFake = false
+                            do
+                                local DeleteInventoryClient =
+                                    require(ReplicatedStorage.Shared.Inventory).Client
+                                local items = DeleteInventoryClient:FindItemsWithKey(itemType, key)
+                                isFake = not items or #items <= 0
+                            end
+                            if isFake then
+                                local VirtualItem = ShopController._virtualItems[itemType]
+                                    and ShopController._virtualItems[itemType][key]
+                                if VirtualItem then
+                                    VirtualItem.ForceHide:Set(false)
+                                    VirtualItem.InDeleteMulti:Set(0)
+                                    VirtualItem.Section:Set("Owned")
+                                end
+                            end
+                        end
+                    end
+                end
+                ShopController._multiDelete = nil
+                ShopController:_updateMultiDeleteVisbility()
+                ShopController:_updateMultiDelete()
+            end)
+        end
+
+        local OriginalFinisherEquipHandler = DisableSignalAndGetOriginalHandler(EquipFinisherButton.Activated)
+        ConnectUnlockSignal(EquipFinisherButton.Activated, function(...)
+            if not Env.Unlock_Enabled then
+                if OriginalFinisherEquipHandler then
+                    return OriginalFinisherEquipHandler(...)
+                end
+                return
+            end
+            local SelectedItem = ShopController._selectedItem
+            if
+                not SelectedItem
+                or SelectedItem.type ~= "Sword"
+                or not SelectedItem.data
+                or not SelectedItem.data.HasFinisher
+            then
+                return
+            end
+            local sn = SelectedItem.name
+            if Env.FinisherEquipped[sn] then
+                Env.FinisherEquipped[sn] = nil
+                if Env.Sword_Name == sn then
+                    Env.Selected_Finisher = false
+                end
+                EquipFinisherButton.Image = "rbxassetid://15452544682"
+                EquipFinisherButton.Label.Text = "EQUIP"
+            else
+                Env.FinisherEquipped[sn] = true
+                if Env.Sword_Name == sn then
+                    Env.Selected_Finisher = sn
+                end
+                EquipFinisherButton.Image = "rbxassetid://15452502387"
+                EquipFinisherButton.Label.Text = "UNEQUIP"
+            end
+            SaveUnlockSettings()
+            QueueSelectedItemRefresh()
+        end)
+
+        local AccessoryVisibilityBySword = UnlockSettings.FakeShowAccessoryPerSword or {}
+        local function GetSelectedSwordAccessoryVisibility()
+            local sword = Env.Sword_Name
+            if sword and AccessoryVisibilityBySword[sword] ~= nil then
+                return AccessoryVisibilityBySword[sword]
+            end
+            return false
+        end
+        local OriginalAccessoryTransparency = {}
+
+        local function SetAccessoryVisible(visible)
+            local char = Player.Character
+            if not char then
+                return
+            end
+            local SwordAccessories = char:FindFirstChild("SwordAccessories")
+            if not SwordAccessories then
+                return
+            end
+            if visible then
+                for desc, origT in pairs(OriginalAccessoryTransparency) do
+                    if desc and desc.Parent then
+                        if desc:IsA("BasePart") or desc:IsA("Decal") or desc:IsA("Texture") then
+                            desc.Transparency = origT
+                        elseif
+                            desc:IsA("ParticleEmitter")
+                            or desc:IsA("Trail")
+                            or desc:IsA("Beam")
+                            or desc:IsA("PointLight")
+                            or desc:IsA("SpotLight")
+                            or desc:IsA("SurfaceLight")
+                        then
+                            desc.Enabled = origT
+                        end
+                    end
+                end
+                OriginalAccessoryTransparency = {}
+            else
+                OriginalAccessoryTransparency = {}
+                for _, desc in ipairs(SwordAccessories:GetDescendants()) do
+                    if desc:IsA("BasePart") or desc:IsA("Decal") or desc:IsA("Texture") then
+                        OriginalAccessoryTransparency[desc] = desc.Transparency
+                        desc.Transparency = 1
+                    elseif
+                        desc:IsA("ParticleEmitter")
+                        or desc:IsA("Trail")
+                        or desc:IsA("Beam")
+                        or desc:IsA("PointLight")
+                        or desc:IsA("SpotLight")
+                        or desc:IsA("SurfaceLight")
+                    then
+                        OriginalAccessoryTransparency[desc] = desc.Enabled
+                        desc.Enabled = false
+                    end
+                end
+            end
+            char:SetAttribute("HasAccessoryEquipped", visible)
+        end
+        local function RefreshAccessoryButton()
+            local SelectedItem = ShopController._selectedItem
+            if not SelectedItem or SelectedItem.type ~= "Sword" then
+                EquipAccessoryButton.Visible = false
+                return
+            end
+            local data = SelectedItem.data
+            if not data or not data.AccessoryToggleable then
+                EquipAccessoryButton.Visible = false
+                return
+            end
+            if data.AccessoryUnlockable and not Env.Unlock_Enabled then
+                local item = FindVirtualItem("Sword", SelectedItem.name)
+                local hasAcc = false
+                if item then
+                    hasAcc = item.HasAccessory and item.HasAccessory:Get()
+                end
+                if not hasAcc then
+                    EquipAccessoryButton.Visible = false
+                    return
+                end
+            end
+            EquipAccessoryButton.Visible = true
+            EquipAccessoryButton.HoverImage = "rbxassetid://14783051124"
+            EquipAccessoryButton.ImageColor3 = Color3.new(1, 1, 1)
+            local show = false
+            show = UnlockSettings.FakeShowAccessoryPerSword
+                and UnlockSettings.FakeShowAccessoryPerSword[SelectedItem.name] == true
+            EquipAccessoryButton.Image = show and "rbxassetid://15452502387" or "rbxassetid://15452544682"
+            EquipAccessoryButton.Label.Text = show and "UNEQUIP ACCESSORY" or "EQUIP ACCESSORY"
+        end
+
+        ConnectUnlockSignal(Player:GetAttributeChangedSignal("ShowSwordAccessory"), function()
+            QueueSelectedItemRefresh()
+        end)
+
+        local OriginalAccessoryEquipHandler =
+            DisableSignalAndGetOriginalHandler(EquipAccessoryButton.Activated)
+        local IsAccessoryTogglePending = false
+        ConnectUnlockSignal(EquipAccessoryButton.Activated, function(...)
+            if IsAccessoryTogglePending then
+                return
+            end
+            IsAccessoryTogglePending = true
+            task.delay(0.2, function()
+                IsAccessoryTogglePending = false
+            end)
+            local SelectedItem = ShopController._selectedItem
+            if
+                not SelectedItem
+                or SelectedItem.type ~= "Sword"
+                or not SelectedItem.data
+                or not SelectedItem.data.AccessoryToggleable
+            then
+                if OriginalAccessoryEquipHandler then
+                    return OriginalAccessoryEquipHandler(...)
+                end
+                return
+            end
+            local sword = SelectedItem.name
+            local current = UnlockSettings.FakeShowAccessoryPerSword
+                and UnlockSettings.FakeShowAccessoryPerSword[sword] == true
+            local newState = not current
+            if not UnlockSettings.FakeShowAccessoryPerSword then
+                UnlockSettings.FakeShowAccessoryPerSword = {}
+            end
+            UnlockSettings.FakeShowAccessoryPerSword[sword] = newState
+            IsAccessoryVisibilityLoopCancelled = true
+            Player:SetAttribute("ShowSwordAccessory", newState)
+            if newState then
+                local char = Player.Character
+                if char then
+                    local SwordAccessories = char:FindFirstChild("SwordAccessories")
+                    if SwordAccessories then
+                        SwordAccessories:ClearAllChildren()
+                    end
+                    local targetSword = Env.Sword_Name
+                    if char:GetAttribute("CurrentlyEquippedSword") == targetSword then
+                        Swords:ForceEquipSwordTo(char, "Base Sword")
+                    end
+                    Swords:ForceEquipSwordTo(char, targetSword)
+                    if Env._Sword_Function then
+                        Env._Sword_Function(targetSword)
+                    end
+                end
+                OriginalAccessoryTransparency = {}
+            else
+                SetAccessoryVisible(false)
+            end
+            EquipAccessoryButton.Image = newState and "rbxassetid://15452502387" or "rbxassetid://15452544682"
+            EquipAccessoryButton.Label.Text = newState and "UNEQUIP ACCESSORY" or "EQUIP ACCESSORY"
+            SaveUnlockSettings()
+        end)
+
+        local OriginalBuyHandlers = {}
+        for _, c in getconnections(EquipItemButton.Activated) do
+            if c and c.Function then
+                table.insert(OriginalBuyHandlers, c.Function)
+            end
+        end
+        DisableSignalAndGetOriginalHandler(EquipItemButton.Activated)
+
+        local RefreshSwordUI = nil
+        for _, Connection in getconnections(ReplicatedStorage.Remotes.FireSwordInfo.OnClientEvent) do
+            if Connection and Connection.Function then
+                RefreshSwordUI = Connection.Function
+                DisableGameConnection(Connection)
+            end
+        end
+        Env._Sword_Function = RefreshSwordUI
+
+        local OriginalParryEffectHandler = nil
+        for _, c in getconnections(ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent) do
+            if c and c.Function then
+                OriginalParryEffectHandler = c.Function
+            end
+        end
+        if OriginalParryEffectHandler then
+            for _, c in getconnections(ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent) do
+                if c and c.Function then
+                    DisableGameConnection(c)
+                end
+            end
+        end
+
+        local VFXController = require(ReplicatedStorage.Controllers.VFXController)
+        local original = VFXController.PlayExplosion
+        RegisterRestoreCallback(function()
+            VFXController.PlayExplosion = original
+        end)
+
+        local SwordSelectionVersion = 0
+        local RestoredSwordWatch
+        local function WatchRestoredSword(char, restored)
+            if RestoredSwordWatch then
+                RestoredSwordWatch:Disconnect()
+                RestoredSwordWatch = nil
+            end
+            if not restored or restored.Parent ~= char then
+                return
+            end
+            local childConn, ancestryConn
+            local watch = {}
+            function watch:Disconnect()
+                if childConn then
+                    childConn:Disconnect()
+                end
+                if ancestryConn then
+                    ancestryConn:Disconnect()
+                end
+                if RestoredSwordWatch == self then
+                    RestoredSwordWatch = nil
+                end
+            end
+            childConn = char.ChildAdded:Connect(function(child)
+                if child == restored then
+                    return
+                end
+                task.defer(function()
+                    if
+                        not Env.Unlock_Enabled
+                        and child.Parent == char
+                        and child:GetAttribute("_equippedSword")
+                    then
+                        if restored.Parent == char then
+                            restored:Destroy()
+                        end
+                        watch:Disconnect()
+                    end
+                end)
+            end)
+            ancestryConn = restored.AncestryChanged:Connect(function()
+                if restored.Parent ~= char then
+                    watch:Disconnect()
+                end
+            end)
+            RestoredSwordWatch = watch
+        end
+
+        RegisterSuspendCallback(function()
+            SwordSelectionVersion += 1
+            UnlockSettings.LastSword = LastFakeSwordName or UnlockSettings.LastSword
+            UnlockSettings.LastExplosion = SelectedExplosionName or UnlockSettings.LastExplosion
+            SaveUnlockSettings()
+            local realSword = OriginalSwordName or "Base Sword"
+            Env.Sword_Name, Env.Selected_Finisher = realSword, false
+            local SwordData = Swords:GetSword(realSword)
+            if SwordData and Player.Character then
+                local char = Player.Character
+                WatchRestoredSword(char, Swords:ForceEquipSwordTo(char, SwordData.Name))
+                if RefreshSwordUI then
+                    RefreshSwordUI(SwordData.Name)
+                end
+            end
+            SelectedExplosionName = nil
+        end)
+
+        local function HookSelectedExplosionEffect()
+            VFXController.PlayExplosion = function(
+                self,
+                name,
+                position,
+                ball,
+                character,
+                attributionCharacter,
+                kill
+            )
+                if
+                    Env.Unlock_Enabled
+                    and SelectedExplosionName
+                    and SelectedExplosionName ~= ""
+                    and kill
+                    and attributionCharacter == Player.Character
+                then
+                    name = SelectedExplosionName
+                end
+                return original(self, name, position, ball, character, attributionCharacter, kill)
+            end
+        end
+
+        Env._Unlock_ReequipLast = function()
+            if not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                return
+            end
+            if RestoredSwordWatch then
+                RestoredSwordWatch:Disconnect()
+            end
+            SelectedExplosionName = UnlockSettings.LastExplosion
+            HookSelectedExplosionEffect()
+            local swordName = LastFakeSwordName or UnlockSettings.LastSword
+            local SwordData = swordName and Swords:GetSword(swordName)
+            if SwordData then
+                LastFakeSwordName = SwordData.Name
+                SwordSelectionVersion += 1
+                local selectionVersion = SwordSelectionVersion
+                Env.Sword_Name = SwordData.Name
+                Env.Selected_Finisher = Env.FinisherEquipped[SwordData.Name] and SwordData.Name or false
+                local char = Player.Character
+                if char then
+                    local restoredModel = Swords:ForceEquipSwordTo(char, SwordData.Name)
+                    task.spawn(function()
+                        local equippedModel = restoredModel
+                        for _ = 1, 30 do
+                            task.wait(0.1)
+                            if selectionVersion ~= SwordSelectionVersion or not Env.Unlock_Enabled
+                                or IsUnlockSuspended or IsUnlockDisposed or Player.Character ~= char then
+                                return
+                            end
+                            local correctModel = equippedModel and equippedModel.Parent == char
+                            for _, child in ipairs(char:GetChildren()) do
+                                if child ~= equippedModel and child:GetAttribute("_equippedSword") then
+                                    correctModel = false
+                                    break
+                                end
+                            end
+                            if not correctModel then
+                                equippedModel = Swords:ForceEquipSwordTo(char, SwordData.Name)
+                            end
+                        end
+                    end)
+                    if selectionVersion ~= SwordSelectionVersion or not Env.Unlock_Enabled then
+                        return
+                    end
+                    if RefreshSwordUI then
+                        RefreshSwordUI(SwordData.Name)
+                    end
+                    local show = GetSelectedSwordAccessoryVisibility()
+                    Player:SetAttribute("ShowSwordAccessory", show)
+                    SetAccessoryVisible(show)
+                end
+            end
+            if RefreshSelectedItemUI then
+                RefreshSelectedItemUI()
+            end
+        end
+
+        local FakeSwordCharacterConnections = {}
+        local IsFakeSwordCheckQueued = false
+        local LastFakeSwordEquipTime, FakeSwordEquipBurst = 0, 0
+        local function NeedsFakeSwordEquip(char, fakeSwordName)
+            local hasFakeModel = false
+            for _, child in ipairs(char:GetChildren()) do
+                if child:GetAttribute("_equippedSword") then
+                    if child.Name ~= fakeSwordName then
+                        return true
+                    end
+                    hasFakeModel = true
+                elseif child.Name == fakeSwordName and child:IsA("Model") then
+                    hasFakeModel = true
+                end
+            end
+            return not hasFakeModel
+        end
+        local function QueueFakeSwordCheck(char)
+            if IsFakeSwordCheckQueued then
+                return
+            end
+            IsFakeSwordCheckQueued = true
+            task.defer(function()
+                IsFakeSwordCheckQueued = false
+                if
+                    not Env.Unlock_Enabled
+                    or IsUnlockSuspended
+                    or IsUnlockDisposed
+                    or Player.Character ~= char
+                then
+                    return
+                end
+                local fakeSwordName = LastFakeSwordName or UnlockSettings.LastSword
+                local SwordData = fakeSwordName and Swords:GetSword(fakeSwordName)
+                if not SwordData or not NeedsFakeSwordEquip(char, SwordData.Name) then
+                    return
+                end
+                local cooldown = 0.3 - (os.clock() - LastFakeSwordEquipTime)
+                if cooldown > 0 then
+                    task.delay(cooldown, QueueFakeSwordCheck, char)
+                    return
+                end
+                FakeSwordEquipBurst = (os.clock() - LastFakeSwordEquipTime < 3) and FakeSwordEquipBurst + 1 or 1
+                LastFakeSwordEquipTime = os.clock()
+                if FakeSwordEquipBurst > 6 then
+                    if FakeSwordEquipBurst == 7 then
+                        warn("[Unlocker] Fake sword keeps getting replaced: " .. SwordData.Name)
+                    end
+                    return
+                end
+                Env.Sword_Name = SwordData.Name
+                Env.Selected_Finisher = Env.FinisherEquipped[SwordData.Name] and SwordData.Name or false
+                Swords:ForceEquipSwordTo(char, SwordData.Name)
+                if RefreshSwordUI then
+                    RefreshSwordUI(SwordData.Name)
+                end
+            end)
+        end
+        local function WatchFakeSwordCharacter(char)
+            DisconnectSignals(FakeSwordCharacterConnections)
+            if not char then
+                return
+            end
+            local function onChange()
+                QueueFakeSwordCheck(char)
+            end
+            FakeSwordCharacterConnections[1] =
+                char:GetAttributeChangedSignal("CurrentlyEquippedSword"):Connect(onChange)
+            FakeSwordCharacterConnections[2] = char.ChildAdded:Connect(onChange)
+        end
+        WatchFakeSwordCharacter(Player.Character)
+        local FakeSwordRespawnConnection = Player.CharacterAdded:Connect(WatchFakeSwordCharacter)
+        RegisterRestoreCallback(function()
+            FakeSwordRespawnConnection:Disconnect()
+            DisconnectSignals(FakeSwordCharacterConnections)
+        end)
+
+        ConnectUnlockSignal(EquipItemButton.Activated, function(...)
+            local SelectedCatalogItem = ShopController._selectedItem
+            if not SelectedCatalogItem then
+                return
+            end
+            local SelectedItemType, SelectedItemName = SelectedCatalogItem.type, SelectedCatalogItem.name
+            if
+                not Env.Unlock_Enabled or (SelectedItemType ~= "Sword" and SelectedItemType ~= "Explosion")
+            then
+                for _, handler in ipairs(OriginalBuyHandlers) do
+                    handler(...)
+                end
+                return
+            end
+            if SelectedItemType == "Explosion" and SelectedExplosionName == SelectedItemName then
+                EquipItemButton.PriceTag.TextLabel.Text = "Equipped"
+                return
+            end
+            if SelectedItemType == "Sword" then
+                SwordSelectionVersion += 1
+                local selectionVersion = SwordSelectionVersion
+                RememberOriginalSword()
+                local oldSword = Env.Sword_Name
+                if oldSword and oldSword ~= SelectedItemName then
+                    Env.FinisherEquipped[oldSword] = nil
+                end
+
+                local Sword_Model = Swords:GetSword(SelectedItemName)
+                local char = Player.Character
+                if not Sword_Model or not char then
+                    return
+                end
+                local ok, model = pcall(Swords.ForceEquipSwordTo, Swords, char, Sword_Model.Name)
+                if selectionVersion ~= SwordSelectionVersion or not Env.Unlock_Enabled then
+                    return
+                end
+                if
+                    not ok
+                    or not model
+                    or model.Parent ~= char
+                    or char ~= Player.Character
+                then
+                    EquipItemButton.PriceTag.TextLabel.Text = "Equip"
+                    warn("[Unlocker] Sword model did not finish equipping: " .. tostring(SelectedItemName))
+                    return
+                end
+                Env.Sword_Name = Sword_Model.Name
+                Env.Selected_Finisher = Env.FinisherEquipped[Sword_Model.Name] and Sword_Model.Name or false
+                EquipItemButton.PriceTag.TextLabel.Text = "Equipped"
+                if RefreshSwordUI then
+                    RefreshSwordUI(Sword_Model.Name)
+                end
+                LastFakeSwordName = Sword_Model.Name
+                UnlockSettings.LastSword = LastFakeSwordName
+                SaveUnlockSettings()
+                IsAccessoryVisibilityLoopCancelled = false
+                AccessoryVisibilityGeneration += 1
+                local accessoryGeneration = AccessoryVisibilityGeneration
+                local SavedAccessoryVisibility = AccessoryVisibilityBySword[Sword_Model.Name]
+                if SavedAccessoryVisibility == nil then
+                    AccessoryVisibilityBySword[Sword_Model.Name] = false
+                end
+                UnlockSettings.FakeShowAccessoryPerSword = AccessoryVisibilityBySword
+                task.spawn(function()
+                    local char = Player.Character
+                    if not char then
+                        return
+                    end
+                    local show = AccessoryVisibilityBySword[Sword_Model.Name] or false
+                    for _ = 1, 20 do
+                        task.wait(0.1)
+                        if
+                            IsAccessoryVisibilityLoopCancelled
+                            or accessoryGeneration ~= AccessoryVisibilityGeneration
+                            or selectionVersion ~= SwordSelectionVersion
+                            or not Env.Unlock_Enabled
+                        then
+                            return
+                        end
+                        if not char or char ~= Player.Character then
+                            return
+                        end
+                        Player:SetAttribute("ShowSwordAccessory", show)
+                        SetAccessoryVisible(show)
+                    end
+                end)
+                QueueSelectedItemRefresh()
+            elseif SelectedItemType == "Explosion" then
+                EquipItemButton.PriceTag.TextLabel.Text = "Equipped"
+                SelectedExplosionName = SelectedItemName
+                UnlockSettings.LastExplosion = SelectedItemName
+                HookSelectedExplosionEffect()
+                SaveUnlockSettings()
+                QueueSelectedItemRefresh()
+            end
+        end)
+
+        if OriginalParryEffectHandler then
+            ConnectUnlockSignal(ReplicatedStorage.Remotes.ParrySuccessAll.OnClientEvent, function(...)
+                local Args = { ... }
+                if Env.Unlock_Enabled and Env.Sword_Name then
+                    local Sword = Swords:GetSword(Env.Sword_Name)
+                    local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                    if Sword and (Args[4] == hrp or tostring(Args[4]) == Player.Name) then
+                        Args[1], Args[3] = Sword.SlashName, Sword.Name
+                    end
+                end
+                return OriginalParryEffectHandler(unpack(Args))
+            end)
+        end
+
+        ConnectUnlockSignal(Player.CharacterAppearanceLoaded, function()
+            if not Env.Unlock_Enabled then
+                return
+            end
+            local char = Player.Character
+            if not char then
+                return
+            end
+            for _ = 1, 80 do
+                task.wait(0.05)
+                if not Env.Unlock_Enabled then
+                    return
+                end
+                local c = Player.Character
+                if not c or c ~= char then
+                    return
+                end
+                if c:GetAttribute("CurrentlyEquippedSword") then
+                    break
+                end
+            end
+            if not Env.Unlock_Enabled then
+                return
+            end
+            local c = Player.Character
+            if not c or c ~= char then
+                return
+            end
+            local fakeSwordName = LastFakeSwordName or UnlockSettings.LastSword or Env.Sword_Name
+            local fakeSwordData = fakeSwordName and Swords:GetSword(fakeSwordName)
+            if not fakeSwordData then
+                return
+            end
+            fakeSwordName = fakeSwordData.Name
+            Env.Sword_Name = fakeSwordName
+            local selectionVersion = SwordSelectionVersion
+            for i = 1, 5 do
+                task.delay(i * 1, function()
+                    if Player.Character ~= c or selectionVersion ~= SwordSelectionVersion then
+                        return
+                    end
+                    if not Env.Unlock_Enabled or IsUnlockSuspended or IsUnlockDisposed then
+                        return
+                    end
+                    if c:GetAttribute("CurrentlyEquippedSword") ~= fakeSwordName then
+                        Swords:ForceEquipSwordTo(c, fakeSwordName)
+                        if RefreshSwordUI then
+                            RefreshSwordUI(fakeSwordName)
+                        end
+                    end
+                end)
+            end
+
+            Swords:ForceEquipSwordTo(c, fakeSwordName)
+            if RefreshSwordUI then
+                RefreshSwordUI(fakeSwordName)
+            end
+            Env.Selected_Finisher = (Env.Sword_Name and Env.FinisherEquipped[Env.Sword_Name])
+                    and Env.Sword_Name
+                or false
+            local show = GetSelectedSwordAccessoryVisibility()
+            Player:SetAttribute("ShowSwordAccessory", show)
+            SetAccessoryVisible(show)
+        end)
+
+        RefreshSelectedItemUI = function()
+            RefreshAccessoryButton()
+            local SelectedItem = ShopController._selectedItem
+            if not SelectedItem then
+                return
+            end
+            if ShopController._multiDelete then
+                return
+            end
+            do
+                local isUnlockType = Env.Unlock_Enabled
+                    and (SelectedItem.type == "Sword" or SelectedItem.type == "Explosion")
+                DeleteButton.Visible = isUnlockType
+                if
+                    Env.Unlock_Enabled
+                    and SelectedItem.type == "Sword"
+                    and SelectedItem.data
+                    and SelectedItem.data.HasFinisher
+                then
+                    EquipFinisherButton.Visible = true
+                    EquipFinisherButton.HoverImage = "rbxassetid://14783051124"
+                    EquipFinisherButton.ImageColor3 = Color3.new(1, 1, 1)
+                    local equipped = Env.FinisherEquipped[SelectedItem.name]
+                    EquipFinisherButton.Image = equipped and "rbxassetid://15452502387"
+                        or "rbxassetid://15452544682"
+                    EquipFinisherButton.Label.Text = equipped and "UNEQUIP" or "EQUIP"
+                else
+                    EquipFinisherButton.Visible = false
+                end
+                if isUnlockType then
+                    EquipItemButton.Visible = true
+                    local isEquipped = (SelectedItem.type == "Sword" and Env.Sword_Name == SelectedItem.name)
+                        or (SelectedItem.type == "Explosion" and SelectedExplosionName == SelectedItem.name)
+                    EquipItemButton.PriceTag.TextLabel.Text = isEquipped and "Equipped" or "Equip"
+                end
+                if FavoriteItemTypes[SelectedItem.type] then
+                    FavoriteButton.Visible = true
+                    FavoriteButton:SetAttribute("Visible", true)
+                    RefreshFavoriteButton()
+                end
+            end
+        end
+
+        Env._Unlock_RefreshSelected = RefreshSelectedItemUI
+    end
+
+    if Env.Unlock_Enabled then
+        RunUnlockStep("Inventory", InitializeInventoryUnlocks)
+        RunUnlockStep("Re-equip sword", Env._Unlock_ReequipLast)
+        task.spawn(RunUnlockStep, "Emotes", Env._Unlock_InitializeEmotes)
+    end
+    Env._Unlock_Initialize = InitializeInventoryUnlocks
+
+    local function ColorToHex(c)
+        return string.format(
+            "#%02X%02X%02X",
+            math.floor(c.R * 255 + 0.5),
+            math.floor(c.G * 255 + 0.5),
+            math.floor(c.B * 255 + 0.5)
+        )
+    end
+    local function BuildSelectedTitleMarkup()
+        local SelectedTitle = _G.__TitleState.Selected
+        return SelectedTitle
+                and string.format(
+                    '<font color="%s">%s</font>',
+                    ColorToHex(SelectedTitle.Color),
+                    SelectedTitle.Text
+                )
+            or ""
+    end
+
+    local AreTitlesInitialized = false
+    local function InitializeTitles()
+        if AreTitlesInitialized then
+            return
+        end
+        AreTitlesInitialized = true
+        if not Env.Unlock_Enabled then
+            return
+        end
+
+        local ProfileTitlePaths = {
+            { "Customize", "Profile", "Playerprofile", "Details", "Title" },
+            { "Customize", "PlayerCard", "Title" },
+        }
+
+        local function IsLocalProfileCard(ProfileCard)
+            if not ProfileCard then
+                return false
+            end
+            for _, desc in ipairs(ProfileCard:GetDescendants()) do
+                if desc:IsA("TextLabel") or desc:IsA("TextButton") or desc:IsA("TextBox") then
+                    local LabelText = desc.Text
+                    if
+                        LabelText
+                        and (
+                            LabelText == Player.Name
+                            or LabelText == Player.DisplayName
+                            or string.find(LabelText, Player.DisplayName, 1, true)
+                        )
+                    then
+                        return true
+                    end
+                end
+            end
+            return false
+        end
+
+        local function FindProfileTitleLabels()
+            local TitleLabels = {}
+            local ProfileCard = PlayerGui:FindFirstChild("ProfileCard")
+            if not ProfileCard or not IsLocalProfileCard(ProfileCard) then
+                return TitleLabels
+            end
+            for _, path in ipairs(ProfileTitlePaths) do
+                local node = ProfileCard
+                for _, n in ipairs(path) do
+                    if node then
+                        node = node:FindFirstChild(n)
+                    end
+                end
+                if node and (node:IsA("TextLabel") or node:IsA("TextButton") or node:IsA("TextBox")) then
+                    table.insert(TitleLabels, node)
+                end
+            end
+            return TitleLabels
+        end
+
+        local function RefreshProfileTitle()
+            if not Env.Unlock_Enabled then
+                return
+            end
+            local SelectedTitleMarkup = BuildSelectedTitleMarkup()
+            for _, lbl in ipairs(FindProfileTitleLabels()) do
+                do
+                    lbl.RichText, lbl.Visible, lbl.TextTransparency = true, true, 0
+                    if lbl.TextSize == 0 then
+                        lbl.TextSize = 18
+                    end
+                    if lbl.TextColor3 == Color3.new(0, 0, 0) then
+                        lbl.TextColor3 = Color3.new(1, 1, 1)
+                    end
+                    if lbl.Text ~= SelectedTitleMarkup then
+                        lbl.Text = SelectedTitleMarkup
+                    end
+                end
+            end
+        end
+
+        local ProfileTitleConnections = {}
+        local WatchedProfileLabels = setmetatable({}, { __mode = "k" })
+        local IsProfileTitleRefreshPending = false
+        local function QueueProfileTitleRefresh()
+            if IsProfileTitleRefreshPending or _ScriptUnloaded or IsUnlockDisposed then
+                return
+            end
+            IsProfileTitleRefreshPending = true
+            task.defer(function()
+                IsProfileTitleRefreshPending = false
+                if not _ScriptUnloaded and not IsUnlockDisposed then
+                    RefreshProfileTitle()
+                end
+            end)
+        end
+        local function WatchProfileLabel(label)
+            if
+                WatchedProfileLabels[label]
+                or not (label:IsA("TextLabel") or label:IsA("TextButton") or label:IsA("TextBox"))
+            then
+                return
+            end
+            WatchedProfileLabels[label] = true
+            ProfileTitleConnections[#ProfileTitleConnections + 1] =
+                label:GetPropertyChangedSignal("Text"):Connect(QueueProfileTitleRefresh)
+            ProfileTitleConnections[#ProfileTitleConnections + 1] = label.AncestryChanged:Connect(function()
+                QueueProfileTitleRefresh()
+            end)
+        end
+        local function WatchProfileCard(card)
+            for _, descendant in ipairs(card:GetDescendants()) do
+                WatchProfileLabel(descendant)
+            end
+            QueueProfileTitleRefresh()
+        end
+        Connections_Manager["ProfileCard_Descendant"] = PlayerGui.DescendantAdded:Connect(function(descendant)
+            if descendant:FindFirstAncestor("ProfileCard") then
+                WatchProfileLabel(descendant)
+                QueueProfileTitleRefresh()
+            end
+        end)
+        Connections_Manager["ProfileCard_Title"] = PlayerGui.ChildAdded:Connect(function(child)
+            if child.Name == "ProfileCard" then
+                WatchProfileCard(child)
+            end
+        end)
+        RegisterRestoreCallback(function()
+            DisconnectSignals(ProfileTitleConnections)
+            table.clear(WatchedProfileLabels)
+            Env._Unlock_RefreshTitle = nil
+        end)
+        Env._Unlock_RefreshTitle = QueueProfileTitleRefresh
+        local existingCard = PlayerGui:FindFirstChild("ProfileCard")
+        if existingCard then
+            WatchProfileCard(existingCard)
+        end
+
+        task.spawn(function()
+            local TitleCatalog = require(ReplicatedStorage.Shared:WaitForChild("TitleData"))
+            if not TitleCatalog then
+                return
+            end
+            local TitleList = PlayerGui:WaitForChild("Settings")
+                :WaitForChild("Frame")
+                :WaitForChild("Frame")
+                :WaitForChild("SettingTitles")
+                :WaitForChild("TitleList")
+            local needed = #TitleCatalog + 1
+            for _ = 1, 60 do
+                local count = 0
+                for _, c in ipairs(TitleList:GetChildren()) do
+                    if c:IsA("ImageButton") then
+                        count += 1
+                    end
+                end
+                if count >= needed then
+                    break
+                end
+                task.wait(0.25)
+            end
+            local TitleRows = {}
+            for _, TitleRow in ipairs(TitleList:GetChildren()) do
+                if TitleRow:IsA("ImageButton") then
+                    table.insert(TitleRows, TitleRow)
+                end
+            end
+            table.sort(TitleRows, function(a, b)
+                return a.LayoutOrder < b.LayoutOrder
+            end)
+            for Index, TitleEntry in ipairs(TitleCatalog) do
+                local TitleRow = TitleRows[Index + 1]
+                if not TitleRow then
+                    break
+                end
+                local TitleLabel = TitleRow:FindFirstChild("TextLabel")
+                if TitleLabel and TitleEntry.Tag then
+                    TitleLabel.Text = TitleEntry.Tag.Text
+                    TitleLabel.TextColor3 = TitleEntry.Tag.Color
+                end
+                TitleRow.Name = TitleEntry.Name or TitleRow.Name
+                TitleRow.Visible = true
+            end
+            local SelectedTitleRow = nil
+            for i, TitleRow in ipairs(TitleRows) do
+                local rowIndex = i
+                ConnectUnlockSignal(TitleRow.Activated, function()
+                    SelectedTitleRow = TitleRow
+                    local TitleEntry = TitleCatalog[rowIndex - 1]
+                    _G.__TitleState.Selected = (rowIndex > 1 and TitleEntry)
+                            and { Text = TitleEntry.Tag.Text, Color = TitleEntry.Tag.Color }
+                        or nil
+                    for _, Other in ipairs(TitleRows) do
+                        local SelectionHighlight = Other:FindFirstChild("Selected")
+                        if SelectionHighlight then
+                            SelectionHighlight.Visible = (Other == SelectedTitleRow)
+                        end
+                    end
+                    QueueProfileTitleRefresh()
+                end)
+            end
+        end)
+
+        QueueProfileTitleRefresh()
+        do
+            if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+                local OriginalChatMessageHandler = TextChatService.OnIncomingMessage
+                TextChatService.OnIncomingMessage = function(message)
+                    local props = Instance.new("TextChatMessageProperties")
+                    if
+                        Env.Unlock_Enabled
+                        and message.TextSource
+                        and message.TextSource.UserId == Player.UserId
+                    then
+                        local SelectedTitle = _G.__TitleState.Selected
+                        if SelectedTitle then
+                            props.PrefixText = string.format(
+                                '<font color="%s">[%s]</font> <font color="%s">%s</font>',
+                                ColorToHex(SelectedTitle.Color),
+                                SelectedTitle.Text,
+                                ColorToHex(SelectedTitle.Color),
+                                Player.DisplayName
+                            )
+                        end
+                    end
+                    return props
+                end
+                Env._Unlock_RestoreTextChatHook = function()
+                    TextChatService.OnIncomingMessage = OriginalChatMessageHandler
+                end
+            end
+        end
+    end
+
+    if Env.Unlock_Enabled then
+        InitializeTitles()
+    end
+    Env._Unlock_InitializeTitles = InitializeTitles
+
+    local UnlockControlsGroup = Tabs.Sword:AddLeftGroupbox("Swords Changer", "swords")
+    UnlockControlsGroup:AddToggle("Unlock_Enabled_Toggle", {
+        Text = "Enable Unlocker",
+        Default = Env.Unlock_Enabled and true or false,
+        Tooltip = "Unlock swords, explosions, finishers and emotes.",
+        Callback = function(state)
+            if _ScriptUnloaded or IsUnlockDisposed then
+                return
+            end
+            local wasEnabled = Env.Unlock_Enabled
+            Env.Unlock_Enabled = state
+            if state then
+                ResumeUnlockAll()
+                RunUnlockStep("Inventory", Env._Unlock_Initialize)
+                if not wasEnabled then
+                    RunUnlockStep("Capture sword", Env._Unlock_CaptureOriginalSword)
+                end
+                RunUnlockStep("Titles", Env._Unlock_InitializeTitles)
+                RunUnlockStep("Refresh title", Env._Unlock_RefreshTitle)
+                RunUnlockStep("Unlock all", Env._Unlock_DoUnlockAll)
+                RunUnlockStep("Favorites", Env._Unlock_ReapplyFavorites)
+                RunUnlockStep("Selected item", Env._Unlock_RefreshSelected)
+                RunUnlockStep("Re-equip sword", Env._Unlock_ReequipLast)
+                task.spawn(RunUnlockStep, "Emotes", Env._Unlock_InitializeEmotes)
+                SaveUnlockSettings()
+            else
+                if not _ScriptUnloaded then
+                    SuspendUnlockAll()
+                end
+            end
+        end,
+    })
+end)
+
+do
+    local DEFAULT_COLOR = Color3.fromRGB(255, 0, 0)
+    local FOLDER_KIND = { ParticleShine = "shield", ParryFX = "slash" }
+    local TINT = {
+        ParticleEmitter = { "Color", true },
+        Beam = { "Color", true },
+        Trail = { "Color", true },
+        Decal = { "Color", false },
+        Texture = { "Color", false },
+        PointLight = { "Color", false },
+        SpotLight = { "Color", false },
+        SurfaceLight = { "Color", false },
+        ImageLabel = { "ImageColor3", false },
+        ImageButton = { "ImageColor3", false },
+        Highlight = { "FillColor", false },
+    }
+
+    local function NewCfg(kind)
+        return {
+            Kind = kind,
+            Enabled = false,
+            Color = DEFAULT_COLOR,
+            Seq = ColorSequence.new(DEFAULT_COLOR),
+            Rainbow = false,
+            PickerColor = DEFAULT_COLOR,
+            Thread = nil,
+        }
+    end
+    local Shield, Slash = NewCfg("shield"), NewCfg("slash")
+    local Cfgs = { shield = Shield, slash = Slash }
+
+    local Original = setmetatable({}, { __mode = "k" })
+    local RuntimeConn, CharDescConn, RespawnConn
+    local BoundChar, Monitoring
+
+    local function GetFXKind(i)
+        local k = FOLDER_KIND[i.Name]
+        if k then return k end
+        local p = i.Parent
+        for _ = 1, 8 do
+            if not p or p == workspace then return nil end
+            k = FOLDER_KIND[p.Name]
+            if k then return k end
+            p = p.Parent
+        end
+        return nil
+    end
+
+    local function Untrack(i, restore)
+        local rec = Original[i]
+        if not rec then return end
+        if rec.PropConn then rec.PropConn:Disconnect() end
+        if rec.DestroyConn then rec.DestroyConn:Disconnect() end
+        if restore and i.Parent then
+            i[rec.Prop] = rec.Value
+        end
+        Original[i] = nil
+    end
+
+    local function UntrackKind(kind)
+        local list = {}
+        for i, rec in pairs(Original) do
+            if rec.Kind == kind then
+                list[#list + 1] = i
+            end
+        end
+        for n = 1, #list do Untrack(list[n], true) end
+    end
+
+    local function ApplyTint(i, rec)
+        local cfg = Cfgs[rec.Kind]
+        if not (cfg and cfg.Enabled) then return end
+        rec.Applying = true
+        i[rec.Prop] = rec.IsSeq and cfg.Seq or cfg.Color
+        rec.Applying = false
+    end
+
+    local function Track(i, kind)
+        if Original[i] then return end
+        local tint = TINT[i.ClassName]
+        if not tint then return end
+        kind = kind or GetFXKind(i)
+        local cfg = kind and Cfgs[kind]
+        if not (cfg and cfg.Enabled) then return end
+        local prop, isSeq = tint[1], tint[2]
+        local ok, orig = true, i[prop]
+        if not ok then return end
+        local rec = { Prop = prop, Value = orig, Kind = kind, IsSeq = isSeq, Applying = false }
+        Original[i] = rec
+        rec.PropConn = i:GetPropertyChangedSignal(prop):Connect(function()
+            if rec.Applying then return end
+            if i.Parent then ApplyTint(i, rec) end
+        end)
+        rec.DestroyConn = i.Destroying:Connect(function()
+            Untrack(i, false)
+        end)
+        ApplyTint(i, rec)
+    end
+
+    local function TrackFolder(folder, kind)
+        if not (folder and kind and Cfgs[kind].Enabled) then return end
+        Track(folder, kind)
+        local desc = folder:GetDescendants()
+        for n = 1, #desc do Track(desc[n], kind) end
+    end
+
+    local function RetintKind(kind)
+        for i, rec in pairs(Original) do
+            if rec.Kind == kind and i.Parent then ApplyTint(i, rec) end
+        end
+    end
+
+    local function CommitColor(cfg, color)
+        cfg.Color = color
+        cfg.Seq = ColorSequence.new(color)
+        if cfg.Enabled then RetintKind(cfg.Kind) end
+    end
+
+    local function ScanNamed(root)
+        if not root then return end
+        local k = FOLDER_KIND[root.Name]
+        if k then TrackFolder(root, k) end
+        local desc = root:GetDescendants()
+        for n = 1, #desc do
+            local d = desc[n]
+            k = FOLDER_KIND[d.Name]
+            if k then TrackFolder(d, k) end
+        end
+    end
+
+    local function OnDescendant(d)
+        local k = FOLDER_KIND[d.Name]
+        if k then
+            TrackFolder(d, k)
+            return
+        end
+        if TINT[d.ClassName] then Track(d) end
+    end
+
+    local function BindChar(char)
+        if BoundChar ~= char then
+            if CharDescConn then CharDescConn:Disconnect() end
+            BoundChar = char
+            CharDescConn = char and char.DescendantAdded:Connect(OnDescendant) or nil
+            Connections_Manager['FX_CharDesc'] = CharDescConn
+        end
+        ScanNamed(char)
+    end
+
+    local function BindRuntime()
+        if RuntimeConn then return end
+        local runtime = workspace:FindFirstChild("Runtime")
+        if not runtime then return end
+        RuntimeConn = runtime.ChildAdded:Connect(function(c)
+            local k = FOLDER_KIND[c.Name]
+            if k then TrackFolder(c, k) end
+        end)
+        Connections_Manager['FX_Runtime'] = RuntimeConn
+        local children = runtime:GetChildren()
+        for n = 1, #children do
+            local c = children[n]
+            local k = FOLDER_KIND[c.Name]
+            if k then TrackFolder(c, k) end
+        end
+    end
+
+    local function StartMonitor()
+        if not Monitoring then
+            Monitoring = true
+            if not RespawnConn then
+                RespawnConn = Player.CharacterAdded:Connect(BindChar)
+                Connections_Manager['FX_Respawn'] = RespawnConn
+            end
+            BindRuntime()
+        end
+        BindChar(Player.Character)
+    end
+
+    local function StopMonitorIfIdle()
+        if Shield.Enabled or Slash.Enabled then return end
+        Monitoring = false
+        BoundChar = nil
+        if CharDescConn then CharDescConn:Disconnect(); CharDescConn = nil; Connections_Manager['FX_CharDesc'] = nil end
+        if RuntimeConn then RuntimeConn:Disconnect(); RuntimeConn = nil; Connections_Manager['FX_Runtime'] = nil end
+        if RespawnConn then RespawnConn:Disconnect(); RespawnConn = nil; Connections_Manager['FX_Respawn'] = nil end
+    end
+
+    local function StartRainbow(cfg)
+        if cfg.Thread or not cfg.Enabled then return end
+        cfg.Thread = task.spawn(function()
+            local hue = 0
+            while cfg.Rainbow and cfg.Enabled do
+                hue = (hue + 0.01) % 1
+                cfg.Color = Color3.fromHSV(hue, 1, 1)
+                cfg.Seq = ColorSequence.new(cfg.Color)
+                RetintKind(cfg.Kind)
+                task.wait(0.05)
+            end
+            cfg.Thread = nil
+        end)
+    end
+
+    local function SetEnabled(cfg, state)
+        cfg.Enabled = state
+        if state then
+            StartMonitor()
+            if cfg.Rainbow then StartRainbow(cfg) end
+        else
+            UntrackKind(cfg.Kind)
+            StopMonitorIfIdle()
+        end
+    end
+
+    local BS_Group = Tabs.Sword:AddRightGroupbox("Shield & Slash FX", "sparkle")
+
+    local function AddFX(cfg, id, label)
+        local tog = BS_Group:AddToggle(id .. "_Toggle", {
+            Text = label,
+            Default = false,
+            Callback = function(state)
+                SetEnabled(cfg, state)
+            end,
+        })
+        tog:AddColorPicker({
+            SaveId  = id .. "_Color",
+            Name    = label .. " Color",
+            Default = DEFAULT_COLOR,
+            Callback = function(color)
+                cfg.PickerColor = color
+                if not cfg.Rainbow then CommitColor(cfg, color) end
+            end,
+        })
+        BS_Group:AddToggle(id .. "_Rainbow", {
+            Text     = "Rainbow",
+            Default  = false,
+            Callback = function(state)
+                cfg.Rainbow = state
+                if state then StartRainbow(cfg)
+                else CommitColor(cfg, cfg.PickerColor) end
+            end,
+        })
+    end
+
+    AddFX(Shield, "ShieldFX", "Shield FX")
+    AddFX(Slash, "SlashFX", "Slash FX")
+
+    local Rewards_Group = Tabs.Sword:AddRightGroupbox("Rewards", "gift")
+    local _RW = { Items = {}, Running = false }
+
+    _RW.Items[1] = { ID = "Claim_Daily_Rewards", Name = "Auto Claim Daily", Interval = 5, Next = 0, Enabled = false }
+    _RW.Items[2] = { ID = "Claim_Playtime_Rewards", Name = "Auto Claim Playtime", Interval = 5, Next = 0, Enabled = false }
+    _RW.Items[3] = { ID = "Claim_Battlepass_Rewards", Name = "Auto Claim BP Rewards", Interval = 5, Next = 0, Enabled = false }
+    _RW.Items[4] = { ID = "Auto_Wheel_Spins", Name = "Auto Spin Wheel", Interval = 12, Next = 0, Enabled = false }
+
+    for _, item in ipairs(_RW.Items) do
+        item.Locked = (item.ID == "Claim_Battlepass_Rewards")
+        Rewards_Group:AddToggle(item.ID .. '_Toggle', {
+            Text = item.Name, Default = false,
+            Status = item.Locked and "Locked" or nil,
+            StatusSubtitle = "BAC Detected",
+            Callback = function(state)
+                if item.Locked then
+                    item.Enabled = false
+                    return
+                end
+                item.Enabled = state
+            end
+        })
+    end
+
+    task.spawn(function()
+        local PG = Player:WaitForChild('PlayerGui', 10)
+        local Data = require(ReplicatedStorage.Packages.Replion).Client:WaitReplion("Data")
+        local Ctrl = ReplicatedStorage.Controllers
+        local BPD = nil
+        pcall(function() BPD = require(ReplicatedStorage.Shared.InfiniteBattlepass.InfiniteBattlepassData) end)
+
+        local function FG(...)
+            local c = PG
+            for _, n in ipairs({...}) do c = c and c:FindFirstChild(n); if not c then return nil end end
+            return c
+        end
+
+        local function FB(btn, cs)
+            if not btn or not btn.Visible then return false end
+            for _, cn in getconnections(btn.Activated) do
+                if cn.Enabled and cn.Function and getfenv(cn.Function).script == cs then cn:Fire(); return true end
+            end
+            return false
+        end
+
+        local RF = {}
+
+        RF["Claim_Daily_Rewards"] = function()
+            local lt = Data:Get("CurrentDailyLoginType")
+            local ld = Data:Get({"DailyLoginData", lt})
+            if not ld or not ld.NextClaim then return end
+            if (lt ~= "D30" and lt ~= "Longterm") then return end
+            if workspace:GetServerTimeNow() < ld.NextClaim then return end
+            local gui = FG("DailyLogin_" .. lt .. "_Rewards")
+            if gui then
+                local btn = lt == "D30" and gui.Page.Rewards:FindFirstChild("Day" .. ld.DaysClaimedStreak + 1, true) or (gui.Frame and gui.Frame.Claim)
+                pcall(function() FB(btn, Ctrl.UI.DailyLoginController) end)
+            end
+            if BPD and BPD.isEnabled() then
+                local bg = FG("BattlepassDailyLogin", "Background", "Frame", "ScrollingFrame")
+                if bg then
+                    for _, ch in bg:GetChildren() do
+                        if ch:GetAttribute("State") == "Claimable" then
+                            pcall(function() FB(ch:FindFirstChild("Claim"), Player:WaitForChild("PlayerScripts").Client.UIBinders.BattlepassDailyLogin) end)
+                            break
+                        end
+                    end
+                end
+            end
+            local wb = Data:Get("WelcomeBackEvent")
+            if wb and workspace:GetServerTimeNow() < (wb.EventEndTime or 0) then
+                local days = FG("NewWelcomeBack", "Frame", "Views", "Login", "Days")
+                if days then
+                    for _, ch in days:GetChildren() do
+                        local cb = ch:FindFirstChild("Claim")
+                        local ix = ch.LayoutOrder
+                        if cb and cb.Visible and ix <= wb.DailyLoginStreak and not wb.ClaimedDailyRewards[ix] then
+                            pcall(function() for _, cn in getconnections(cb.MouseButton1Click) do if cn.Enabled and cn.Function and getfenv(cn.Function).script == Ctrl.WelcomeBackController.EventControllers.Login then cn:Fire(); break end end end)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+
+        RF["Claim_Playtime_Rewards"] = function()
+            local ptI = require(ReplicatedStorage.Common.PlaytimeRewardsInfo).Rewards
+            local ptD = Data:Get("PlaytimeRewardsData")
+            if ptD then
+                for ix, rw in pairs(ptI) do
+                    if not ptD.ClaimedRewards[tostring(ix)] and workspace:GetServerTimeNow() >= ptD.TimerStart + rw.Duration then
+                        pcall(function() FB(FG("PlaytimeRewards","PlaytimeRewards","Page","List","RewardsList",tostring(ix),"ClaimButton"), Ctrl.UI.PlaytimeRewardsController) end)
+                        break
+                    end
+                end
+            end
+            if BPD and BPD.isEnabled() then
+                local bpPT = require(ReplicatedStorage.Shared.Battlepass.BattlepassPlaytimeRewardsData)
+                local cl = Data:Get("ClaimedPlaytimeRewards") or {}
+                for ix, rw in pairs(bpPT) do
+                    if rw.Seconds <= (Data:Get("SecondsPlayedToday") or 0) and not table.find(cl, ix) then
+                        local g = FG("BattlepassPlaytimeRewards","PlaytimeRewards","MainFrame","Grid",tostring(ix))
+                        if g then pcall(function() FB(g.Claim.Claim, Ctrl.Battlepass.BattlepassPlaytimeRewardsController) end) end
+                        break
+                    end
+                end
+            end
+            local qs = Data:Get("CurrentQuests") or {}
+            local qd = require(ReplicatedStorage.Shared.Quests)
+            for _, qi in pairs(qs) do
+                local df = qd[qi]
+                if df and (Data:Get({"QuestStats", df.stat}) or 0) >= df.goal and not table.find(Data:Get("QuestsAwarded") or {}, qi) then
+                    pcall(function() FB(FG("NewDailyQuests","Holder","Quests",qi,"Intermediate"), Ctrl.UI.QuestsController) end)
+                end
+            end
+        end
+
+        RF["Claim_Battlepass_Rewards"] = function()
+            if not BPD or not BPD.isEnabled() then return end
+            local ca = FG("Battlepass","Main","Background","Left","ClaimAll")
+            if ca and ca.Visible then pcall(function() FB(ca, Ctrl.Battlepass.BattlepassTierController) end) end
+        end
+
+        RF["Auto_Wheel_Spins"] = function()
+            if (Data:Get("rolls") or 0) <= 0 then return end
+
+            local wheelGui = FG("Wheel", "Default")
+            if wheelGui and wheelGui:GetAttribute("Spinning") then
+                wheelGui:SetAttribute("Spinning", false)
+            end
+
+            local Utils = require(ReplicatedStorage.Common.Utils)
+            pcall(function()
+                Utils.Network:Invoke("SpinWheel")
+            end)
+        end
+
+        _RW.Running = true
+        while not _ScriptUnloaded and _RW.Running do
+            for _, r in ipairs(_RW.Items) do
+                if r.Enabled and os.clock() >= r.Next and RF[r.ID] then
+                    r.Next = os.clock() + r.Interval
+                    pcall(RF[r.ID])
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end
+
+do
+    local HttpService = game:GetService("HttpService")
+    local TeleportService = game:GetService("TeleportService")
+    local GENV = getgenv()
+
+    GENV.txtDeviceSpoofType = GENV.txtDeviceSpoofType or "PC"
+
+    local Group = Tabs.Sword:AddLeftGroupbox("Device Spoofer", "monitor")
+
+    Group:AddDropdown("DeviceSpoof_Type", {
+        Text = "Device",
+        Values = { "PC", "Mobile", "Console" },
+        Multi = false,
+        Default = "PC",
+        Callback = function(Value)
+            GENV.txtDeviceSpoofType = Value
+        end,
+    })
+
+    local function Notify(title, content, duration)
+        if Window and Window.Notify then
+            pcall(function()
+                Window:Notify({ Title = title, Content = content, Duration = duration or 3 })
+            end)
+        end
+    end
+
+    do
+        local applied = GENV.txtDeviceSpoofApplied
+        if type(applied) == "table" and applied.JobId == game.JobId and applied.Device then
+            local label = (applied.Device == "Phone" or applied.Device == "Tablet") and "Mobile" or applied.Device
+            task.defer(function()
+                Notify("Device Spoofer", "Active: " .. tostring(label), 3)
+            end)
+        end
+    end
+
+    Group:AddButton({
+        Text = "Apply & Rejoin",
+        Callback = function()
+            local deviceType = GENV.txtDeviceSpoofType
+            local opt = Library and Library.Options and Library.Options.DeviceSpoof_Type
+            if opt then
+                local ok, val = pcall(function() return opt.Value end)
+                if ok and type(val) == "string" and (val == "PC" or val == "Mobile" or val == "Console") then
+                    deviceType = val
+                end
+            end
+            deviceType = deviceType or "PC"
+            GENV.txtDeviceSpoofType = deviceType
+
+            local spoofDevice = (deviceType == "Mobile") and "Phone" or deviceType
+            local displayName = (spoofDevice == "Phone" or spoofDevice == "Tablet") and "Mobile" or spoofDevice
+
+            local query = [[local Source = %q
+            if not game:IsLoaded() then game.Loaded:Wait() end
+            local Queue = queue_on_teleport or queueonteleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
+            local Players = game:GetService('Players')
+            local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+            local Environment = getgenv()
+            if Environment.txtDeviceSpoofQueue then
+                Environment.txtDeviceSpoofQueue:Disconnect()
+            end
+            local Queued = false
+            Environment.txtDeviceSpoofQueue = Player.OnTeleport:Connect(function()
+                if not Queued then
+                    Queue(Source:format(Source))
+                    Queued = true
+                end
+            end)
+            local Device = ]] .. HttpService:JSONEncode(spoofDevice) .. [[
+            if game.GameId ~= ]] .. tostring(game.GameId) .. [[ then return end
+            local Previous = Environment.txtDeviceSpoofRun
+            if Previous and Previous.JobId == game.JobId and Previous.Device == Device then return end
+            if Previous and Previous.Restore then Previous.Restore() end
+            local Run = { Device = Device, JobId = game.JobId }
+            Environment.txtDeviceSpoofRun = Run
+            while not workspace:GetAttribute('ClientModulesLoaded') do
+                workspace:GetAttributeChangedSignal('ClientModulesLoaded'):Wait()
+            end
+            if Environment.txtDeviceSpoofRun ~= Run then return end
+            local ReplicatedStorage = game:GetService('ReplicatedStorage')
+            local Listener = require(ReplicatedStorage:WaitForChild('ClientGameModules'):WaitForChild('DeviceListener'))
+            local Observe = Listener.Observe
+
+            local function Apply(Callback)
+                if Run.Restore then Run.Restore() end
+                task.spawn(function()
+                    local Success, Result = pcall(function()
+                        Callback(Device)
+                        Callback(Listener.Device)
+                    end)
+                    if not Success then
+                        Environment.txtDeviceSpoofRun = nil
+                        error(Result, 0)
+                    end
+                    Environment.txtDeviceSpoofApplied = { Device = Device, JobId = game.JobId }
+                    pcall(function()
+                        workspace:SetAttribute("txtDeviceSpoof_" .. Player.UserId, Device)
+                    end)
+                end)
+            end
+
+            for _, Connection in Listener.OnChange:GetConnections() do
+                if debug.info(Connection._fn, 's') == 'ReplicatedStorage.Controllers.PlayerProfileController' then
+                    Apply(Connection._fn)
+                    return
+                end
+            end
+
+            local function ObserveDevice(Self, Callback)
+                if debug.info(Callback, 's') == 'ReplicatedStorage.Controllers.PlayerProfileController' then
+                    Apply(Callback)
+                    return Self.OnChange:Connect(Callback)
+                end
+                return Observe(Self, Callback)
+            end
+
+            Run.Restore = function()
+                if Listener.Observe == ObserveDevice then Listener.Observe = Observe end
+                Run.Restore = nil
+            end
+            Listener.Observe = ObserveDevice
+            ]]
+
+            local concatenated = query:format(query)
+
+            if GENV.txtDeviceSpoofQueue then
+                GENV.txtDeviceSpoofQueue:Disconnect()
+                GENV.txtDeviceSpoofQueue = nil
+            end
+
+            local queue = queue_on_teleport or queueonteleport
+                or (syn and syn.queue_on_teleport)
+                or (fluxus and fluxus.queue_on_teleport)
+
+            if not queue then
+                Notify("Device Spoofer", "Executor does not support queue_on_teleport.", 4)
+                return
+            end
+
+            queue(concatenated)
+
+            Notify("Device Spoofer", "Spoofing as " .. tostring(displayName) .. ", rejoining...", 3)
+            task.wait(0.2)
+
+            if not pcall(TeleportService.TeleportToPlaceInstance, TeleportService, game.PlaceId, game.JobId, Player) then
+                pcall(function()
+                    game:GetService("ExperienceService"):LaunchExperience({ placeId = game.PlaceId, gameInstanceId = game.JobId })
+                end)
+            end
+        end,
+    })
+
+    Env._DeviceSpoofUnload = function()
+        if GENV.txtDeviceSpoofQueue then
+            pcall(function() GENV.txtDeviceSpoofQueue:Disconnect() end)
+            GENV.txtDeviceSpoofQueue = nil
+        end
+        Notify("Device Spoofer", "Restored", 2)
+        Env._DeviceSpoofUnload = nil
+    end
+end
+
+do
+    local Q = {
+        Enabled_Blind = false,
+        Enabled_Disorient = false,
+        Active_Until = 0,
+        Saved_Atmosphere = nil,
+        Saved_Camera = nil,
+        Conns = {},
+    }
+
+    local function Track(key, c)
+        if c then
+            Q.Conns[#Q.Conns + 1] = c
+            Connections_Manager[key] = c
+        end
+    end
+
+    local function Untrack(key, c)
+        if c then pcall(function() c:Disconnect() end) end
+        if Connections_Manager[key] == c then Connections_Manager[key] = nil end
+    end
+
+    local function ClearBlindness(atmosphere)
+        local Light = workspace:FindFirstChildOfClass("Lighting") or Lighting
+        if atmosphere then
+            local s = Q.Saved_Atmosphere
+            atmosphere.Density = s and s.Density or 0
+            atmosphere.Offset = s and s.Offset or 0
+            atmosphere.Haze = s and s.Haze or 0
+            atmosphere.Glare = s and s.Glare or 0
+            if s then
+                atmosphere.Color = s.Color
+                atmosphere.Decay = s.Decay
+            end
+            return
+        end
+        local blind = Light:FindFirstChild("Blindness")
+        if blind and blind:IsA("Atmosphere") then
+            ClearBlindness(blind)
+        end
+        for _, v in ipairs(workspace:GetChildren()) do
+            if v:IsA("Atmosphere") and v.Name == "Blindness" then
+                ClearBlindness(v)
+            end
+        end
+    end
+
+    local function KillBlindGui()
+        local pg = Player:FindFirstChild("PlayerGui")
+        if not pg then return end
+        for _, v in ipairs(pg:GetDescendants()) do
+            if v:IsA("ImageLabel") or v:IsA("Frame") then
+                if v.Name == "Blindness" or v.Name == "Blind" or v.Name == "QuasarBlind" then
+                    v.Visible = false
+                end
+            end
+        end
+    end
+
+    local function OnQuasar(plr, char)
+        if char ~= Player.Character then return end
+        local upg = plr and plr:FindFirstChild("Upgrades")
+        upg = upg and upg:FindFirstChild("Quasar")
+        Q.Active_Until = os.clock() + 5 + (upg and upg.Value or 0)
+        if Q.Enabled_Blind then
+            ClearBlindness()
+            KillBlindGui()
+        end
+        if Q.Enabled_Disorient and Q.Saved_Camera then
+            local cam = workspace.CurrentCamera
+            if cam then
+                local rot = Q.Saved_Camera.Rotation
+                cam.CFrame = CFrame.new(cam.CFrame.Position) * rot
+            end
+        end
+    end
+
+    local function OnBlindnessChanged()
+        if not Q.Enabled_Blind then return end
+        if os.clock() >= Q.Active_Until then return end
+        local blind = Lighting:FindFirstChild("Blindness")
+        if blind and blind.Enabled then blind.Enabled = false end
+        KillBlindGui()
+    end
+
+    local function OnAtmosphereAdded(inst)
+        if not Q.Enabled_Blind then return end
+        if not inst:IsA("Atmosphere") then return end
+        if os.clock() < Q.Active_Until and inst.Name == "Blindness" then
+            ClearBlindness(inst)
+        elseif inst.Name ~= "Blindness" then
+            Q.Saved_Atmosphere = {
+                Density = inst.Density, Offset = inst.Offset,
+                Haze = inst.Haze, Glare = inst.Glare,
+                Color = inst.Color, Decay = inst.Decay,
+            }
+        end
+    end
+
+    local function Start()
+        local remote = ReplicatedStorage:FindFirstChild("Remotes")
+        if remote then
+            local ev = remote:FindFirstChild("PlrQuasared")
+            if ev then
+                Track("Quasar_Event", ev.OnClientEvent:Connect(function(plr, char)
+                    OnQuasar(plr, char)
+                end))
+            end
+        end
+        Track("Quasar_BlindProp", Lighting:GetPropertyChangedSignal("Enabled"):Connect(OnBlindnessChanged))
+        local blind = Lighting:FindFirstChild("Blindness")
+        if blind then
+            Track("Quasar_BlindProp2", blind:GetPropertyChangedSignal("Enabled"):Connect(OnBlindnessChanged))
+        end
+        Track("Quasar_Atmo", workspace.ChildAdded:Connect(OnAtmosphereAdded))
+        Track("Quasar_Cam", RunService.PreRender:Connect(function()
+            local cam = workspace.CurrentCamera
+            if cam then Q.Saved_Camera = cam.CFrame end
+        end))
+        for _, v in ipairs(Lighting:GetChildren()) do
+            if v:IsA("Atmosphere") and v.Name ~= "Blindness" and not Q.Saved_Atmosphere then
+                Q.Saved_Atmosphere = {
+                    Density = v.Density, Offset = v.Offset,
+                    Haze = v.Haze, Glare = v.Glare,
+                    Color = v.Color, Decay = v.Decay,
+                }
+            end
+        end
+    end
+
+    local function Stop()
+        for k, c in pairs(Q.Conns) do
+            pcall(function() c:Disconnect() end)
+            Q.Conns[k] = nil
+        end
+        for key, c in pairs(Connections_Manager) do
+            if type(key) == "string" and key:sub(1, 6) == "Quasar" then
+                pcall(function() c:Disconnect() end)
+                Connections_Manager[key] = nil
+            end
+        end
+        Q.Active_Until = 0
+        Q.Saved_Camera = nil
+    end
+
+    Env._Quasar_State = Q
+
+    local G = Tabs.Sword:AddLeftGroupbox("Anti-Quasar", "eye-off")
+    G:AddToggle('Quasar_Blind_Toggle', {
+        Text = 'Anti Blind',
+        Default = false,
+        Callback = function(s)
+            Q.Enabled_Blind = s
+            if s then
+                Start()
+                ClearBlindness()
+                KillBlindGui()
+            else
+                Stop()
+            end
+        end,
+    })
+    G:AddToggle('Quasar_Disorient_Toggle', {
+        Text = 'Anti Disorient',
+        Default = false,
+        Callback = function(s)
+            Q.Enabled_Disorient = s
+            if s and not Q.Saved_Camera then
+                Start()
+            elseif not s and not Q.Enabled_Blind then
+                Stop()
+            end
+        end,
+    })
+end
+
+local ESP_Group = Tabs.Client:AddLeftGroupbox("ESP", "palette")
+
+local FuryStartCount = {}
+local FuryResult = {}
+local FURY_RESULT_HOLD = 5
+
+local function GetServerParryCount(plr)
+    return plr:GetAttribute('ServerParryCount')
+        or (plr.Character and plr.Character:GetAttribute('ServerParryCount'))
+        or 0
+end
+
+local function GetFuryCount(plr)
+    return math.max(GetServerParryCount(plr) - (FuryStartCount[plr] or 0), 0)
+end
+
+local SOF_Connections = {}
+
+local function SetupSOF_Tracker(plr)
+    if plr == Player or not plr.Character then return end
+    if SOF_Connections[plr] then return end
+
+    local char = plr.Character
+    local conn = char:GetAttributeChangedSignal("AbilityActive"):Connect(function()
+        if _ScriptUnloaded then return end
+        local active = char:GetAttribute("AbilityActive")
+        local ability = plr:GetAttribute('EquippedAbility') or plr:GetAttribute('CurrentlyEquippedAbility')
+
+        if active and ability == "Slashes of Fury" then
+            FuryStartCount[plr] = GetServerParryCount(plr)
+            FuryResult[plr] = nil
+        elseif not active and FuryStartCount[plr] then
+            FuryResult[plr] = { GetFuryCount(plr), workspace:GetServerTimeNow() + FURY_RESULT_HOLD }
+            FuryStartCount[plr] = nil
+        end
+    end)
+    SOF_Connections[plr] = conn
+end
+
+for _, plr in ipairs(Players:GetPlayers()) do
+    task.spawn(SetupSOF_Tracker, plr)
+    Connections_Manager['SOF_Char_' .. plr.UserId] = plr.CharacterAdded:Connect(function()
+        task.wait(1); SetupSOF_Tracker(plr)
+    end)
+end
+Connections_Manager['SOF_PlayerAdded'] = Players.PlayerAdded:Connect(function(plr)
+    task.wait(1); SetupSOF_Tracker(plr)
+    Connections_Manager['SOF_Char_' .. plr.UserId] = plr.CharacterAdded:Connect(function()
+        task.wait(1); SetupSOF_Tracker(plr)
+    end)
+end)
+Connections_Manager['SOF_PlayerRemoving'] = Players.PlayerRemoving:Connect(function(plr)
+    if SOF_Connections[plr] then SOF_Connections[plr]:Disconnect(); SOF_Connections[plr] = nil end
+    local key = 'SOF_Char_' .. plr.UserId
+    if Connections_Manager[key] then Connections_Manager[key]:Disconnect(); Connections_Manager[key] = nil end
+    FuryStartCount[plr] = nil
+    FuryResult[plr] = nil
+end)
+Env._SOF_Cleanup = function()
+    for plr, c in pairs(SOF_Connections) do
+        pcall(function() c:Disconnect() end)
+        SOF_Connections[plr] = nil
+    end
+end
+
+local Ability_Module
+task.spawn(function()
+    Ability_Module = require(ReplicatedStorage.Shared.Abilities)
+end)
+
+local function GetAbilityCooldownSafe(subject, abilityName)
+    if Ability_Module and Ability_Module.getAbilityCooldown then
+        local ok, cd = true, Ability_Module.getAbilityCooldown(subject, abilityName)
+        if ok then return cd end
+    end
+    return nil
+end
+
+local function GetEquippedAbility(plr)
+    return plr:GetAttribute('EquippedAbility') or plr:GetAttribute('CurrentlyEquippedAbility')
+end
+
+local function GetUpgradeLevel(plr, char, abilityName)
+    local level = nil
+
+    if Ability_Module and Ability_Module.getUpgradeLevel and abilityName and (plr or char) then
+        local ok, result = true, Ability_Module.getUpgradeLevel(plr or char, abilityName)
+        if ok and type(result) == 'number' then
+            level = result
+        end
+    end
+
+    if level == nil and plr and abilityName then
+        local upgrades = plr:FindFirstChild('Upgrades')
+        if upgrades then
+            local compact = abilityName:gsub(' ', '')
+            local val = upgrades:FindFirstChild(abilityName) or upgrades:FindFirstChild(compact)
+            if val and (val:IsA('IntValue') or val:IsA('NumberValue')) then
+                level = val.Value
+            end
+        end
+    end
+    if level == nil and char then
+        level = char:GetAttribute('AbilityUpgrade')
+    end
+    if type(level) ~= 'number' then return 0 end
+    return math.max(0, math.floor(level))
+end
+
+local function ReadChargeAttr(char, player, attr)
+    local value = char:GetAttribute(attr)
+    if value == nil and player then
+        value = player:GetAttribute(attr)
+    end
+    if value == nil then
+        local abilityFolder = char:FindFirstChild("Abilities")
+        value = abilityFolder and abilityFolder:GetAttribute(attr)
+    end
+    return value
+end
+
+local function GetChargeInfo(char, abilityName)
+    local chargeData = Charge_Abilities[abilityName]
+    if not chargeData then return nil end
+
+    local player = Players:GetPlayerFromCharacter(char)
+
+    local maxCharges = chargeData.MaxCharges or 2
+    local byLevel = chargeData.MaxChargesByLevel
+    if byLevel then
+        local level = GetUpgradeLevel(player, char, abilityName)
+        while level > 0 and byLevel[level] == nil do level -= 1 end
+        maxCharges = byLevel[level] or maxCharges
+    end
+    if chargeData.MaxChargesAttr then
+        maxCharges = ReadChargeAttr(char, player, chargeData.MaxChargesAttr) or maxCharges
+    end
+
+    local charges = math.min(ReadChargeAttr(char, player, chargeData.ChargeAttr) or maxCharges, maxCharges)
+
+    local nextUseCD = nil
+    if chargeData.NextUseAttr then
+        local nextUse = ReadChargeAttr(char, player, chargeData.NextUseAttr)
+        if nextUse then
+            local remaining = nextUse - workspace:GetServerTimeNow()
+            if remaining > 0 then
+                nextUseCD = tick() + remaining
+            end
+        end
+    end
+
+    return {
+        Charges = charges,
+        MaxCharges = maxCharges,
+        CDEnd = nextUseCD
+    }
+end
+
+local COLOR_READY  = Color3.fromRGB(100, 220, 120)
+local COLOR_CD = Color3.fromRGB(225, 95, 85)
+local COLOR_ACTIVE = Color3.fromRGB(90, 190, 255)
+local COLOR_CHARGE = Color3.fromRGB(255, 200, 70)
+
+local BADGE_TIERS = {
+    { Color3.fromRGB(95, 185, 255),  Color3.fromRGB(35, 105, 215), Color3.fromRGB(15, 45, 95) },
+    { Color3.fromRGB(200, 130, 255), Color3.fromRGB(120, 55, 210), Color3.fromRGB(55, 20, 95) },
+    { Color3.fromRGB(255, 225, 110), Color3.fromRGB(235, 145, 25), Color3.fromRGB(110, 60, 5) },
+}
+
+local function ChargeDisplay(charges, max, remaining, timerFormat)
+    local fraction = (max > 0) and (charges / max) or 0
+    local color = (charges >= max) and COLOR_READY or COLOR_CHARGE
+    local text = string.format("%d/%d", charges, max)
+    if remaining and remaining > 0 then
+        text = text .. "  " .. string.format(timerFormat or "%.0f", remaining)
+    end
+    return fraction, color, text
+end
+
+local function UpdateVersionBadge(badge, level)
+    local tier = math.clamp(level, 1, #BADGE_TIERS)
+    local label = badge:FindFirstChild('Label')
+    if label then
+        local text = 'V' .. tostring(level)
+        if label.Text ~= text then label.Text = text end
+    end
+    if badge:GetAttribute('Tier') == tier then return end
+    badge:SetAttribute('Tier', tier)
+    local colors = BADGE_TIERS[tier]
+    local gradient = badge:FindFirstChildOfClass('UIGradient')
+    if gradient then gradient.Color = ColorSequence.new(colors[1], colors[2]) end
+    local stroke = badge:FindFirstChildOfClass('UIStroke')
+    if stroke then stroke.Color = colors[3] end
+end
+
+local AbilityActiveStart = {}
+local CooldownExpiration = {}
+local CooldownTotal = {}
+local AbilityActiveDuration = {}
+local LastAbilityActiveState = {}
+local AbilityTrackingContext = {}
+
+local function UpdateActiveTimer(plr, now, active, previouslyActive)
+    local duration = tonumber(plr:GetAttribute("AbilityDuration"))
+    if not active or not duration or duration <= 0 then
+        AbilityActiveStart[plr] = nil
+        AbilityActiveDuration[plr] = nil
+        return
+    end
+    if not previouslyActive or not AbilityActiveStart[plr] or AbilityActiveDuration[plr] ~= duration then
+        AbilityActiveStart[plr] = now
+        AbilityActiveDuration[plr] = duration
+    end
+end
+
+local function ActiveTimerDisplay(startTime, duration, now)
+    if startTime and duration and duration > 0 then
+        local remaining = math.max(0, duration - (now - startTime))
+        if remaining > 0 then
+            return math.clamp(remaining / duration, 0, 1), string.format("%.1f", remaining)
+        end
+    end
+    return nil, ""
+end
+
+local FURY_REQUIRED_PARRIES = 35
+local FURY_RESULT_HOLD = 5
+
+local function GetUpgradedMaxCharges(plr, abilityName)
+    return GetUpgradeLevel(plr, plr.Character, abilityName) > 0 and 3 or 2
+end
+
+local DribbleCharges = {}
+local DribbleRefillTimes = {}
+
+local function OnDribbleImmunity(Instance)
+    if Instance.Name ~= "DRIBBLE_IMMUNITY" then
+        return
+    end
+
+    local Character = Instance:FindFirstAncestorOfClass("Model")
+    local Enemy = Character and Players:GetPlayerFromCharacter(Character)
+
+    if not Enemy then
+        return
+    end
+
+    local MaxCharges = GetUpgradedMaxCharges(Enemy, "Dribble")
+    DribbleCharges[Enemy] = math.min(DribbleCharges[Enemy] or MaxCharges, MaxCharges)
+
+    DribbleCharges[Enemy] = math.max(DribbleCharges[Enemy] - 1, 0)
+
+    local Cooldown = GetAbilityCooldownSafe(Enemy, "Dribble")
+
+    if Cooldown and Cooldown > 0 then
+        DribbleRefillTimes[Enemy] = DribbleRefillTimes[Enemy] or {}
+        table.insert(DribbleRefillTimes[Enemy], workspace:GetServerTimeNow() + Cooldown)
+    end
+end
+
+local DragonSpiritCharges = {}
+local DragonSpiritRefillTimes = {}
+
+local function OnGuardianDragon(instance)
+    if instance.Name ~= "GUARDIAN_DRAGON" then
+        return
+    end
+
+    for _, player in Players:GetPlayers() do
+        if GetEquippedAbility(player) == "Dragon Spirit" then
+            local MaxCharges = GetUpgradedMaxCharges(player, "Dragon Spirit")
+            DragonSpiritCharges[player] = math.min(DragonSpiritCharges[player] or MaxCharges, MaxCharges)
+
+            DragonSpiritCharges[player] = math.max(DragonSpiritCharges[player] - 1, 0)
+
+            local cd = GetAbilityCooldownSafe(player, "Dragon Spirit")
+
+            if cd and cd > 0 then
+                local now = workspace:GetServerTimeNow()
+                if not DragonSpiritRefillTimes[player] or DragonSpiritRefillTimes[player] <= now then
+                    DragonSpiritRefillTimes[player] = now + cd - 1
+                end
+            end
+        end
+    end
+end
+
+local function StartAbilityChargeMonitors()
+    if not Connections_Manager['Dribble Event Monitor'] then
+        Connections_Manager['Dribble Event Monitor'] = AliveFolder.DescendantAdded:Connect(OnDribbleImmunity)
+    end
+    if not Connections_Manager['Dragon Spirit Event Monitor'] then
+        Connections_Manager['Dragon Spirit Event Monitor'] = RuntimeFolder.ChildAdded:Connect(OnGuardianDragon)
+    end
+end
+
+local function StopAbilityChargeMonitors()
+    for _, key in ipairs({ 'Dribble Event Monitor', 'Dragon Spirit Event Monitor' }) do
+        local conn = Connections_Manager[key]
+        if conn then
+            conn:Disconnect()
+            Connections_Manager[key] = nil
+        end
+    end
+end
+
+local function ClearAbilityESPPlayer(plr)
+    DribbleCharges[plr] = nil
+    DribbleRefillTimes[plr] = nil
+    DragonSpiritCharges[plr] = nil
+    DragonSpiritRefillTimes[plr] = nil
+    AbilityActiveStart[plr] = nil
+    CooldownExpiration[plr] = nil
+    CooldownTotal[plr] = nil
+    AbilityActiveDuration[plr] = nil
+    LastAbilityActiveState[plr] = nil
+    AbilityTrackingContext[plr] = nil
+    FuryStartCount[plr] = nil
+    FuryResult[plr] = nil
+    FuryUI.Clear(plr)
+end
+
+local Billboard_Pending = {}
+local function EnsureBillboard(plr)
+    if plr == Player then return end
+
+    local char = plr.Character
+    if not char then return end
+
+    local label = Billboard_Banner[plr]
+    local gui = label and label.Parent
+
+    if gui and gui.Adornee and gui.Adornee:IsDescendantOf(char) then
+        gui.Enabled = true 
+        return
+    end
+
+    if Billboard_Pending[plr] then return end
+
+    Billboard_Pending[plr] = true
+    task.spawn(function()
+        SkinChanger.CreateBillboard(plr, plr.Character)
+        Billboard_Pending[plr] = nil
+    end)
+end
+
+local Ability_ESP_Toggle = ESP_Group:AddToggle('Ability_ESP_Toggle', {
+    Text = 'Ability ESP',
+    Default = false,
+    Callback = function(state)
+        if state then
+            StartAbilityChargeMonitors()
+
+            if not Connections_Manager['Billboard_PlayerRemoving'] then
+                Connections_Manager['Billboard_PlayerRemoving'] = Players.PlayerRemoving:Connect(function(Instance)
+                    local banner = Billboard_Banner[Instance]
+                    if banner and banner.Parent then
+                        banner.Parent:Destroy()
+                    end
+                    Billboard_Banner[Instance] = nil
+                    Billboard_Pending[Instance] = nil
+                    ClearAbilityESPPlayer(Instance)
+                end)
+            end
+
+            if Connections_Manager['Ability ESP'] then
+                Connections_Manager['Ability ESP']:Disconnect()
+                Connections_Manager['Ability ESP'] = nil
+            end
+
+            Connections_Manager['Ability ESP'] = RunService.Heartbeat:Connect(function()
+                local Data_Abilities = ReplicatedStorage.Misc.DataAbilities
+                local Now = workspace:GetServerTimeNow()
+
+
+                for Enemy, RefillTimes in DribbleRefillTimes do
+                    local Dribble_Max = GetUpgradedMaxCharges(Enemy, "Dribble")
+                    while RefillTimes[1] and Now >= RefillTimes[1] do
+                        table.remove(RefillTimes, 1)
+                        DribbleCharges[Enemy] = math.min((DribbleCharges[Enemy] or 0) + 1, Dribble_Max)
+                    end
+                    if not RefillTimes[1] then DribbleRefillTimes[Enemy] = nil end
+                end
+
+                for player, nextRefill in DragonSpiritRefillTimes do
+                    if Now >= nextRefill then
+                        local Dragon_Max = GetUpgradedMaxCharges(player, "Dragon Spirit")
+                        DragonSpiritCharges[player] = math.min((DragonSpiritCharges[player] or 0) + 1, Dragon_Max)
+
+                        if DragonSpiritCharges[player] < Dragon_Max then
+                            DragonSpiritRefillTimes[player] = Now + (GetAbilityCooldownSafe(player, "Dragon Spirit") or 0)
+                        else
+                            DragonSpiritRefillTimes[player] = nil
+                        end
+                    end
+                end
+
+                for _, Value in Players:GetPlayers() do
+                    if Value ~= Player and not Value.Character and AbilityTrackingContext[Value] then
+                        ClearAbilityESPPlayer(Value)
+                    end
+                    if Value and Value ~= Player and Value.Character then
+                        local EquippedAbility = GetEquippedAbility(Value)
+                        local SampleKey = tostring(EquippedAbility) .. ":" .. tostring(GetUpgradeLevel(Value, Value.Character, EquippedAbility))
+                        local Context = AbilityTrackingContext[Value]
+                        if not Context or Context.Character ~= Value.Character or Context.Key ~= SampleKey or Context.Parent ~= Value.Character.Parent then
+                            ClearAbilityESPPlayer(Value)
+                            AbilityTrackingContext[Value] = { Character = Value.Character, Key = SampleKey, Parent = Value.Character.Parent }
+                        end
+                        local Current_Active_State = Value.Character:GetAttribute("AbilityActive") == true
+                        local Previous_Active_State = LastAbilityActiveState[Value]
+
+                        if Previous_Active_State == nil then
+                            Previous_Active_State = false
+                        end
+
+                        UpdateActiveTimer(Value, Now, Current_Active_State, Previous_Active_State)
+
+                        if Current_Active_State ~= Previous_Active_State then
+                            if Current_Active_State then
+                                local Active_Ability_Name = EquippedAbility
+
+                                if not Active_Ability_Name then
+                                    continue
+                                end
+
+                                local Cooldown = GetAbilityCooldownSafe(Value, Active_Ability_Name)
+                                local StartTime = Now
+
+                                if Cooldown and Cooldown > 0 then
+                                    CooldownExpiration[Value] = StartTime + Cooldown
+                                    CooldownTotal[Value] = Cooldown
+                                end
+                            end
+
+                            LastAbilityActiveState[Value] = Current_Active_State
+                        end
+
+                        EnsureBillboard(Value)
+
+                        local Ability_Name = GetEquippedAbility(Value)
+                        local Icon = Billboard_Banner[Value]
+                        local Gui = Icon and Icon.Parent
+
+                        if Icon and Gui then
+                            local Bar = Gui:FindFirstChild("Bar")
+                            local Fill = Bar and Bar:FindFirstChild("Fill")
+                            local Info = Gui:FindFirstChild("Info")
+
+                            if not Ability_Name then
+                                Icon.Visible = false
+                                if Bar then Bar.Visible = false end
+                                if Info then Info.Visible = false end
+                            else
+                                local head = Gui.Adornee
+                                local cam = workspace.CurrentCamera
+                                if head and cam then
+                                    local dist = (cam.CFrame.Position - head.Position).Magnitude
+                                    local screen = math.clamp(cam.ViewportSize.Y / 1080, 0.7, 1.5)
+                                    local s = math.clamp(1.3 - dist / 200, 0.85, 1.25) * screen
+                                    Gui.Size = UDim2.new(0, 60 * s, 0, 80 * s)
+                                end
+
+                                local Ability_Data = Data_Abilities:FindFirstChild(Ability_Name)
+                                local Ability_Icon = Ability_Data and Ability_Data:GetAttribute("Icon")
+                                local Upgraded_Icon = Ability_Data and Ability_Data:GetAttribute("Icon1")
+                                local Upgrade_Level = GetUpgradeLevel(Value, Value.Character, Ability_Name)
+
+                                if Upgrade_Level > 0 and Upgraded_Icon and Upgraded_Icon ~= "" then
+                                    Ability_Icon = Upgraded_Icon
+                                end
+
+                                if Ability_Icon and Ability_Icon ~= "" then
+                                    if Icon.Image ~= Ability_Icon then Icon.Image = Ability_Icon end
+                                    Icon.Visible = true
+                                else
+                                    Icon.Visible = false
+                                end
+
+                                local Badge = Icon:FindFirstChild('VersionBadge')
+                                if Badge then
+                                    if Icon.Visible and Upgrade_Level > 0 then
+                                        UpdateVersionBadge(Badge, Upgrade_Level)
+                                        Badge.Visible = true
+                                    else
+                                        Badge.Visible = false
+                                    end
+                                end
+
+                                local barFraction = nil
+                                local barColor = COLOR_READY
+                                local infoText = ""
+
+                                local Is_Passive = Passive_Abilities[Ability_Name]
+                                local Is_Charge = Charge_Abilities[Ability_Name]
+
+                                local Fury_Result = FuryResult[Value]
+                                if Fury_Result and Now >= Fury_Result[2] then
+                                    FuryResult[Value] = nil
+                                    Fury_Result = nil
+                                    FuryUI.Clear(Value)
+                                end
+
+                                if Is_Passive then
+                                elseif Ability_Name == "Slashes of Fury" and (FuryStartCount[Value] or Fury_Result) then
+                                    barFraction = nil
+                                    infoText = ""
+
+                                    local Is_Active = FuryStartCount[Value] ~= nil
+                                    local Count = Is_Active and GetFuryCount(Value) or (Fury_Result and Fury_Result[1]) or 0
+                                    local HintBall = nil
+                                    if Is_Active then
+                                        for _, b in ipairs(BallsFolder:GetChildren()) do
+                                            if not b:GetAttribute("realBall") then
+                                                HintBall = b; break
+                                            end
+                                        end
+                                    end
+                                    FuryUI.Sync(Value, Is_Active, Count, HintBall, Now)
+                                elseif Ability_Name == "Dribble" then
+                                    local Max = GetUpgradedMaxCharges(Value, "Dribble")
+                                    local NextRefill = DribbleRefillTimes[Value] and DribbleRefillTimes[Value][1]
+                                    barFraction, barColor, infoText = ChargeDisplay(
+                                        math.min(DribbleCharges[Value] or Max, Max), Max,
+                                        NextRefill and NextRefill - Now)
+                                elseif Ability_Name == "Dragon Spirit" then
+                                    local Max = GetUpgradedMaxCharges(Value, "Dragon Spirit")
+                                    local NextRefill = DragonSpiritRefillTimes[Value]
+                                    barFraction, barColor, infoText = ChargeDisplay(
+                                        math.min(DragonSpiritCharges[Value] or Max, Max), Max,
+                                        NextRefill and NextRefill - Now)
+                                elseif Is_Charge then
+                                    local Charge_Info = GetChargeInfo(Value.Character, Ability_Name)
+
+                                    if Charge_Info then
+                                        barFraction, barColor, infoText = ChargeDisplay(
+                                            Charge_Info.Charges, Charge_Info.MaxCharges,
+                                            Charge_Info.CDEnd and Charge_Info.CDEnd - tick())
+                                    end
+                                else
+                                    if Current_Active_State then
+                                        barColor = COLOR_ACTIVE
+                                        if AbilityActiveStart[Value] and AbilityActiveDuration[Value] then
+                                            barFraction, infoText = ActiveTimerDisplay(AbilityActiveStart[Value], AbilityActiveDuration[Value], Now)
+                                        else
+                                            barFraction = 1
+                                            infoText = ""
+                                        end
+                                    else
+                                        local Expire = CooldownExpiration[Value]
+
+                                        if Expire then
+                                            local remaining = Expire - Now
+                                            if remaining > 0 then
+                                                local total = CooldownTotal[Value] or remaining
+                                                barFraction = (total > 0) and (remaining / total) or 0
+                                                barColor = COLOR_CD
+                                                infoText = string.format("%.1f", remaining)
+                                            else
+                                                CooldownExpiration[Value] = nil
+                                                CooldownTotal[Value] = nil
+                                                barFraction = 1
+                                                barColor = COLOR_READY
+                                            end
+                                        else
+                                            barFraction = 1
+                                            barColor = COLOR_READY
+                                        end
+                                    end
+                                end
+
+                                if Bar and Fill then
+                                    if barFraction and Icon.Visible then
+                                        Bar.Visible = true
+                                        Fill.Size = UDim2.new(math.clamp(barFraction, 0, 1), 0, 1, 0)
+                                        Fill.BackgroundColor3 = barColor
+                                        local Glow = Fill:FindFirstChild('Glow')
+                                        if Glow then
+                                            Glow.Color = barColor
+                                            Glow.Enabled = barFraction > 0
+                                        end
+                                    else
+                                        Bar.Visible = false
+                                    end
+                                end
+
+                                if Info then
+                                    if infoText ~= "" and Icon.Visible then
+                                        Info.Text = infoText
+                                        Info.Visible = true
+                                    else
+                                        Info.Visible = false
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            StopAbilityChargeMonitors()
+
+            if Connections_Manager['Ability ESP'] then
+                Connections_Manager['Ability ESP']:Disconnect()
+                Connections_Manager['Ability ESP'] = nil
+            end
+            if Connections_Manager['Billboard_PlayerRemoving'] then
+                Connections_Manager['Billboard_PlayerRemoving']:Disconnect()
+                Connections_Manager['Billboard_PlayerRemoving'] = nil
+            end
+
+            for plr, Value in pairs(Billboard_Banner) do
+                local Gui = Value and Value.Parent
+                if Gui then
+                    Gui.Enabled = false
+                end
+            end
+            table.clear(Billboard_Pending)
+        end
+    end,
+})
+
+Ability_ESP_Toggle:AddKeyPicker('Ability_ESP_Keybind', {
+    Text = 'Ability ESP',
+    Mode = 'Toggle',
+})
+
+Connections_Manager['Runtime_Tornado'] = RuntimeFolder.ChildAdded:Connect(function(Value)
+    if Value.Name == 'Tornado' then
+        Tornado_Time = os.clock()
+
+        local nested = Connections_Manager['Runtime_Tornado_Nested']
+        if type(nested) ~= 'table' then
+            nested = {}
+            Connections_Manager['Runtime_Tornado_Nested'] = nested
+        end
+
+        nested[#nested + 1] = Value:GetAttributeChangedSignal('TornadoTime'):Connect(function()
+            Tornado_Time = os.clock()
+        end)
+
+        nested[#nested + 1] = Value.Destroying:Connect(function()
+            Tornado_Time = nil
+        end)
+    end
+end)
+
+if not Is_Mobile then
+    local Parry_Key_Binds = {
+        [Enum.KeyCode.One] = 'Camera',
+        [Enum.KeyCode.Two] = 'Dot',
+        [Enum.KeyCode.Three] = 'InstaDot',
+        [Enum.KeyCode.Four] = 'Backward',
+        [Enum.KeyCode.Five] = 'Random',
+        [Enum.KeyCode.Six] = 'RandomTarget'
+    }
+
+    Connections_Manager['Parry_Type_Keybinds'] = UserInputService.InputBegan:Connect(function(Input, Value)
+        if _ScriptUnloaded then return end
+        if Value then return end
+
+        local New_Type = Parry_Key_Binds[Input.KeyCode]
+
+        if New_Type then
+            Selected_Parry_Type = New_Type
+
+            if Library.Options.Parry_Type_Dropdown then
+                local Display = (New_Type == 'RandomTarget') and 'Random Target' or (New_Type == 'InstaDot') and 'Insta Dot' or New_Type
+                Library.Options.Parry_Type_Dropdown:SetValue(Display)
+            end
+        end
+    end)
+end
+
+local Menu_Group = Tabs.UISettings:AddLeftGroupbox("Menu", "menu")
+
+Menu_Group:AddToggle('Watermark_Toggle', {
+    Text = 'Watermark',
+    Default = true,
+    Callback = function(state)
+        if Env._WatermarkGui then
+            Env._WatermarkGui.Enabled = state
+        end
+    end
+})
+
+Menu_Group:AddButton({
+    Text = 'Unload',
+    Callback = function()
+        Window:Dialog({
+            Title = 'Unload',
+            Content = 'Are you SURE?',
+            OnConfirm = UnloadScript,
+        })
+    end
+})
+
+if Is_Mobile then
+    task.spawn(function()
+        local ok = pcall(function()
+            if Library.MobileToggle or Library.UniversalMobileButton or Library.ToggleButton then
+                error('has_mobile')
+            end
+        end)
+        if ok then
+            local btn = Instance.new('TextButton')
+            btn.Name = 'ByteMobileMenu'
+            btn.Size = UDim2.fromOffset(56, 56)
+            btn.Position = UDim2.new(0, 12, 0.5, -28)
+            btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            btn.BackgroundTransparency = 0.15
+            btn.Text = '☰'
+            btn.TextSize = 26
+            btn.TextColor3 = Color3.new(1, 1, 1)
+            btn.Font = Enum.Font.GothamBold
+            btn.AutoButtonColor = false
+            btn.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+            Instance.new('UICorner', btn).CornerRadius = UDim.new(1, 0)
+            local stroke = Instance.new('UIStroke', btn)
+            stroke.Color = Color3.fromRGB(60, 60, 60)
+            stroke.Thickness = 1
+            btn.Activated:Connect(function()
+                if Library and Library.Toggle then
+                    pcall(function() Library:Toggle() end)
+                end
+            end)
+        end
+    end)
+end
+
+SaveManager:SetLibrary(Library)
+if ThemeManager then
+    ThemeManager:SetLibrary(Library)
+end
+
+SaveManager:IgnoreThemeSettings()
+
+if ThemeManager then
+    ThemeManager:SetFolder("Vanana")
+end
+SaveManager:SetFolder("Vanana")
+
+SaveManager:BuildConfigSection(Tabs.UISettings)
+if ThemeManager then
+    ThemeManager:ApplyToTab(Tabs.UISettings)
+end
+
+SaveManager:LoadAutoloadConfig()
+
+task.spawn(function()
+    while not _ScriptUnloaded do
+        if not Library or not Library.Window then break end
+        task.wait(0.5)
+    end
+    if not _ScriptUnloaded then
+        UnloadScript()
+    end
+end)
