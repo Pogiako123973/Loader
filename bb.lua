@@ -9,6 +9,8 @@ local Players = game:GetService('Players')
 local UserInputService = game:GetService('UserInputService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local RunService = game:GetService('RunService')
+Env.WantImmortality = false
+pcall(function() game:GetService('RunService'):UnbindFromRenderStep("CamFix") end)
 local Debris = game:GetService('Debris')
 local TweenService = game:GetService('TweenService')
 local Stats = game:GetService('Stats')
@@ -1606,13 +1608,15 @@ do
 
     function Immortality_Module.Start()
         if Enabled then return end
-        if Env.WantImmortality == false then return end
+        if not Env.WantImmortality then return end
         Enabled = true
         TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
         pcall(function() setsimulationradius(1e9, 1e9) end)
 
         local char = Player.Character
         if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum then hum.PlatformStand = false; hum.Sit = false end
             for _, v in ipairs(char:GetDescendants()) do SetCollisions(v, false) end
             CharDescConn = char.DescendantAdded:Connect(function(v)
                 if Enabled then SetCollisions(v, false) end
@@ -1620,7 +1624,7 @@ do
         end
 
         PreSimConn = RunService.PreSimulation:Connect(function(dt)
-            if not Enabled then return end
+            if not Env.WantImmortality then return end
             local c = Player.Character
             local root = c and c.PrimaryPart
             if not root then return end
@@ -1639,7 +1643,7 @@ do
         end)
 
         HeartbeatConn = RunService.Heartbeat:Connect(function()
-            if not Enabled then return end
+            if not Env.WantImmortality then return end
             local c = Player.Character
             if not c or c.Parent ~= AliveFolder then Immortality_Module.Stop(); return end
             local hum = c:FindFirstChildOfClass("Humanoid")
@@ -1667,7 +1671,7 @@ do
         end)
 
         RenderConn = RunService:BindToRenderStep("CamFix", Enum.RenderPriority.Camera.Value - 1, function()
-            if not Enabled or not TrueCFrame then return end
+            if not Env.WantImmortality or not TrueCFrame then return end
             local c = Player.Character
             local root = c and c.PrimaryPart
             if root then root.CFrame = TrueCFrame end
@@ -1686,19 +1690,23 @@ do
             pcall(function()
                 for _, v in ipairs(c:GetDescendants()) do SetCollisions(v, true) end
                 local root, hum = c.PrimaryPart, c:FindFirstChildOfClass("Humanoid")
-                if root and TrueCFrame and root.Parent then
+                if root and root.Parent then
                     local params = RaycastParams.new()
                     params.FilterDescendantsInstances = { c }
                     params.FilterType = Enum.RaycastFilterType.Exclude
-                    local hit = workspace:Raycast(TrueCFrame.Position + Vector3.new(0, 10, 0), Vector3.new(0, -100, 0), params)
+                    local hit = workspace:Raycast(root.Position + Vector3.new(0, 10, 0), Vector3.new(0, -1000, 0), params)
                     if hit then
-                        TrueCFrame = CFrame.new(TrueCFrame.Position.X, hit.Position.Y + 3, TrueCFrame.Position.Z) * TrueCFrame.Rotation
+                        root.CFrame = CFrame.new(root.Position.X, hit.Position.Y + 3, root.Position.Z) * root.CFrame.Rotation
                     end
-                    root.CFrame = TrueCFrame
+                    root.Anchored = false
                     root.AssemblyLinearVelocity = Vector3.zero
                     root.AssemblyAngularVelocity = Vector3.zero
                 end
-                if hum then hum:ChangeState(Enum.HumanoidStateType.Running) end
+                if hum then
+                    hum.PlatformStand = false
+                    hum.Sit = false
+                    hum:ChangeState(Enum.HumanoidStateType.Running)
+                end
             end)
         end
         TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
@@ -1995,7 +2003,7 @@ function UnloadScript()
         end
     end
 
-    if Immortality_Module and Immortality_Module.IsEnabled() then
+    if Immortality_Module then
         Immortality_Module.Stop()
     end
 
@@ -2053,7 +2061,7 @@ function UnloadScript()
     Env.Auto_Ability = nil
     Env.Animation_Fix = nil
     Env.ThunderDash_NoCD = nil
-    Env.WantImmortality = nil
+    Env.WantImmortality = false
     if Env._PreclickDB_State then
         Env._PreclickDB_State.Enabled = false
         Env._PreclickDB_State = nil
@@ -2100,6 +2108,8 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
     Default = false,
     Notify = false,
     Callback = function(state)
+        local Manual_Parry_Time = 0
+        local Last_CD_Y = 0.5
         if state then
             Connections_Manager['Auto Parry'] = RunService.PreSimulation:Connect(function()
                 local Character = Player.Character
@@ -2142,6 +2152,14 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 local Parry_Cooldown = Get_Hotbar_Gradient('Block')
                 local Ability_CD = Get_Hotbar_Gradient('Ability')
 
+                if Parry_Cooldown then
+                    local cur_y = Parry_Cooldown.Offset.Y
+                    if Last_CD_Y >= 0.42 and cur_y < 0.4 and Recent_Parries(os.clock(), 0.2) == 0 then
+                        Manual_Parry_Time = os.clock()
+                    end
+                    Last_CD_Y = cur_y
+                end
+
                 if RuntimeFolder:FindFirstChild('Tornado') then
                     if not Tornado_Time then
                         Tornado_Time = os.clock()
@@ -2161,7 +2179,7 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 local Used_Ability = false
 
                 local Phantom_Wants_Protect = Env.Phantom_Detection and Phantom_On_Player and Phantom_Detection_Mode == 'Normal'
-                if (Env.Cooldown_Protection or Phantom_Wants_Protect) and Parry_Cooldown and Time_View > 0.5 and Parry_Cooldown.Offset.Y <= 0.4 and Distance <= Parry_Accuracy then
+                if (os.clock() - Manual_Parry_Time) >= 0.6 and not Preclick_Armed and (Env.Cooldown_Protection or Phantom_Wants_Protect) and Parry_Cooldown and Time_View > 0.5 and Parry_Cooldown.Offset.Y <= 0.4 and Distance <= Parry_Accuracy then
                     for _, Ability in Protect_Abilities do
                         local A = Abilities and Abilities:FindFirstChild(Ability)
                         if A and A.Enabled then
@@ -9680,6 +9698,11 @@ if ThemeManager then
 end
 
 SaveManager:LoadAutoloadConfig()
+
+Env.WantImmortality = false
+if Library and Library.Toggles and Library.Toggles.Immortality_Toggle then
+    pcall(function() Library.Toggles.Immortality_Toggle:SetValue(false) end)
+end
 
 task.spawn(function()
     while not _ScriptUnloaded do
