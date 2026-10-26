@@ -1606,8 +1606,26 @@ do
         return IsFloor(hit.Instance, hit.Normal.Y)
     end
 
+    local function Wait_Grounded(char, timeout)
+        local root = char and char.PrimaryPart
+        if not root then return false end
+        local deadline = os.clock() + (timeout or 2)
+        while os.clock() < deadline do
+            if not Env.WantImmortality or Player.Character ~= char then return false end
+            local params = RaycastParams.new()
+            params.FilterDescendantsInstances = { char }
+            params.FilterType = Enum.RaycastFilterType.Exclude
+            local hit = workspace:Raycast(root.Position, Vector3.new(0, -8, 0), params)
+            if hit and hit.Distance <= 8 then return true end
+            task.wait(0.03)
+        end
+        return false
+    end
+
     function Immortality_Module.Start()
         if Enabled then return end
+        if not Env.WantImmortality then return end
+        if not Wait_Grounded(Player.Character, 2) then return end
         if not Env.WantImmortality then return end
         Enabled = true
         TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
@@ -9697,11 +9715,17 @@ if ThemeManager then
     ThemeManager:ApplyToTab(Tabs.UISettings)
 end
 
-SaveManager:LoadAutoloadConfig()
-
-Env.WantImmortality = false
-if Library and Library.Toggles and Library.Toggles.Immortality_Toggle then
-    pcall(function() Library.Toggles.Immortality_Toggle:SetValue(false) end)
+local oldLoad = SaveManager.LoadAutoloadConfig
+SaveManager.LoadAutoloadConfig = function(self, ...)
+    local oldCallback = Immortality_Toggle.Callback
+    Immortality_Toggle.Callback = function() end
+    oldLoad(self, ...)
+    Immortality_Toggle.Callback = oldCallback
+    
+    if Immortality_Toggle.Value then
+        Immortality_Toggle:SetValue(false)
+    end
+    Env.WantImmortality = false
 end
 
 task.spawn(function()
