@@ -64,7 +64,7 @@ do
     WatermarkGui.IgnoreGuiInset = true
     WatermarkGui.DisplayOrder = 999
     WatermarkGui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
-    WatermarkGui.Enabled = false
+    WatermarkGui.Enabled = true
 
     local Main = Instance.new('Frame')
     Main.Size = UDim2.fromOffset(0, 32)
@@ -332,6 +332,9 @@ task.spawn(function()
 end)
 
 local function GetBallPosition(ball)
+    if getgenv().GetAccurateBallPosition then
+        return getgenv().GetAccurateBallPosition(ball)
+    end
     return Server_Ball_Positions[ball] or ball.Position
 end
 
@@ -542,7 +545,7 @@ local function Find_Target()
 end
 
 local function On_Target_Changed(Ball)
-    if Ball == Target_Ball then Parried = false end
+    Parried = false
     Target_Ball = Find_Target()
 end
 
@@ -573,8 +576,17 @@ local function Record_Target(Ball)
 
     local Info = Clash_Info[Ball]
     if not Info then
-        Clash_Info[Ball] = { Time = Now, Target = Target }
+        Clash_Info[Ball] = { Time = Now, Target = Target, Last = Target }
         return
+    end
+    local Last = Info.Last or Info.Target
+    if Target ~= Last then
+        if Target == Local_Player_Name and Last then
+            Info.From, Info.FromTime = Last, Now
+        elseif Last == Local_Player_Name and Target then
+            Info.To, Info.ToTime = Target, Now
+        end
+        Info.Last = Target
     end
     Info.Previous, Info.Time, Info.Target = Info.Target, Now, Target
 end
@@ -2225,7 +2237,7 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                     return
                 end
 
-                local Skip_Curve = Auto_Parry.Is_Fury_Target() or Preclick_Armed
+                local Skip_Curve = Auto_Parry.Is_Fury_Target() or Preclick_Armed or (Distance <= Parry_Accuracy * 0.5)
                 if Distance <= Parry_Accuracy and (Skip_Curve or not Auto_Parry.Is_Curved(Offset, Velocity, Ball_Velocity)) then
                     Auto_Parry.Parry(Selected_Parry_Type)
                     Last_Parry = os.clock()
@@ -2798,13 +2810,13 @@ end
 
 local Auto_Spam_Group = Tabs.Main:AddRightGroupbox("Clashing", "square-mouse-pointer")
 
-local SPAM_BASE, SPAM_MAX_RANGE = 8, 40
-local SPAM_HOLD = 0.12
+local SPAM_BASE, SPAM_MAX_RANGE = 8, 30
+local SPAM_HOLD = 0.14
 local SPAM_PARRIES = 3
 local SPAM_PRESETS = {
+    { Window = 0.7, Lead = 0.14 },
     { Window = 0.6, Lead = 0.12 },
     { Window = 0.5, Lead = 0.10 },
-    { Window = 0.4, Lead = 0.08 },
 }
 local Spam_Preset = SPAM_PRESETS[2]
 local Spam_Hold_Until, Last_Spam = 0, 0
@@ -2814,31 +2826,46 @@ local SPAM_LEAVE_DOT = 0.7
 local function Check_Clash(Ball, Info, Root, Move_Direction, Ping, Now, Locked)
     if not Info or Ball.Parent ~= BallsFolder or not Ball:GetAttribute('realBall') then return 'leave' end
     local Preset = Spam_Preset
-    if Locked then
-        if Now - Info.Time > Preset.Window then return 'leave' end
-    elseif Recent_Parries(Now, Preset.Window) < SPAM_PARRIES then
-        return 'leave'
-    end
+    local PB = math.clamp(Ping / 1000, 0, 0.2)
+    local CLASH_WINDOW = Preset.Window + PB
 
-    if Info.Target ~= Local_Player_Name and Info.Previous ~= Local_Player_Name then return 'leave' end
+    local Partner = Info.From
+    local Clashing = Partner ~= nil
+        and Partner == Info.To
+        and (Now - (Info.FromTime or 0)) < CLASH_WINDOW
+        and (Now - (Info.ToTime or 0)) < CLASH_WINDOW
+    if not Clashing then return 'leave' end
+
+    if Info.Target ~= Local_Player_Name and Info.Target ~= Partner then return 'leave' end
 
     local Zoomies = Ball:FindFirstChild('zoomies')
     if not Zoomies then return 'leave' end
     local Ball_Velocity = Zoomies.VectorVelocity
+    local Speed = Ball_Velocity.Magnitude
+
+    if Speed < 20 then return 'idle' end
+
+    local Partner_Char = AliveFolder:FindFirstChild(Partner)
+    local Partner_Root = Partner_Char and Partner_Char.PrimaryPart
+    if not Partner_Root then return 'leave' end
+    local Entity_Distance = (Root.Position - Partner_Root.Position).Magnitude
+    
+    if Entity_Distance > 25 then return 'leave' end
+
+    local Reach = Speed * (Ping / 1000 + 0.1)
+    local Base = math.max(SPAM_BASE, 10)
+    local Spam_Range = math.clamp(Base + Reach, Base, math.min(SPAM_MAX_RANGE, 30))
+
     local Offset = Root.Position - GetBallPosition(Ball)
+    if Offset.Magnitude > Spam_Range then return 'idle' end
 
     local Flat = Vector3.new(Offset.X, 0, Offset.Z)
-    if Flat.Magnitude > 0.001 and Move_Direction:Dot(Flat.Unit) > SPAM_LEAVE_DOT then
+    if not Locked and Flat.Magnitude > 0.001 and Move_Direction.Magnitude > 0.1
+        and Move_Direction:Dot(Flat.Unit) > SPAM_LEAVE_DOT then
         return 'leave'
     end
 
-    if Info.Target == Local_Player_Name
-        and Auto_Parry.Is_Curved(Offset, Ball_Velocity - Root.AssemblyLinearVelocity, Ball_Velocity) then
-        return 'pause'
-    end
-
-    local Spam_Range = math.min(SPAM_BASE + Ball_Velocity.Magnitude * (Ping / 2000 + Preset.Lead), SPAM_MAX_RANGE)
-    return Offset.Magnitude <= Spam_Range and 'spam' or 'idle'
+    return 'spam'
 end
 
 local Auto_Spam_Toggle = Auto_Spam_Group:AddToggle('Auto_Spam_Toggle', {
@@ -2872,20 +2899,16 @@ local Auto_Spam_Toggle = Auto_Spam_Group:AddToggle('Auto_Spam_Toggle', {
             if Clash_Ball then
                 local State = Check_Clash(Clash_Ball, Clash_Info[Clash_Ball], Root, Move_Direction, Ping, Now, true)
                 if State == 'spam' then
-                    Spam_Hold_Until = Now + SPAM_HOLD
-                elseif State == 'pause' then
-                    Spam_Hold_Until = 0
+                    Spam_Hold_Until = Now + SPAM_HOLD + math.clamp(Ping / 2000, 0, 0.06)
                 elseif State == 'leave' then
                     Spam_Hold_Until, Clash_Ball = 0, nil
-                    table.clear(Parry_Times)
-                    return
                 end
             end
 
             if not Clash_Ball then
                 for Ball, Info in Clash_Info do
                     if Check_Clash(Ball, Info, Root, Move_Direction, Ping, Now, false) == 'spam' then
-                        Clash_Ball, Spam_Hold_Until = Ball, Now + SPAM_HOLD
+                        Clash_Ball, Spam_Hold_Until = Ball, Now + SPAM_HOLD + math.clamp(Ping / 2000, 0, 0.06)
                         break
                     end
                 end
@@ -9727,6 +9750,15 @@ SaveManager.LoadAutoloadConfig = function(self, ...)
     end
     Env.WantImmortality = false
 end
+
+task.spawn(function()
+    task.wait(0.5)
+    if SaveManager and SaveManager.LoadAutoloadConfig then
+        pcall(function()
+            SaveManager:LoadAutoloadConfig()
+        end)
+    end
+end)
 
 task.spawn(function()
     while not _ScriptUnloaded do
