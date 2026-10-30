@@ -612,6 +612,7 @@ Connections_Manager['Target_Ball_Removed'] = BallsFolder.ChildRemoved:Connect(fu
 end)
 
 function Auto_Parry.Parry(Parry_Type, Silent)
+    Env.Last_Auto_Fire = os.clock()
     if Parry_Input_Method == "Keypress" then
         local now = os.clock()
         if (now - Keypress_Last_Fire) < KEYPRESS_INTERVAL then
@@ -2141,6 +2142,16 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
         local Manual_Parry_Time = 0
         local Last_CD_Y = 0.5
         if state then
+            Connections_Manager['Manual_Parry_Detect'] = UserInputService.InputBegan:Connect(function(Input, Processed)
+                if Processed or _ScriptUnloaded then return end
+                if Input.KeyCode == Enum.KeyCode.F
+                    or Input.UserInputType == Enum.UserInputType.MouseButton1
+                    or Input.UserInputType == Enum.UserInputType.Touch then
+                    if not Env.Last_Auto_Fire or (os.clock() - Env.Last_Auto_Fire) > 0.05 then
+                        Env.Manual_Parry_Until = os.clock() + 0.3
+                    end
+                end
+            end)
             Connections_Manager['Auto Parry'] = RunService.PreSimulation:Connect(function()
                 local Character = Player.Character
                 if not Character or Character.Parent ~= AliveFolder then return end
@@ -2158,7 +2169,7 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 local Zoomies = Ball:FindFirstChild('zoomies')
                 if not Zoomies then return end
 
-                if Parried then return end
+                if Parried or os.clock() < (Env.Manual_Parry_Until or 0) then return end
 
                 local Preclick_Armed = Env._PreclickDB_State
                     and Env._PreclickDB_State.Enabled
@@ -2255,6 +2266,11 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 Connections_Manager['Auto Parry']:Disconnect()
                 Connections_Manager['Auto Parry'] = nil
             end
+            if Connections_Manager['Manual_Parry_Detect'] then
+                Connections_Manager['Manual_Parry_Detect']:Disconnect()
+                Connections_Manager['Manual_Parry_Detect'] = nil
+            end
+            Env.Manual_Parry_Until = 0
         end
     end
 })
