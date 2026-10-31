@@ -134,6 +134,7 @@ local State = {
     AntiShake = false,
     NoFog = false,
     AntiAfk = false,
+    SilentAim = false,
 }
 
 do
@@ -326,11 +327,11 @@ end
 function Byte.Press()
     pcall(function()
         local survivorMob = PlayerGui:FindFirstChild("Survivor-mob")
-        local controls    = survivorMob and survivorMob:FindFirstChild("Controls")
-        local action      = controls and controls:FindFirstChild("action")
+        local controls = survivorMob and survivorMob:FindFirstChild("Controls")
+        local action = controls and controls:FindFirstChild("action")
         if action then
             local c = action.AbsolutePosition + action.AbsoluteSize * 0.5
-            VirtualInputManager:SendMouseButtonEvent(c.X, c.Y, 0, true,  game, 0)
+            VirtualInputManager:SendMouseButtonEvent(c.X, c.Y, 0, true, game, 0)
             task.wait(0.01)
             VirtualInputManager:SendMouseButtonEvent(c.X, c.Y, 0, false, game, 0)
         end
@@ -346,7 +347,7 @@ function Byte.Goal(Line, Goal)
     local Line_Angle = Line.Rotation % 360
     local Goal_Angle = Goal.Rotation % 360
     local Start_Angle = (Goal_Angle + 104) % 360
-    local End_Angle  = (Goal_Angle + 114) % 360
+    local End_Angle = (Goal_Angle + 114) % 360
     if Start_Angle > End_Angle then
         return Line_Angle >= Start_Angle or Line_Angle <= End_Angle
     else
@@ -372,14 +373,20 @@ function Byte.Get_ProgressColor(Percent)
     end
 end
 
+local _parryReadyCache = {t = 0, v = false}
 function Byte.Is_Parry_Ready()
+    local now = os.clock()
+    if now - _parryReadyCache.t < 0.02 then return _parryReadyCache.v end
+    _parryReadyCache.t = now
     local Survivor_Gui = PlayerGui:FindFirstChild('Survivor-mob') or PlayerGui:FindFirstChild('Survivor-con') or PlayerGui:FindFirstChild('Survivor')
     local Gen = Survivor_Gui and Survivor_Gui:FindFirstChild('Gen')
     local Item_Frame = Gen and Gen:FindFirstChild('ItemFrame')
     local Gui = Item_Frame and Item_Frame:FindFirstChild('Gui')
     local Bar = Gui and Gui:FindFirstChild('Bar')
     local UI_Gradient = Bar and Bar:FindFirstChild('UIGradient')
-    return UI_Gradient ~= nil and UI_Gradient:IsA('UIGradient') and UI_Gradient.Offset.Y <= 0.25
+    local r = UI_Gradient ~= nil and UI_Gradient:IsA('UIGradient') and UI_Gradient.Offset.Y <= 0.25
+    _parryReadyCache.v = r
+    return r
 end
 
 function Byte.Play_Cooldown()
@@ -443,46 +450,57 @@ local ESP_Folder = Instance.new("Folder")
 ESP_Folder.Name = "Byte_ESP"
 ESP_Folder.Parent = game:GetService("CoreGui")
 
+local CachedTags = { Generators = {}, Pallets = {}, Vaults = {}, Hooks = {} }
+local LastTagRefresh = 0
+local function RefreshTags()
+    local now = os.clock()
+    if now - LastTagRefresh < 1 then return end
+    LastTagRefresh = now
+    CachedTags.Generators = CollectionService:GetTagged("Generator")
+    CachedTags.Pallets   = CollectionService:GetTagged("PalletPoint")
+    CachedTags.Vaults    = CollectionService:GetTagged("VaultPoint")
+    local hooks = {}
+    for _, v in ipairs(CollectionService:GetTagged("HookPoint")) do
+        if v:IsA("BasePart") or v:IsA("Model") then hooks[#hooks+1] = v end
+    end
+    for _, v in ipairs(CollectionService:GetTagged("UnhookPoint")) do
+        if v:IsA("BasePart") then hooks[#hooks+1] = v end
+    end
+    CachedTags.Hooks = hooks
+end
+
 local function CreateESP(inst, text, color, isHighlight)
     if not inst or not inst.Parent then return nil end
     if ESP_Objects[inst] then return ESP_Objects[inst] end
-
     local bb = Instance.new("BillboardGui")
-    bb.Name = "ESP_BB"
-    bb.Adornee = inst
+    bb.Name = "ESP_BB"; bb.Adornee = inst
     bb.Size = UDim2.new(0, 150, 0, 30)
     bb.StudsOffset = Vector3.new(0, 2.5, 0)
     bb.AlwaysOnTop = true
     bb.Parent = ESP_Folder
-
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(1, 0, 1, 0)
     label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = color
+    label.Text = text; label.TextColor3 = color
     label.TextStrokeTransparency = 0
     label.Font = Enum.Font.GothamBold
     label.TextSize = 12
     label.Parent = bb
-
     local hl = nil
     if isHighlight then
         hl = Instance.new("Highlight")
         hl.Adornee = inst
-        hl.FillColor = color
-        hl.FillTransparency = 0.5
-        hl.OutlineColor = color
-        hl.OutlineTransparency = 0
+        hl.FillColor = color; hl.FillTransparency = 0.5
+        hl.OutlineColor = color; hl.OutlineTransparency = 0
         hl.Parent = ESP_Folder
     end
-
     ESP_Objects[inst] = {BB = bb, Label = label, Highlight = hl}
     return ESP_Objects[inst]
 end
 
 local function CleanESP()
     for inst, data in pairs(ESP_Objects) do
-        if not inst.Parent or not inst:IsDescendantOf(workspace) then
+        if not inst.Parent then
             data.BB:Destroy()
             if data.Highlight then data.Highlight:Destroy() end
             ESP_Objects[inst] = nil
@@ -490,215 +508,164 @@ local function CleanESP()
     end
 end
 
+local function UpdateLabel(data, text, color)
+    if data.Label.Text ~= text then data.Label.Text = text end
+    if data.Label.TextColor3 ~= color then data.Label.TextColor3 = color end
+end
+local function UpdateHighlight(data, color)
+    local hl = data.Highlight
+    if not hl then return end
+    if hl.OutlineColor ~= color then hl.OutlineColor = color end
+    if hl.FillColor    ~= color then hl.FillColor    = color end
+end
+
 local function ForceUpdateESP()
     local char = Player.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-    local myPos = char.HumanoidRootPart.Position
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    local myPos = hrp.Position
+    RefreshTags()
 
     if Connections_Manager['ESP_Active'] then
         for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= Player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                local isKiller   = CollectionService:HasTag(p.Character, "Killer")
-                local isSurvivor = CollectionService:HasTag(p.Character, "Survivor")
-
-                if not isKiller and not isSurvivor then
-                    local lower = ((p.Team and p.Team.Name) or ""):lower()
-                    isKiller   = lower:find("killer")   ~= nil
-                    isSurvivor = lower:find("survivor") ~= nil
-                end
-
-                local baseColor
-                if isKiller then
-                    baseColor = Color3.fromRGB(255, 50, 50)
-                elseif isSurvivor then
-                    baseColor = Color3.fromRGB(50, 255, 50)
-                else
-                    baseColor = Color3.fromRGB(200, 200, 200)
-                end
-
-                local hum = p.Character:FindFirstChildOfClass("Humanoid")
-                local hooked  = p.Character:GetAttribute("IsHooked") == true
-                local carried = p.Character:GetAttribute("IsCarried") == true
-                local downed  = (p.Character:GetAttribute("Knocked") == true)
-                            or (hum and hum.Health > 0 and hum.Health <= hum.MaxHealth * 0.5)
-
-                local color = baseColor
-                local tag = ""
-                if hooked then
-                    color = Color3.fromRGB(255, 255, 50)
-                    tag = " [HOOKED]"
-                elseif carried then
-                    color = Color3.fromRGB(255, 165, 0)
-                    tag = " [CARRIED]"
-                elseif downed then
-                    color = Color3.fromRGB(255, 200, 0)
-                    tag = " [DOWNED]"
-                end
-
-                local dist = math.floor((p.Character.HumanoidRootPart.Position - myPos).Magnitude)
-                local text = p.DisplayName .. " [" .. dist .. "m]" .. tag
-
-                local data = CreateESP(p.Character, text, color, true)
-                if data then
-                    data.BB.Enabled = true
-                    data.Label.Text       = text
-                    data.Label.TextColor3 = color
-                    if data.Highlight then
-                        data.Highlight.Enabled          = true
-                        data.Highlight.OutlineColor     = color
-                        data.Highlight.FillColor        = color
-                        data.Highlight.FillTransparency = 0.5
-                    end
-                end
+            if p == Player or not p.Character then continue end
+            local prp = p.Character:FindFirstChild("HumanoidRootPart")
+            if not prp then continue end
+            local isKiller   = CollectionService:HasTag(p.Character, "Killer")
+            local isSurvivor = CollectionService:HasTag(p.Character, "Survivor")
+            if not isKiller and not isSurvivor then
+                local lower = ((p.Team and p.Team.Name) or ""):lower()
+                isKiller   = lower:find("killer") ~= nil
+                isSurvivor = lower:find("survivor") ~= nil
+            end
+            local baseColor
+            if isKiller then baseColor = Color3.fromRGB(255, 50, 50)
+            elseif isSurvivor then baseColor = Color3.fromRGB(50, 255, 50)
+            else baseColor = Color3.fromRGB(200, 200, 200) end
+            local hum = p.Character:FindFirstChildOfClass("Humanoid")
+            local hooked  = p.Character:GetAttribute("IsHooked")  == true
+            local carried = p.Character:GetAttribute("IsCarried") == true
+            local downed  = (p.Character:GetAttribute("Knocked") == true)
+                         or (hum and hum.Health > 0 and hum.Health <= hum.MaxHealth * 0.5)
+            local color, tag = baseColor, ""
+            if hooked then      color = Color3.fromRGB(255,255,50);  tag = " [HOOKED]"
+            elseif carried then color = Color3.fromRGB(255,165,0);   tag = " [CARRIED]"
+            elseif downed then  color = Color3.fromRGB(255,200,0);   tag = " [DOWNED]" end
+            local dist = math.floor((prp.Position - myPos).Magnitude)
+            local text = p.DisplayName .. " [" .. dist .. "m]" .. tag
+            local data = CreateESP(p.Character, text, color, true)
+            if data then
+                if not data.BB.Enabled then data.BB.Enabled = true end
+                UpdateLabel(data, text, color)
+                UpdateHighlight(data, color)
+                if data.Highlight and not data.Highlight.Enabled then data.Highlight.Enabled = true end
             end
         end
     end
 
     if Connections_Manager['Gen_ESP_Active'] then
-        for _, gen in ipairs(CollectionService:GetTagged("Generator")) do
+        for _, gen in ipairs(CachedTags.Generators) do
+            if not gen.Parent then continue end
             local isCompleted = gen:GetAttribute("Completed") == true
             local rawProg = gen:GetAttribute("RepairProgress") or 0
             local prog = math.floor(rawProg)
-
-            if isCompleted or rawProg >= 99.5 then
-                prog = 100
-            end
-
+            if isCompleted or rawProg >= 99.5 then prog = 100 end
             local color = prog >= 100 and Color3.fromRGB(50, 255, 50) or Color3.fromRGB(0, 255, 255)
             local text = "Gen: " .. prog .. "%"
-
             local data = CreateESP(gen, text, color, true)
             if data then
-                data.BB.Enabled = true
-                data.Label.Text = text
-                data.Label.TextColor3 = color
-
+                if not data.BB.Enabled then data.BB.Enabled = true end
+                UpdateLabel(data, text, color)
                 if data.Highlight then
-                    data.Highlight.Enabled = true
-                    data.Highlight.OutlineColor = color
+                    if not data.Highlight.Enabled then data.Highlight.Enabled = true end
+                    if data.Highlight.OutlineColor ~= color then data.Highlight.OutlineColor = color end
                 end
             end
         end
     end
 
     if Connections_Manager['Pallet_ESP_Active'] then
-        for _, pPoint in ipairs(CollectionService:GetTagged("PalletPoint")) do
-            if pPoint:IsA("BasePart") and pPoint.Parent then
-                local target = pPoint.Parent
-                if target.Name == "Intact" and target.Parent and target.Parent:IsA("Model") then
-                    target = target.Parent
-                end
-
-                if target then
-                    target:SetAttribute("__BytePallet", true)
-                    local pos = pPoint.Position
-                    local dist = math.floor((pos - myPos).Magnitude)
-                    local text = "Pallet [" .. dist .. "m]"
-                    local color = Color3.fromRGB(255, 150, 0)
-
-                    local data = CreateESP(target, text, color, true)
-                    if data then
-                        data.BB.Adornee = target
-                        data.BB.Enabled = true
-                        data.Label.Text       = text
-                        data.Label.TextColor3 = color
-                        if data.Highlight then
-                            data.Highlight.Adornee = target
-                            data.Highlight.Enabled      = true
-                            data.Highlight.OutlineColor = color
-                            data.Highlight.FillColor    = color
-                            data.Highlight.FillTransparency = 0.5
-                        end
-                    end
+        for _, pPoint in ipairs(CachedTags.Pallets) do
+            if not pPoint.Parent or not pPoint:IsA("BasePart") then continue end
+            local target = pPoint.Parent
+            if target.Name == "Intact" and target.Parent and target.Parent:IsA("Model") then
+                target = target.Parent
+            end
+            if target then
+                target:SetAttribute("__BytePallet", true)
+                local dist = math.floor((pPoint.Position - myPos).Magnitude)
+                local text = "Pallet [" .. dist .. "m]"
+                local color = Color3.fromRGB(255, 150, 0)
+                local data = CreateESP(target, text, color, true)
+                if data then
+                    if not data.BB.Enabled then data.BB.Enabled = true end
+                    UpdateLabel(data, text, color)
+                    UpdateHighlight(data, color)
+                    if data.Highlight and not data.Highlight.Enabled then data.Highlight.Enabled = true end
                 end
             end
         end
     end
 
     if Connections_Manager['Vault_ESP_Active'] then
-        for _, vault in ipairs(CollectionService:GetTagged("VaultPoint")) do
-            if vault:IsA("BasePart") and vault.Parent then
-                local target = vault.Parent and vault.Parent:IsA("Model") and vault.Parent or vault
-                target:SetAttribute("__ByteVault", true)
-
-                local pos = vault.Position
-                local dist = math.floor((pos - myPos).Magnitude)
-                local text = "Vault [" .. dist .. "m]"
-                local color = Color3.fromRGB(50, 255, 50)
-
-                local data = CreateESP(target, text, color, true)
-                if data then
-                    data.BB.Adornee = target
-                    data.BB.Enabled = true
-                    data.Label.Text       = text
-                    data.Label.TextColor3 = color
-                    if data.Highlight then
-                        data.Highlight.Adornee = target
-                        data.Highlight.Enabled      = true
-                        data.Highlight.OutlineColor = color
-                        data.Highlight.FillColor    = color
-                        data.Highlight.FillTransparency = 0.5
-                    end
-                end
+        for _, vault in ipairs(CachedTags.Vaults) do
+            if not vault.Parent or not vault:IsA("BasePart") then continue end
+            local target = (vault.Parent and vault.Parent:IsA("Model")) and vault.Parent or vault
+            target:SetAttribute("__ByteVault", true)
+            local dist = math.floor((vault.Position - myPos).Magnitude)
+            local text = "Vault [" .. dist .. "m]"
+            local color = Color3.fromRGB(50, 255, 50)
+            local data = CreateESP(target, text, color, true)
+            if data then
+                if not data.BB.Enabled then data.BB.Enabled = true end
+                UpdateLabel(data, text, color)
+                UpdateHighlight(data, color)
+                if data.Highlight and not data.Highlight.Enabled then data.Highlight.Enabled = true end
             end
         end
     end
 
     if Connections_Manager['Hooks_ESP_Active'] then
-        local hooks = {}
-        for _, v in ipairs(CollectionService:GetTagged("HookPoint")) do
-            if v:IsA("BasePart") or v:IsA("Model") then table.insert(hooks, v) end
-        end
-        for _, v in ipairs(CollectionService:GetTagged("UnhookPoint")) do
-            if v:IsA("BasePart") then table.insert(hooks, v) end
-        end
-
-        do
-            for _, v in ipairs(hooks) do
-                if v.Parent then
-                    local target = v
-                    if v:IsA("BasePart") and v.Parent and v.Parent:IsA("Model") then
-                        target = v.Parent
-                    end
-
-                    local pos
-                    if target:IsA("Model") then
-                        pos = target.PrimaryPart and target.PrimaryPart.Position
-                           or (target:FindFirstChildWhichIsA("BasePart") and target:FindFirstChildWhichIsA("BasePart").Position)
-                    else
-                        pos = target.Position
-                    end
-
-                    if pos then
-                        target:SetAttribute("__ByteHook", true)
-                        local dist = math.floor((pos - myPos).Magnitude)
-                        local isUnhook = CollectionService:HasTag(v, "UnhookPoint")
-                        local text = (isUnhook and "[UNHOOK] " or "[HOOK] ") .. dist .. "m"
-                        local color = isUnhook and Color3.fromRGB(0, 220, 255) or Color3.fromRGB(255, 100, 255)
-                        local data = CreateESP(target, text, color, true)
-                        if data then
-                            data.BB.Adornee = target
-                            data.BB.Enabled = true
-                            data.Label.Text       = text
-                            data.Label.TextColor3 = color
-                            if data.Highlight then
-                                data.Highlight.Adornee = target
-                                data.Highlight.Enabled      = true
-                                data.Highlight.OutlineColor = color
-                                data.Highlight.FillColor    = color
-                                data.Highlight.FillTransparency = 0.5
-                            end
-                        end
-                    end
+        for _, v in ipairs(CachedTags.Hooks) do
+            if not v.Parent then continue end
+            local target = v
+            if v:IsA("BasePart") and v.Parent and v.Parent:IsA("Model") then target = v.Parent end
+            local pos
+            if target:IsA("Model") then
+                pos = target.PrimaryPart and target.PrimaryPart.Position
+                   or (target:FindFirstChildWhichIsA("BasePart") and target:FindFirstChildWhichIsA("BasePart").Position)
+            else pos = target.Position end
+            if pos then
+                target:SetAttribute("__ByteHook", true)
+                local dist = math.floor((pos - myPos).Magnitude)
+                local isUnhook = CollectionService:HasTag(v, "UnhookPoint")
+                local text = (isUnhook and "[UNHOOK] " or "[HOOK] ") .. dist .. "m"
+                local color = isUnhook and Color3.fromRGB(0, 220, 255) or Color3.fromRGB(255, 100, 255)
+                local data = CreateESP(target, text, color, true)
+                if data then
+                    if not data.BB.Enabled then data.BB.Enabled = true end
+                    UpdateLabel(data, text, color)
+                    UpdateHighlight(data, color)
+                    if data.Highlight and not data.Highlight.Enabled then data.Highlight.Enabled = true end
                 end
             end
         end
     end
 end
 
-Connections_Manager['ESP_Render'] = RunService.RenderStepped:Connect(function()
+local ESP_LastUpdate, ESP_LastClean = 0, 0
+Connections_Manager['ESP_Render'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
-    CleanESP()
+    if not (Connections_Manager['ESP_Active']
+         or Connections_Manager['Gen_ESP_Active']
+         or Connections_Manager['Pallet_ESP_Active']
+         or Connections_Manager['Vault_ESP_Active']
+         or Connections_Manager['Hooks_ESP_Active']) then return end
+    local now = os.clock()
+    if now - ESP_LastUpdate < 0.1 then return end
+    ESP_LastUpdate = now
+    if now - ESP_LastClean >= 1 then CleanESP(); ESP_LastClean = now end
     ForceUpdateESP()
 end)
 
@@ -864,8 +831,8 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-    local lastHeal       = {}
-    local lastUnhook     = {}
+    local lastHeal = {}
+    local lastUnhook = {}
     local lastSelfUnhook = 0
 
     while task.wait(0.5) do
@@ -1045,7 +1012,7 @@ task.spawn(function()
                             else
                                 local code = Enum.KeyCode[bind]
                                 if code then
-                                    VirtualInputManager:SendKeyEvent(true,  code, false, game)
+                                    VirtualInputManager:SendKeyEvent(true, code, false, game)
                                     VirtualInputManager:SendKeyEvent(false, code, false, game)
                                 end
                             end
@@ -1109,25 +1076,25 @@ task.spawn(function()
 end)
 
 local Repo = 'https://raw.githubusercontent.com/viseamn/Visual/main/'
-local Library      = loadstring(game:HttpGet(Repo .. 'Library.lua'))()
+local Library = loadstring(game:HttpGet(Repo .. 'Library.lua'))()
 local ThemeManager = loadstring(game:HttpGet(Repo .. 'ThemeManager.lua'))()
-local SaveManager  = loadstring(game:HttpGet(Repo .. 'SaveManager.lua'))()
+local SaveManager = loadstring(game:HttpGet(Repo .. 'SaveManager.lua'))()
 
 local Options = Library.Options
-local Toggles = Library.Toggles
+local Toggles = Library.Toggles or {}
 
 local Window = Library:CreateWindow({
-    Title                = 'Byte',
-    Layout               = 'Bottom bar',
-    MenuKey              = Enum.KeyCode.RightControl,
+    Title = 'Byte',
+    Layout = 'Bottom bar',
+    MenuKey = Enum.KeyCode.RightControl,
     NotificationPosition = 'BottomRight',
 })
 
 local Tabs = {
-    ['Main']        = Window:AddTab('Main', 'user'),
-    ['Items']       = Window:AddTab('Items', 'box'),
-    ['Killer']      = Window:AddTab('Killer', 'target'),
-    ['ESP']         = Window:AddTab('ESP', 'eye'),
+    ['Main'] = Window:AddTab('Main', 'user'),
+    ['Items'] = Window:AddTab('Items', 'box'),
+    ['Killer'] = Window:AddTab('Killer', 'target'),
+    ['ESP'] = Window:AddTab('ESP', 'eye'),
     ['UI Settings'] = Window:CreateSettingsTab(),
 }
 
@@ -1151,8 +1118,8 @@ Main_Group:AddToggle('GeneratorSkillCheck', {
             Connections_Manager['Generator'] = Generator_Event.OnClientEvent:Connect(function(generator, point)
                 local Check_Gui = PlayerGui:WaitForChild('SkillCheckPromptGui')
                 local Check = Check_Gui:WaitForChild('Check')
-                local Line  = Check:WaitForChild('Line')
-                local Goal  = Check:WaitForChild('Goal')
+                local Line = Check:WaitForChild('Line')
+                local Goal = Check:WaitForChild('Goal')
 
                 if Connections_Manager['Live'] then
                     pcall(function() Connections_Manager['Live']:Disconnect() end)
@@ -1206,8 +1173,8 @@ Main_Group:AddToggle('HealSkillCheck', {
             Connections_Manager['Heal'] = Heal_Event.OnClientEvent:Connect(function(target, point)
                 local Check_Gui = PlayerGui:WaitForChild('SkillCheckPromptGui')
                 local Check = Check_Gui:WaitForChild('Check')
-                local Line  = Check:WaitForChild('Line')
-                local Goal  = Check:WaitForChild('Goal')
+                local Line = Check:WaitForChild('Line')
+                local Goal = Check:WaitForChild('Goal')
 
                 if Connections_Manager['Live 2'] then
                     pcall(function() Connections_Manager['Live 2']:Disconnect() end)
@@ -1292,24 +1259,24 @@ Main_Group:AddButton({
 
 local Survivor_Right = Tabs['Main']:AddRightGroupbox("Survivor", "user")
 
-Survivor_Right:AddToggle('FastVault',      { Text = 'Fast Vault',            Default = false, Callback = function(v) State.FastVault = v end })
-Survivor_Right:AddToggle('FastSlide',      { Text = 'Fast Pallet Slide',     Default = false, Callback = function(v) State.FastSlide = v end })
-Survivor_Right:AddToggle('InfSprint',      { Text = 'Infinite Sprint',       Default = false, Callback = function(v) State.InfSprint = v end })
-Survivor_Right:AddToggle('FastRepair',     { Text = 'Fast Repair (Max)',     Default = false, Callback = function(v) State.FastRepair = v end })
-Survivor_Right:AddToggle('AntiStun',       { Text = 'Anti Stun',             Default = false, Callback = function(v) State.AntiStun = v end })
-Survivor_Right:AddToggle('AutoHeal',       { Text = 'Auto Heal Teammates',   Default = false, Callback = function(v) State.AutoHeal = v end })
-Survivor_Right:AddToggle('AutoUnhook',     { Text = 'Auto Unhook Teammates', Default = false, Callback = function(v) State.AutoUnhook = v end })
-Survivor_Right:AddToggle('AutoSelfUnhook', { Text = 'Auto Self Unhook',      Default = false, Callback = function(v) State.AutoSelfUnhook = v end })
-Survivor_Right:AddToggle('NoParryCooldown', { Text = 'No Parry Cooldown',     Default = false, Callback = function(v) State.NoParryCooldown = v end })
+Survivor_Right:AddToggle('FastVault', { Text = 'Fast Vault', Default = false, Callback = function(v) State.FastVault = v end })
+Survivor_Right:AddToggle('FastSlide', { Text = 'Fast Pallet Slide', Default = false, Callback = function(v) State.FastSlide = v end })
+Survivor_Right:AddToggle('InfSprint', { Text = 'Infinite Sprint', Default = false, Callback = function(v) State.InfSprint = v end })
+Survivor_Right:AddToggle('FastRepair', { Text = 'Fast Repair (Max)', Default = false, Callback = function(v) State.FastRepair = v end })
+Survivor_Right:AddToggle('AntiStun', { Text = 'Anti Stun', Default = false, Callback = function(v) State.AntiStun = v end })
+Survivor_Right:AddToggle('AutoHeal', { Text = 'Auto Heal Teammates', Default = false, Callback = function(v) State.AutoHeal = v end })
+Survivor_Right:AddToggle('AutoUnhook', { Text = 'Auto Unhook Teammates', Default = false, Callback = function(v) State.AutoUnhook = v end })
+Survivor_Right:AddToggle('AutoSelfUnhook', { Text = 'Auto Self Unhook', Default = false, Callback = function(v) State.AutoSelfUnhook = v end })
+Survivor_Right:AddToggle('NoParryCooldown', { Text = 'No Parry Cooldown', Default = false, Callback = function(v) State.NoParryCooldown = v end })
 
 local ParryClients = setmetatable({}, { __mode = "k" })
 local LastParryScan = 0
 task.spawn(function()
-    while task.wait(0.05) do
+    while task.wait(0.15) do
         if State.Unloaded then break end
         if not State.NoParryCooldown then continue end
         pcall(function()
-            if os.clock() - LastParryScan >= 1 then
+            if os.clock() - LastParryScan >= 3 then
                 LastParryScan = os.clock()
                 for _, obj in ipairs(getgc(true)) do
                     if type(obj) == "table"
@@ -1348,17 +1315,17 @@ if getidentity() >= 7 then
     Survivor_Right:AddToggle('Silent_Aim_Toggle', {
         Text = 'Silent Aim (Gun)',
         Default = false,
-        Callback = function(state) Toggles.Silent_Aim_Toggle.Value = state end
+        Callback = function(value) State.SilentAim = value end
     })
 end
 
 local Items_Group = Tabs['Items']:AddLeftGroupbox("Item Automation", "box")
-Items_Group:AddToggle('AutoToF',         { Text = 'Auto Shoot ToF (Revolver)', Default = false, Callback = function(v) State.AutoToF = v end })
-Items_Group:AddToggle('AutoHolyWater',   { Text = 'Auto Throw Holy Water',     Default = false, Callback = function(v) State.AutoHolyWater = v end })
-Items_Group:AddToggle('AutoRiot',        { Text = 'Auto Riot Shield Rush',     Default = false, Callback = function(v) State.AutoRiot = v end })
-Items_Group:AddToggle('AutoFlash',       { Text = 'Auto Flashlight Blind',     Default = false, Callback = function(v) State.AutoFlash = v end })
-Items_Group:AddToggle('AutoAdren',       { Text = 'Auto Adrenaline Revive',    Default = false, Callback = function(v) State.AutoAdren = v end })
-Items_Group:AddToggle('AutoBandage',     { Text = 'Auto Bandage Heal',         Default = false, Callback = function(v) State.AutoBandage = v end })
+Items_Group:AddToggle('AutoToF', { Text = 'Auto Shoot ToF (Revolver)', Default = false, Callback = function(v) State.AutoToF = v end })
+Items_Group:AddToggle('AutoHolyWater', { Text = 'Auto Throw Holy Water', Default = false, Callback = function(v) State.AutoHolyWater = v end })
+Items_Group:AddToggle('AutoRiot', { Text = 'Auto Riot Shield Rush', Default = false, Callback = function(v) State.AutoRiot = v end })
+Items_Group:AddToggle('AutoFlash', { Text = 'Auto Flashlight Blind', Default = false, Callback = function(v) State.AutoFlash = v end })
+Items_Group:AddToggle('AutoAdren', { Text = 'Auto Adrenaline Revive', Default = false, Callback = function(v) State.AutoAdren = v end })
+Items_Group:AddToggle('AutoBandage', { Text = 'Auto Bandage Heal', Default = false, Callback = function(v) State.AutoBandage = v end })
 
 local Esp_Group = Tabs['ESP']:AddLeftGroupbox('ESP Settings', 'eye')
 
@@ -1488,35 +1455,38 @@ local function RestoreWorld()
     savedWorld = nil
 end
 
-Connections_Manager['Movement_World_Stepped'] = RunService.RenderStepped:Connect(function()
+Connections_Manager['Movement_World_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
-
     if State.Fullbright or State.NoFog then
         SaveWorld()
         if State.Fullbright then
-            LightingSvc.Brightness = 2
-            LightingSvc.ClockTime = 14
-            LightingSvc.GlobalShadows = false
-            LightingSvc.Ambient = Color3.new(1, 1, 1)
-            LightingSvc.OutdoorAmbient = Color3.new(1, 1, 1)
+            if LightingSvc.Brightness     ~= 2    then LightingSvc.Brightness = 2 end
+            if LightingSvc.ClockTime      ~= 14   then LightingSvc.ClockTime = 14 end
+            if LightingSvc.GlobalShadows  ~= false then LightingSvc.GlobalShadows = false end
+            if LightingSvc.Ambient        ~= Color3.new(1,1,1) then LightingSvc.Ambient = Color3.new(1,1,1) end
+            if LightingSvc.OutdoorAmbient ~= Color3.new(1,1,1) then LightingSvc.OutdoorAmbient = Color3.new(1,1,1) end
         else
-            LightingSvc.Brightness = savedWorld.Brightness
-            LightingSvc.ClockTime = savedWorld.ClockTime
-            LightingSvc.GlobalShadows = savedWorld.GlobalShadows
-            LightingSvc.Ambient = savedWorld.Ambient
-            LightingSvc.OutdoorAmbient = savedWorld.OutdoorAmbient
+            if LightingSvc.Brightness     ~= savedWorld.Brightness     then LightingSvc.Brightness = savedWorld.Brightness end
+            if LightingSvc.ClockTime      ~= savedWorld.ClockTime      then LightingSvc.ClockTime = savedWorld.ClockTime end
+            if LightingSvc.GlobalShadows  ~= savedWorld.GlobalShadows  then LightingSvc.GlobalShadows = savedWorld.GlobalShadows end
+            if LightingSvc.Ambient        ~= savedWorld.Ambient        then LightingSvc.Ambient = savedWorld.Ambient end
+            if LightingSvc.OutdoorAmbient ~= savedWorld.OutdoorAmbient then LightingSvc.OutdoorAmbient = savedWorld.OutdoorAmbient end
         end
         if State.NoFog then
-            LightingSvc.FogEnd = 1e6
-            LightingSvc.FogStart = 1e6
+            if LightingSvc.FogEnd   ~= 1e6 then LightingSvc.FogEnd = 1e6 end
+            if LightingSvc.FogStart ~= 1e6 then LightingSvc.FogStart = 1e6 end
             for atmo in pairs(savedWorld.Atmosphere) do
-                if atmo and atmo.Parent then pcall(function() atmo.Density = 0 end) end
+                if atmo and atmo.Parent and atmo.Density ~= 0 then
+                    pcall(function() atmo.Density = 0 end)
+                end
             end
         else
-            LightingSvc.FogEnd = savedWorld.FogEnd
-            LightingSvc.FogStart = savedWorld.FogStart
+            if LightingSvc.FogEnd   ~= savedWorld.FogEnd   then LightingSvc.FogEnd = savedWorld.FogEnd end
+            if LightingSvc.FogStart ~= savedWorld.FogStart then LightingSvc.FogStart = savedWorld.FogStart end
             for atmo, density in pairs(savedWorld.Atmosphere) do
-                if atmo and atmo.Parent then pcall(function() atmo.Density = density end) end
+                if atmo and atmo.Parent and atmo.Density ~= density then
+                    pcall(function() atmo.Density = density end)
+                end
             end
         end
     elseif savedWorld then
@@ -1527,7 +1497,7 @@ end)
 local NoSlowState = { Lifted = nil, LiftedTo = nil }
 local NO_SLOW_TARGET = 17
 
-Connections_Manager['NoSlow_Stepped'] = RunService.Stepped:Connect(function()
+Connections_Manager['NoSlow_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
     local char = Player.Character
     if not char then return end
@@ -1536,14 +1506,14 @@ Connections_Manager['NoSlow_Stepped'] = RunService.Stepped:Connect(function()
 
     if State.NoSlow then
         if hum.WalkSpeed > 0 and hum.WalkSpeed < NO_SLOW_TARGET then
-            NoSlowState.Lifted   = NoSlowState.Lifted or hum.WalkSpeed
+            NoSlowState.Lifted = NoSlowState.Lifted or hum.WalkSpeed
             NoSlowState.LiftedTo = NO_SLOW_TARGET
             hum.WalkSpeed = NO_SLOW_TARGET
         end
     elseif NoSlowState.Lifted then
         local before = NoSlowState.Lifted
-        local wrote  = NoSlowState.LiftedTo
-        NoSlowState.Lifted   = nil
+        local wrote = NoSlowState.LiftedTo
+        NoSlowState.Lifted = nil
         NoSlowState.LiftedTo = nil
         if math.abs(hum.WalkSpeed - wrote) < 0.01 then
             hum.WalkSpeed = before
@@ -1622,7 +1592,7 @@ Connections_Manager['BypassGenPoint_Render'] = RunService.RenderStepped:Connect(
 end)
 
 local noclipSet = {}
-Connections_Manager['NoClip_Stepped'] = RunService.Stepped:Connect(function()
+Connections_Manager['NoClip_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
     if State.NoClip then
         local char = Player.Character
@@ -1725,7 +1695,7 @@ end
 
 task.spawn(function()
     local wasOn = false
-    while task.wait(0.2) do
+    while task.wait(1) do
         if State.Unloaded then break end
         if State.AntiShake then
             MuteShake()
@@ -2102,8 +2072,7 @@ function Byte:ParryCheck(RootPart)
     if not Player.Character:FindFirstChild("Parrying Dagger") then return end
     if not State.AutoParry then return end
 
-    local myRP = Player.Character.PrimaryPart
-              or Player.Character:FindFirstChild("HumanoidRootPart")
+    local myRP = Player.Character.PrimaryPart or Player.Character:FindFirstChild("HumanoidRootPart")
     if not myRP then return end
 
     local Direction = (myRP.Position - RootPart.Position).Unit
@@ -2157,8 +2126,7 @@ function Byte:ParryCheck(RootPart)
 end
 
 function Byte:ParrySetup(Character)
-    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
-                   or Character:WaitForChild("Humanoid", 10)
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid") or Character:WaitForChild("Humanoid", 10)
     if not Humanoid then return end
 
     local function findSwingArm()
@@ -2298,8 +2266,11 @@ ThemeManager:ApplyToTab(Tabs['UI Settings'])
 SaveManager:LoadAutoloadConfig()
 
 local _lastParryTime = 0
+local _parryFrameCounter = 0
 Connections_Manager['AutoParry'] = RunService.PreSimulation:Connect(function()
     if State.Unloaded or not State.AutoParry then return end
+    _parryFrameCounter = _parryFrameCounter + 1
+    if _parryFrameCounter % 3 ~= 0 then return end
     if tick() - _lastParryTime < 0.4 then return end
     local myChar = Player.Character
     if not myChar then return end
@@ -2355,6 +2326,10 @@ end)
 local HitPart = nil
 Connections_Manager['SilentAim'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
+    if not State.SilentAim then
+        HitPart = nil
+        return
+    end
     if Player.Team and Player.Team.Name ~= "Spectator" and Player.Character and Player.Character.PrimaryPart then
         local Target = nil
         local Closest = math.huge
@@ -2395,7 +2370,7 @@ if getidentity() >= 7 then
     local Namecall; Namecall = hookmetamethod(game, "__namecall", function(Self, ...)
         local Method = getnamecallmethod()
         local Args = {...}
-        if not (checkcaller and checkcaller()) and Method == "FireServer" and Self == Fire_Remote and Toggles.Silent_Aim_Toggle.Value and HitPart then
+        if not (checkcaller and checkcaller()) and Method == "FireServer" and Self == Fire_Remote and State.SilentAim and HitPart then
             local Direction = CFrame.new(workspace.CurrentCamera.CFrame.Position, HitPart.Position)
             Args[2] = Direction.LookVector
             return Namecall(Self, unpack(Args))
