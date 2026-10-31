@@ -1570,7 +1570,7 @@ local function BuildInterface()
         Callback = AimHookBind("SilentAim"),
     }):AddKeyPicker("SilentAimKey", { Default = "None", Mode = "Toggle" })
     sheriffBox:AddToggle("SilentAimV2", {
-        Text = "Silent Aim V2 (Magic Bullet)",
+        Text = "Wall Bang",
         Default = false,
         Callback = AimHookBind("SilentAimV2"),
     }):AddKeyPicker("SilentAimV2Key", { Default = "None", Mode = "Toggle" })
