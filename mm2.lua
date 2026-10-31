@@ -126,8 +126,6 @@ Byte.State = {
         FarmSpeed = 25,
         ResetWhenFull = false,
         UnlockAll = false,
-        AutoSaveKnife = true,
-        AutoSaveGun = true,
     },
 }
 
@@ -1010,11 +1008,17 @@ function Byte.Farm.InitBagTracking()
         warn("[Byte] CoinsStarted remote not found — bag counter may stay stale")
     end
     if GameLib.CoinCollected then
-        Byte.Util.Connect(GameLib.CoinCollected.OnClientEvent, function(player, current, maximum)
-            if player == LocalPlayer then
-                State.Bag.Current = tonumber(current) or 0
-                State.Bag.Max = tonumber(maximum) or 0
+        Byte.Util.Connect(GameLib.CoinCollected.OnClientEvent, function(a, b, c)
+            local newCurrent, newMax
+            if typeof(a) == "Instance" or type(a) == "string" then
+                newCurrent = tonumber(b) or 0
+                newMax = tonumber(c) or 0
+            else
+                newCurrent = tonumber(a) or 0
+                newMax = tonumber(b) or 0
             end
+            State.Bag.Current = newCurrent
+            if newMax > 0 then State.Bag.Max = newMax end
         end)
     end
     if GameLib.CoinsStarted then
@@ -1261,12 +1265,12 @@ function Byte.UnlockAll.Step()
         local equippedKnifeName = ProfileData.Weapons.Equipped.Knife
         local equippedGunName = ProfileData.Weapons.Equipped.Gun
 
-        if State.Opt.UnlockAll and os.clock() > ua_ignoreAutoSave then
-            if State.Opt.AutoSaveKnife and equippedKnifeName and equippedKnifeName ~= "nil" and equippedKnifeName ~= ua_selectedKnife then
+        if os.clock() > ua_ignoreAutoSave then
+            if equippedKnifeName and equippedKnifeName ~= "nil" and equippedKnifeName ~= "Default Knife" and equippedKnifeName ~= ua_selectedKnife then
                 ua_selectedKnife = equippedKnifeName
                 if writefile then pcall(writefile, ua_savePath, tostring(equippedKnifeName) .. "|" .. tostring(equippedGunName or "nil")) end
             end
-            if State.Opt.AutoSaveGun and equippedGunName and equippedGunName ~= "nil" and equippedGunName ~= ua_selectedGun then
+            if equippedGunName and equippedGunName ~= "nil" and equippedGunName ~= "Default Gun" and equippedGunName ~= ua_selectedGun then
                 ua_selectedGun = equippedGunName
                 if writefile then pcall(writefile, ua_savePath, tostring(equippedKnifeName or "nil") .. "|" .. tostring(equippedGunName)) end
             end
@@ -1422,21 +1426,41 @@ function Byte.Scheduler.Boot(_notify)
 end
 
 function Byte.Scheduler.Stop()
+    if not State.Alive then return end
     State.Alive = false
     getgenv().ByteUnload = nil
-    Byte.Sheriff.SyncAimHook()
-    Byte.Movement.SetFly(false)
-    Byte.Movement.SetNoclip(false)
-    for _, conn in ipairs(State.Conns) do conn:Disconnect() end
+    
+    pcall(Byte.Sheriff.SyncAimHook)
+    
+    for _, conn in ipairs(State.Conns) do
+        pcall(function() conn:Disconnect() end)
+    end
     table.clear(State.Conns)
-    if State.Opt.SpeedOn then Byte.Movement.RestoreSpeed() end
-    if State.Opt.JumpOn then Byte.Movement.RestoreJump() end
-    Byte.Visual.SetFullbright(false)
-    Byte.Visual.ClearXRay()
-    Byte.Farm.DetachMover()
-    Byte.Movement.SetInvis(false)
-    if State.Opt.UnlockAll then pcall(function() Byte.UnlockAll.Toggle(false, true) end) end
-    Byte.Esp.Destroy()
+
+    pcall(Byte.Movement.SetFly, false)
+    pcall(Byte.Movement.SetNoclip, false)
+    pcall(Byte.Movement.SetInvis, false)
+    pcall(Byte.Farm.DetachMover)
+    
+    pcall(function()
+        if State.Opt.SpeedOn then Byte.Movement.RestoreSpeed() end
+        if State.Opt.JumpOn then Byte.Movement.RestoreJump() end
+    end)
+
+    pcall(Byte.Visual.SetFullbright, false)
+    pcall(Byte.Visual.ClearXRay)
+    
+    pcall(function()
+        if State.Opt.UnlockAll then Byte.UnlockAll.Toggle(false, true) end
+    end)
+    
+    pcall(Byte.Esp.Destroy)
+
+    Byte.Library = nil
+    Byte.ThemeManager = nil
+    Byte.SaveManager = nil
+    Byte.Notify = nil
+    table.clear(State.Halted)
 end
 
 local function BuildInterface()
@@ -1521,36 +1545,12 @@ local function BuildInterface()
             task.spawn(function() Byte.UnlockAll.Toggle(value) end)
         end,
     })
-    skinBox:AddToggle("AutoSaveKnife", {
-        Text = "Auto Save Equipped Knife",
-        Default = true,
-        Callback = Bind("AutoSaveKnife"),
-    })
-    skinBox:AddToggle("AutoSaveGun", {
-        Text = "Auto Save Equipped Gun",
-        Default = true,
-        Callback = Bind("AutoSaveGun"),
-    })
 
     task.spawn(function()
         while State.Alive do
             pcall(function()
-                local ok, ProfileData = pcall(function() return require(game.ReplicatedStorage.Modules.ProfileData) end)
-                if ok and ProfileData then
-                    if ProfileData.CoinsInBag then
-                        State.Bag.Current = ProfileData.CoinsInBag
-                    end
-                    if ProfileData.MaxCoinsInBag then
-                        State.Bag.Max = ProfileData.MaxCoinsInBag
-                    elseif ProfileData.MaxCoins then
-                        State.Bag.Max = ProfileData.MaxCoins
-                    end
-                end
-
                 local text
-                if not Byte.Round.Map() then
-                    text = "Bag: in lobby"
-                elseif State.Bag.Max > 0 then
+                if State.Bag.Max > 0 then
                     text = string.format("Bag: %d / %d", State.Bag.Current, State.Bag.Max)
                 else
                     text = string.format("Bag: %d / ?", State.Bag.Current)
@@ -1805,7 +1805,7 @@ local function BuildInterface()
 
     local originalUnload = Library.Unload
     Library.Unload = function(...)
-        if State.Alive then pcall(Byte.Scheduler.Stop) end
+        pcall(Byte.Scheduler.Stop)
         return originalUnload(...)
     end
 
