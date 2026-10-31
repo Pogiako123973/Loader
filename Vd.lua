@@ -1276,7 +1276,7 @@ task.spawn(function()
         if State.Unloaded then break end
         if not State.NoParryCooldown then continue end
         pcall(function()
-            if os.clock() - LastParryScan >= 3 then
+            if os.clock() - LastParryScan >= 15 then
                 LastParryScan = os.clock()
                 for _, obj in ipairs(getgc(true)) do
                     if type(obj) == "table"
@@ -1457,6 +1457,7 @@ end
 
 Connections_Manager['Movement_World_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
+    if not State.Fullbright and not State.NoFog and not savedWorld then return end
     if State.Fullbright or State.NoFog then
         SaveWorld()
         if State.Fullbright then
@@ -1499,6 +1500,7 @@ local NO_SLOW_TARGET = 17
 
 Connections_Manager['NoSlow_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
+    if not State.NoSlow and not NoSlowState.Lifted then return end
     local char = Player.Character
     if not char then return end
     local hum = char:FindFirstChildOfClass("Humanoid")
@@ -1521,16 +1523,12 @@ Connections_Manager['NoSlow_Stepped'] = RunService.Heartbeat:Connect(function()
     end
 end)
 
--- ==== Bypass Generator Point (Experimental) ====
--- 1. Strips "doing action" + "Blocked" tags from nearby GeneratorPoints so the prompt shows up
--- 2. Forces repair-related attributes (some may be server-read, some decorative)
--- Reverts on toggle off
-
 local _bgpWasActive = false
 local _bgpLastStrip = 0
 
 Connections_Manager['BypassGenPoint_Render'] = RunService.RenderStepped:Connect(function()
     if State.Unloaded then return end
+    if not State.BypassGenPoint and not _bgpWasActive then return end
     local char = Player.Character
 
     if State.BypassGenPoint then
@@ -1538,7 +1536,6 @@ Connections_Manager['BypassGenPoint_Render'] = RunService.RenderStepped:Connect(
         local hrp = char:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
 
-        -- 1. Seat steal: strip tags from nearby generator points every 150ms
         local now = tick()
         if now - _bgpLastStrip > 0.15 then
             _bgpLastStrip = now
@@ -1557,12 +1554,8 @@ Connections_Manager['BypassGenPoint_Render'] = RunService.RenderStepped:Connect(
             end
         end
 
-        -- 2. Force attributes (may or may not be server-read)
         if char:GetAttribute("repairboost") ~= 5 then
             char:SetAttribute("repairboost", 5)
-        end
-        if char:GetAttribute("speedboost") ~= 3 then
-            char:SetAttribute("speedboost", 3)
         end
         if char:GetAttribute("skillcheckfrequency") ~= 0.2 then
             char:SetAttribute("skillcheckfrequency", 0.2)
@@ -1574,12 +1567,8 @@ Connections_Manager['BypassGenPoint_Render'] = RunService.RenderStepped:Connect(
         _bgpWasActive = true
 
     elseif _bgpWasActive and char then
-        -- revert on toggle-off
         if char:GetAttribute("repairboost") == 5 then
             char:SetAttribute("repairboost", 1)
-        end
-        if char:GetAttribute("speedboost") == 3 then
-            char:SetAttribute("speedboost", 1)
         end
         if char:GetAttribute("skillcheckfrequency") == 0.2 then
             char:SetAttribute("skillcheckfrequency", 1)
@@ -1594,6 +1583,7 @@ end)
 local noclipSet = {}
 Connections_Manager['NoClip_Stepped'] = RunService.Heartbeat:Connect(function()
     if State.Unloaded then return end
+    if not State.NoClip and next(noclipSet) == nil then return end
     if State.NoClip then
         local char = Player.Character
         if not char then return end
@@ -1695,7 +1685,7 @@ end
 
 task.spawn(function()
     local wasOn = false
-    while task.wait(1) do
+    while task.wait(3) do            
         if State.Unloaded then break end
         if State.AntiShake then
             MuteShake()
@@ -1954,7 +1944,7 @@ end
 
 task.spawn(function()
     local wasOn = false
-    while task.wait(0.2) do
+    while task.wait(2) do        
         if State.Unloaded then break end
         if State.AntiStun then
             Byte_MuteStun()
