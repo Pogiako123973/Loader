@@ -65,7 +65,7 @@ local SETTINGS = {
     reviveBeforeGems = true,
     reviveMaxDistance = 220,
     avoidCatchers = true,
-    predictionTime = 0.65,
+    predictionTime = 0.55,
     avoidStrength = 2.2,
     panicDistance = 15,
     safezoneDepthRatio = 0.52,
@@ -76,7 +76,7 @@ local SETTINGS = {
     edgeLookAhead = 14,
     edgeSecondLookAhead = 28,
     autoDash = true,
-    dashCooldown = 0.85,
+    dashCooldown = 0.35,
     dashDistance = 48,
     dashClosingSpeed = 10,
     smoothMovement = true,
@@ -116,7 +116,7 @@ local SETTINGS = {
     showHitboxes = true,
     showGoalUtility = true,
     showThreatUtility = false,
-    showDebugUI = false,
+    showDebugUI = true,
     showPath = true,
     cameraFollow = true,
     cameraResponse = 0.25,
@@ -179,6 +179,18 @@ local runtime = {
     lastMovePosition = nil,
     moveCommandAt = -math.huge,
     stuck = false,
+    committedDirection = Vector3.zero,
+    commitUntil = -math.huge,
+    commitReason = "",
+    threatMemory = {},
+    randomWalkUntil = -math.huge,
+    randomWalkDir = Vector3.zero,
+    survivalMode = false,
+    survivalUntil = -math.huge,
+    manualOverride = false,
+    manualOverrideUntil = -math.huge,
+    lastManualInputAt = -math.huge,
+    lastAutoMoveDir = Vector3.zero,
     path = Vector3.zero,
     goal = nil,
     goalMode = "SafeZone",
@@ -448,7 +460,9 @@ local function updatePathVisual()
     pathVisual.endPart.CFrame = CFrame.new(endWorld)
 
     local color
-    if runtime.goalMode == "Gem" then
+    if runtime.manualOverride then
+        color = Color3.fromRGB(160, 160, 160)
+    elseif runtime.goalMode == "Gem" then
         color = Color3.fromRGB(255, 200, 50)
     elseif runtime.goalMode == "Revive" then
         color = Color3.fromRGB(80, 160, 255)
@@ -501,16 +515,58 @@ local function getRunState()
     return LocalPlayer:GetAttribute("RunState") or "Idle"
 end
 
+local CATCHER_ROLE_NAMES = {
+    Catcher = true,
+    Chaser = true,
+    Catch = true,
+    ChaserTeam = true,
+}
+
+local RUNNER_ROLE_NAMES = {
+    Runner = true,
+    Hider = true,
+    Coward = true,
+}
+
+local function roleIsCatcher(role)
+    if type(role) ~= "string" then return false end
+    return CATCHER_ROLE_NAMES[role] == true
+end
+
+local function roleIsRunner(role)
+    if type(role) ~= "string" then return false end
+    return RUNNER_ROLE_NAMES[role] == true
+end
+
 local function isRunnerActive()
     if LocalPlayer:GetAttribute("InMatch") ~= true then return false end
-    if getRole() ~= "Runner" then return false end
+    if not roleIsRunner(getRole()) then return false end
     return getRunState() == "Active"
 end
 
 local function isCatcherActive()
     if LocalPlayer:GetAttribute("InMatch") ~= true then return false end
-    if getRole() ~= "Catcher" then return false end
+    if not roleIsCatcher(getRole()) then return false end
     return getRunState() == "Active"
+end
+
+local function hasManualMovementInput()
+    local hum = getHumanoid()
+    if not hum then return false end
+    local move = hum.MoveDirection
+    if move.Magnitude > 0.1 then return true end
+    if UserInputService then
+        local ok, keys = pcall(function()
+            local active = {}
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then active[#active + 1] = "W" end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then active[#active + 1] = "A" end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then active[#active + 1] = "S" end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then active[#active + 1] = "D" end
+            return active
+        end)
+        if ok and keys and #keys > 0 then return true end
+    end
+    return false
 end
 
 local function canMove()
@@ -1108,7 +1164,10 @@ end
 local function refreshGems(now, position)
     if now - runtime.gemScanAt < SETTINGS.gemScanInterval then return end
     runtime.gemScanAt = now
-    local best, bestDistance
+    local goal = runtime.goal
+    local goalDir = goal and flat(goal - position) or Vector3.zero
+    if goalDir.Magnitude > 0.05 then goalDir = goalDir.Unit end
+    local best, bestScore
     local folders = {"LocalRunnerGems"}
     if SETTINGS.autoCandy then
         table.insert(folders, "LocalRunnerCandyCorn")
@@ -1118,14 +1177,20 @@ local function refreshGems(now, position)
         if folder then
             for _, obj in ipairs(folder:GetChildren()) do
                 if obj:IsA("BasePart") and obj.Parent then
-                    local d = flat(obj.Position - position).Magnitude
+                    local toGem = flat(obj.Position - position)
+                    local d = toGem.Magnitude
                     local vertical = math.abs(obj.Position.Y - position.Y)
                     local ignored = runtime.gemIgnored[obj]
                     if d <= SETTINGS.gemMaxDistance and vertical <= 5
                         and (not ignored or now >= ignored) then
-                        if not bestDistance or d < bestDistance then
-                            best = obj
-                            bestDistance = d
+                        local alignment = 0
+                        if goalDir.Magnitude > 0.05 and d > 0.05 then
+                            alignment = goalDir:Dot(toGem.Unit)
+                        end
+                        local score = alignment * 12 - d
+                        if d <= SETTINGS.gemCollectDistance * 1.5 then score += 20 end
+                        if not bestScore or score > bestScore then
+                            best, bestScore = obj, score
                         end
                     end
                 end
@@ -1136,7 +1201,7 @@ local function refreshGems(now, position)
 end
 
 local function findDownedPlayer(position)
-    local best, bestDistance
+    local best, bestScore
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Parent then
             local c = player.Character
@@ -1145,9 +1210,17 @@ local function findDownedPlayer(position)
                 local helper = c:GetAttribute("RescueHelperId")
                 if helper == nil or helper == LocalPlayer.UserId then
                     local d = flat(root.Position - position).Magnitude
-                    if d <= SETTINGS.reviveMaxDistance and (not bestDistance or d < bestDistance) then
-                        best = player
-                        bestDistance = d
+                    if d <= SETTINGS.reviveMaxDistance then
+                        local threatPenalty = 0
+                        for _, t in ipairs(runtime.threats) do
+                            local td = flat(t.position - root.Position).Magnitude
+                            if td < 20 then threatPenalty += (20 - td) * 3 end
+                        end
+                        local urgency = d <= RESCUE_RANGE + 4 and -25 or 0
+                        local score = d + threatPenalty + urgency
+                        if not bestScore or score < bestScore then
+                            best, bestScore = player, score
+                        end
                     end
                 end
             end
@@ -1240,12 +1313,16 @@ local function refreshCatchers(now)
     local list = runtime.catchers
     table.clear(list)
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Parent and player:GetAttribute("GameRole") == "Catcher" and player:GetAttribute("RunState") == "Active" then
-            local c = player.Character
-            local h = c and c:FindFirstChildOfClass("Humanoid")
-            local r = c and c:FindFirstChild("HumanoidRootPart")
-            if h and h.Health > 0 and r and c:GetAttribute("Ragdolled") ~= true and c:GetAttribute("MovementLocked") ~= true then
-                list[#list + 1] = player
+        if player ~= LocalPlayer and player.Parent then
+            local role = player:GetAttribute("GameRole")
+            local state = player:GetAttribute("RunState")
+            if roleIsCatcher(role) and state == "Active" then
+                local c = player.Character
+                local h = c and c:FindFirstChildOfClass("Humanoid")
+                local r = c and c:FindFirstChild("HumanoidRootPart")
+                if h and h.Health > 0 and r and c:GetAttribute("Ragdolled") ~= true and c:GetAttribute("MovementLocked") ~= true then
+                    list[#list + 1] = player
+                end
             end
         end
     end
@@ -1326,6 +1403,8 @@ local function updateThreats(now, position)
                     timeToDanger = math.max(0, (distance - danger) / closing)
                 elseif distance <= danger then
                     timeToDanger = 0
+                elseif distance <= danger * 1.5 and velocity.Magnitude > 1 then
+                    timeToDanger = math.max(0.1, (distance - danger) / math.max(runSpeed * 0.5, 1))
                 end
                 local interceptTime = math.min(closestTime, prediction)
                 if timeToDanger < interceptTime then interceptTime = timeToDanger end
@@ -1372,9 +1451,9 @@ local function updateThreats(now, position)
         end
     end
     table.sort(runtime.threats, function(a, b)
-        if a.collisionRisk ~= b.collisionRisk then return a.collisionRisk end
+        if a.collisionRisk ~= b.collisionRisk then return a.collisionRisk == true end
         if a.timeToDanger ~= b.timeToDanger then return a.timeToDanger < b.timeToDanger end
-        if a.tackle ~= b.tackle then return a.tackle end
+        if a.tackle ~= b.tackle then return a.tackle == true end
         if a.interceptGap ~= b.interceptGap then return a.interceptGap < b.interceptGap end
         return a.distance < b.distance
     end)
@@ -1391,6 +1470,110 @@ local function rotate(dir, angle)
     local c = math.cos(r)
     local s = math.sin(r)
     return Vector3.new(dir.X * c - dir.Z * s, 0, dir.X * s + dir.Z * c)
+end
+
+local function commitDirection(dir, now, duration, reason)
+    dir = flat(dir)
+    if dir.Magnitude < 0.05 then return end
+    runtime.committedDirection = dir.Unit
+    runtime.commitUntil = now + duration
+    runtime.commitReason = reason or ""
+end
+
+local function updateThreatMemory(now, threats)
+    local visible = {}
+    for _, t in ipairs(threats) do visible[t.player] = t end
+    for player, mem in pairs(runtime.threatMemory) do
+        local t = visible[player]
+        if t then
+            mem.lastSeen = now
+            mem.lastPosition = t.position
+            mem.lastVelocity = t.velocity
+            mem.confidence = 1
+        else
+            local age = now - mem.lastSeen
+            if age > 2.0 or not player.Parent then
+                runtime.threatMemory[player] = nil
+            else
+                mem.confidence = math.max(0, 1 - age / 2.0)
+                mem.lastPosition = mem.lastPosition + mem.lastVelocity * age
+            end
+        end
+    end
+    for player, t in pairs(visible) do
+        if not runtime.threatMemory[player] then
+            runtime.threatMemory[player] = {
+                lastSeen = now,
+                lastPosition = t.position,
+                lastVelocity = t.velocity,
+                confidence = 1,
+            }
+        end
+    end
+end
+
+local function threatMemoryPenalty(position, direction)
+    local dir = flat(direction)
+    if dir.Magnitude < 0.05 then return 0 end
+    dir = dir.Unit
+    local penalty = 0
+    for _, mem in pairs(runtime.threatMemory) do
+        if mem.confidence > 0.15 then
+            local toMem = flat(mem.lastPosition - position)
+            local d = toMem.Magnitude
+            if d > 1 and d < 50 then
+                local align = dir:Dot(toMem.Unit)
+                if align > 0.35 then
+                    penalty += align * mem.confidence * (50 - d) * 0.35
+                end
+            end
+        end
+    end
+    return penalty
+end
+
+local function tryOvershootBait(position, threats)
+    local nearest = threats[1]
+    if not nearest then return nil end
+    if nearest.distance > 26 or nearest.distance < 3.5 then return nil end
+    if nearest.velocity.Magnitude < getCatcherSpeed() * 0.7 then return nil end
+    local toCatcher = flat(nearest.position - position)
+    if toCatcher.Magnitude < 0.05 then return nil end
+    toCatcher = toCatcher.Unit
+    local velDir = flat(nearest.velocity)
+    if velDir.Magnitude < 0.05 then return nil end
+    velDir = velDir.Unit
+    if velDir:Dot(toCatcher) < 0.9 then return nil end
+    local lateral = Vector3.new(-toCatcher.Z, 0, toCatcher.X)
+    local leftClear = groundSupportScore(position, lateral, position.Y) >= 4
+        and not invisWallHit(position, lateral, 14)
+    local rightClear = groundSupportScore(position, -lateral, position.Y) >= 4
+        and not invisWallHit(position, -lateral, 14)
+    if leftClear and not rightClear then return lateral end
+    if rightClear and not leftClear then return -lateral end
+    if leftClear and rightClear then
+        local rel = toCatcher:Dot(lateral)
+        return rel >= 0 and -lateral or lateral
+    end
+    return nil
+end
+
+local function shouldReserveDash(threats)
+    local nearby = 0
+    local mostImminent = math.huge
+    local tackleActive = false
+    for _, t in ipairs(threats) do
+        if t.distance < 40 then nearby += 1 end
+        local ttd = t.timeToDanger or math.huge
+        if ttd < mostImminent then mostImminent = ttd end
+        if t.tackle then tackleActive = true end
+    end
+    if nearby <= 1 then
+        if mostImminent <= 0.55 then return false end
+        if tackleActive and mostImminent <= 1.0 then return false end
+        return true
+    end
+    return false
 end
 
 local function routeClear(position, direction, threats)
@@ -1678,6 +1861,14 @@ local function chooseRunnerDirection(position, goal, threats)
     if desired.Magnitude < 0.05 then return Vector3.zero end
     desired = desired.Unit
     
+    local nowCommit = os.clock()
+    if nowCommit < runtime.commitUntil and runtime.committedDirection.Magnitude > 0.05 then
+        local commitClear = routeClear(position, runtime.committedDirection, threats)
+        if commitClear > -2 and runtime.committedDirection:Dot(desired) > 0.1 then
+            return runtime.committedDirection
+        end
+    end
+    
     local panic = false
     if #threats > 0 and threats[1].distance <= SETTINGS.panicDistance then
         panic = true
@@ -1807,6 +1998,8 @@ local function chooseRunnerDirection(position, goal, threats)
                 end
             end
             
+            score -= threatMemoryPenalty(position, candidate)
+            
             if score > bestScore then
                 bestScore = score
                 best = candidate
@@ -1814,6 +2007,9 @@ local function chooseRunnerDirection(position, goal, threats)
         end
     end
     if best.Magnitude < 0.05 then return desired end
+    if best:Dot(desired) < 0.92 and bestScore > 0 then
+        commitDirection(best, os.clock(), 0.35, "dodge")
+    end
     return best.Unit
 end
 
@@ -1940,8 +2136,8 @@ local function requestDash(direction, now)
         return false
     end
     local hum = getHumanoid()
-    local dir = hum and flat(hum.MoveDirection) or Vector3.zero
-    if dir.Magnitude < 0.05 then dir = flat(direction) end
+    local dir = flat(direction)
+    if dir.Magnitude < 0.05 and hum then dir = flat(hum.MoveDirection) end
     if dir.Magnitude < 0.05 then dir = flat(root.CFrame.LookVector) end
     if dir.Magnitude < 0.05 then
         runtime.dashStatus = "no-direction"
@@ -1969,6 +2165,15 @@ local function shouldDash(position, threats, goalDistance)
     local now = os.clock()
     if now - runtime.dashAt < 0.20 then return false end 
     if #threats == 0 then return false end
+    if shouldReserveDash(threats) then return false end
+    
+    local character = getCharacter()
+    if character then
+        local gameCooldown = tonumber(character:GetAttribute("DashCooldownUntil")) or 0
+        if gameCooldown > now + 0.05 then
+            return false
+        end
+    end
     
     local nearestDistance = math.huge
     local surroundedCount = 0
@@ -1982,13 +2187,15 @@ local function shouldDash(position, threats, goalDistance)
         local gap = tonumber(threat.interceptGap) or math.huge
         local danger = math.max(tonumber(threat.danger) or 4, 4)
         imminentTime = math.min(imminentTime, tonumber(threat.timeToDanger) or math.huge)
-        
-        if threat.tackle and (gap <= danger * 1.25 or (threat.timeToDanger or math.huge) <= 0.35 or threat.distance <= 12) then
-            immediateDanger = true
-        elseif threat.preTackle and (gap <= danger * 1.15 and (threat.timeToDanger or math.huge) <= 0.45) then
-            immediateDanger = true
-        elseif threat.collisionRisk and (gap <= danger * 1.1 and (threat.timeToDanger or math.huge) <= 0.4) then
-            immediateDanger = true
+        local maxDashRange = threat.tackle and 26 or 18
+        if threat.distance <= maxDashRange then
+            if threat.tackle and (gap <= danger * 1.6 or (threat.timeToDanger or math.huge) <= 0.45 or threat.distance <= 14) then
+                immediateDanger = true
+            elseif threat.preTackle and (gap <= danger * 1.4 and (threat.timeToDanger or math.huge) <= 0.6) then
+                immediateDanger = true
+            elseif threat.collisionRisk and (gap <= danger * 1.35 and (threat.timeToDanger or math.huge) <= 0.55) then
+                immediateDanger = true
+            end
         end
     end
     
@@ -2151,7 +2358,7 @@ end
 local function runnerStep(now, dt)
     local role = getRole()
     local state = getRunState()
-    if role ~= "Runner" or state ~= "Active" then
+    if not roleIsRunner(role) or state ~= "Active" then
         runtime.path = Vector3.zero
         runtime.runnerPlanAt = -math.huge
         runtime.runnerPlanDirection = Vector3.zero
@@ -2184,10 +2391,43 @@ local function runnerStep(now, dt)
         runtime.path = Vector3.zero
         return
     end
+    local position = root.Position
+    local nowInput = os.clock()
+    if hasManualMovementInput() then
+        runtime.lastManualInputAt = nowInput
+        runtime.manualOverrideUntil = nowInput + 0.35
+    end
+    local manualOverride = nowInput < runtime.manualOverrideUntil
+    if manualOverride and not runtime.manualOverride then
+        if SETTINGS.notifications then
+            notify("Byte", "Manual control active", 1.2)
+        end
+    end
+    runtime.manualOverride = manualOverride
+    if manualOverride then
+        runtime.path = Vector3.zero
+        runtime.committedDirection = Vector3.zero
+        runtime.commitUntil = -math.huge
+        runtime.sideGapDirection = Vector3.zero
+        runtime.sideGapUntil = -math.huge
+        runtime.survivalMode = false
+        if runtime.reviveStarted then cancelRevive() end
+        local assistThreats = updateThreats(now, position)
+        updateThreatMemory(now, assistThreats)
+        local steeringDir = flat(hum.MoveDirection)
+        if steeringDir.Magnitude < 0.05 then
+            local look = flat(root.CFrame.LookVector)
+            if look.Magnitude > 0.05 then steeringDir = look end
+        end
+        if steeringDir.Magnitude > 0.05 and shouldDash(position, assistThreats, 0) then
+            local dashDir = chooseDashDirection(position, steeringDir, assistThreats)
+            requestDash(dashDir, now)
+        end
+        return
+    end
     refreshPing(now)
     refreshSafezones()
     refreshCatchers(now)
-    local position = root.Position
     local baseGoal = runnerGoal(position, now)
     if runtime.routeComplete then
         local targetZone = runtime.routeTargetSide == (safezone.a and safezone.a.name) and safezone.a or safezone.b
@@ -2273,6 +2513,44 @@ local function runnerStep(now, dt)
     end
     movementStuck(now, position)
     local threats = updateThreats(now, position)
+    updateThreatMemory(now, threats)
+    
+    local surrounded = #threats >= 3 and threats[1].distance < 18
+    if surrounded and threats[1].distance < 12 then
+        runtime.survivalMode = true
+        runtime.survivalUntil = now + 1.2
+    end
+    if runtime.survivalMode and now > runtime.survivalUntil then
+        runtime.survivalMode = false
+    end
+    if runtime.survivalMode and #threats > 0 then
+        local escape = Vector3.zero
+        for _, t in ipairs(threats) do
+            local away = flat(position - (t.predict or t.position))
+            if away.Magnitude > 0.05 then
+                escape += away.Unit / math.max(t.distance, 4)
+            end
+        end
+        if escape.Magnitude > 0.05 then
+            local dir = escape.Unit
+            local edgeDir, risk = chooseEdgeDirection(position, dir, position + dir * 30, position.Y)
+            if risk and edgeDir.Magnitude > 0.05 then dir = edgeDir end
+            runtime.path = dir
+            hum.AutoRotate = true
+            hum:Move(dir, false)
+            return
+        end
+    end
+    
+    local bait = tryOvershootBait(position, threats)
+    if bait and bait.Magnitude > 0.05 then
+        commitDirection(bait, now, 0.4, "juke")
+        runtime.path = bait.Unit
+        hum.AutoRotate = true
+        hum:Move(bait.Unit, false)
+        return
+    end
+    
     local distanceToGoal = flat(movementGoal - position).Magnitude
     local arriveDistance = runtime.goalMode == "Gem" and SETTINGS.gemCollectDistance or 2.5
     if distanceToGoal <= arriveDistance then
@@ -2437,29 +2715,36 @@ local function runnerStep(now, dt)
         local recovery = center and flat(center - position) or flat(movementGoal - position)
         if recovery.Magnitude > 0.05 then
             recovery = recovery.Unit
-            if runtime.stuckRecoveryDirection.Magnitude < 0.05
+            if nowEdge < runtime.randomWalkUntil and runtime.randomWalkDir.Magnitude > 0.05 then
+                direction = runtime.randomWalkDir
+                hardDodge = true
+            elseif runtime.stuckRecoveryDirection.Magnitude < 0.05
                 or nowEdge >= runtime.stuckRecoveryUntil
                 or runtime.stuckRecoveryDirection:Dot(recovery) < 0.75 then
-                local candidates = {recovery, rotateEdge(recovery, 35), rotateEdge(recovery, -35), rotateEdge(recovery, 70), rotateEdge(recovery, -70)}
                 local best = recovery
                 local bestScore = -math.huge
-                for _, candidate in ipairs(candidates) do
+                for i = 1, 6 do
+                    local candidate = rotate(recovery, math.random(-180, 180))
                     local support = groundSupportScore(position, candidate, position.Y)
                     local progress = candidate:Dot(recovery)
-                    local score = support * 5 + progress * 4
+                    local score = support * 5 + progress * 2 + math.random() * 2
                     if score > bestScore then
                         bestScore = score
-                        best = candidate.Unit
+                        best = candidate
                     end
                 end
                 runtime.stuckRecoveryDirection = best
                 runtime.stuckRecoveryUntil = nowEdge + 0.85
+                runtime.randomWalkDir = best
+                runtime.randomWalkUntil = nowEdge + 0.3
             end
-            direction = runtime.stuckRecoveryDirection
+            direction = runtime.randomWalkUntil > nowEdge and runtime.randomWalkDir or runtime.stuckRecoveryDirection
+            if direction.Magnitude < 0.05 then direction = recovery end
             hardDodge = true
         end
     elseif nowEdge >= runtime.stuckRecoveryUntil then
         runtime.stuckRecoveryDirection = Vector3.zero
+        runtime.randomWalkDir = Vector3.zero
     end
     if SETTINGS.smoothMovement and not hardDodge and runtime.path.Magnitude > 0.05 and not runtime.stuck then
         local alpha = math.clamp(SETTINGS.turnRate * math.clamp(dt or (1 / 60), 0.001, 0.1), 0, 1)
@@ -2479,7 +2764,8 @@ local function runnerStep(now, dt)
         runtime.dashStatus = "no-dash-state-change"
     end
     local goalDistance = flat(movementGoal - position).Magnitude
-    if shouldDash(position, threats, goalDistance) then
+    local wantsDash = shouldDash(position, threats, goalDistance)
+    if wantsDash then
         local dashDir = chooseDashDirection(position, direction, threats)
         if runtime.sideGapDirection.Magnitude > 0.05 and os.clock() < runtime.sideGapUntil then
             dashDir = runtime.sideGapDirection
@@ -2488,7 +2774,15 @@ local function runnerStep(now, dt)
         elseif runtime.stuck and runtime.stuckRecoveryDirection.Magnitude > 0.05 then
             dashDir = runtime.stuckRecoveryDirection
         end
-        requestDash(dashDir, now)
+        local fired = requestDash(dashDir, now)
+        if SETTINGS.showDebugUI then
+            print(string.format("[Byte Dash] fired=%s status=%s threats=%d nearest=%.1f ttd=%.2f",
+                tostring(fired),
+                tostring(runtime.dashStatus),
+                #threats,
+                threats[1] and threats[1].distance or -1,
+                threats[1] and threats[1].timeToDanger or -1))
+        end
     end
 end
 
@@ -2497,7 +2791,7 @@ local function refreshRunnerTargets(now)
     runtime.catcherTargetAt = now
     table.clear(runtime.catcherTargets)
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Parent and player:GetAttribute("GameRole") == "Runner" and player:GetAttribute("RunState") == "Active" then
+        if player ~= LocalPlayer and player.Parent and roleIsRunner(player:GetAttribute("GameRole")) and player:GetAttribute("RunState") == "Active" then
             local c = player.Character
             local h = c and c:FindFirstChildOfClass("Humanoid")
             local r = c and c:FindFirstChild("HumanoidRootPart")
@@ -3028,6 +3322,17 @@ LocalPlayer.CharacterAdded:Connect(function()
     runtime.reviveStarted = false
     runtime.reviveStartAt = 0
     runtime.threatHistory = {}
+    runtime.threatMemory = {}
+    runtime.committedDirection = Vector3.zero
+    runtime.commitUntil = -math.huge
+    runtime.commitReason = ""
+    runtime.randomWalkDir = Vector3.zero
+    runtime.randomWalkUntil = -math.huge
+    runtime.survivalMode = false
+    runtime.survivalUntil = -math.huge
+    runtime.manualOverride = false
+    runtime.manualOverrideUntil = -math.huge
+    runtime.lastManualInputAt = -math.huge
     runtime.threats = {}
     runtime.catchers = {}
     runtime.catcherTargets = {}
@@ -3155,7 +3460,6 @@ getgenv().Window = Window
 local RunnerTab = Window:AddTab("Runner", "footprints")
 local CatcherTab = Window:AddTab("Catcher", "crosshair")
 local WheelTab = Window:AddTab("Wheel", "rotate-cw")
-local JourneyTab = Window:AddTab("Journey", "gift")
 
 local RunnerMovement = RunnerTab:AddLeftGroupbox("Automation", "footprints")
 RunnerMovement:AddToggle("runnerEnabled", {
@@ -3534,10 +3838,9 @@ RunnerSafety:AddSlider("predictionTime", {
     Min = 0.25,
     Max = 1.1,
     Default = 0.65,
-    Rounding = 2,
+    Rounding = 0.01,
     Callback = function(v)
-        local snapped = math.floor(((tonumber(v) or 0.65) + 0.025) / 0.05) * 0.05
-        snapped = math.clamp(snapped, 0.25, 1.1)
+        local snapped = math.clamp(tonumber(v) or 0.65, 0.25, 1.1)
         snapped = math.floor(snapped * 100 + 0.5) / 100
         SETTINGS.predictionTime = snapped
         if math.abs(snapped - v) > 0.001 and Options and Options.predictionTime then
@@ -3550,7 +3853,7 @@ RunnerSafety:AddSlider("panicDistance", {
     Min = 8,
     Max = 25,
     Default = 15,
-    Rounding = 0,
+    Rounding = 1,
     Callback = function(v)
         local snapped = math.floor((tonumber(v) or 15) + 0.5)
         snapped = math.clamp(snapped, 8, 25)
@@ -3581,10 +3884,9 @@ RunnerSmoothing:AddSlider("avoidStrength", {
     Min = 0.5,
     Max = 2.5,
     Default = 1.8,
-    Rounding = 1,
+    Rounding = 0.1,
     Callback = function(v)
-        local snapped = math.floor(((tonumber(v) or 1.8) + 0.05) / 0.1) * 0.1
-        snapped = math.clamp(snapped, 0.5, 2.5)
+        local snapped = math.clamp(tonumber(v) or 1.8, 0.5, 2.5)
         snapped = math.floor(snapped * 10 + 0.5) / 10
         SETTINGS.avoidStrength = snapped
         if Options and Options.avoidStrength then
