@@ -9,8 +9,6 @@ local Players = game:GetService('Players')
 local UserInputService = game:GetService('UserInputService')
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local RunService = game:GetService('RunService')
-Env.WantImmortality = false
-pcall(function() game:GetService('RunService'):UnbindFromRenderStep("CamFix") end)
 local Debris = game:GetService('Debris')
 local TweenService = game:GetService('TweenService')
 local Stats = game:GetService('Stats')
@@ -301,7 +299,22 @@ local Remote = Child(
 )
 
 local function Parry_Token()
-    local Pad = Upvalues[4](Key, 'TIME')
+    local ok, Pad = pcall(Upvalues[4], Key, 'TIME')
+    if not ok or type(Pad) ~= 'string' or #Pad == 0 then
+        local okU, NewUp = pcall(function()
+            return ((debug and debug.getupvalues) or getupvalues)(require(
+                Child(Child(Child(ReplicatedStorage, "Controllers"), "SwordsController \012"), "PRY")
+            ))
+        end)
+        if not okU or type(NewUp) ~= 'table' then return nil end
+        Upvalues = NewUp
+        Key  = Upvalues[3] and Upvalues[3][3]
+        Hash = Upvalues[8]
+        if Hash and Hash:find("PARRY_HASH_FAKE", 1, true) then Hash = nil end
+        local ok2, Pad2 = pcall(Upvalues[4], Key, 'TIME')
+        if not ok2 or type(Pad2) ~= 'string' or #Pad2 == 0 then return nil end
+        Pad = Pad2
+    end
     local ST = tostring(math.floor(workspace:GetServerTimeNow() * 100))
     local TK = {}
     for i = 1, #ST do
@@ -338,6 +351,17 @@ local function GetBallPosition(ball)
     return Server_Ball_Positions[ball] or ball.Position
 end
 
+
+local function GetPredictedBallPosition(ball)
+    local pos = GetBallPosition(ball)
+    if not ball then return pos end
+    local zoomies = ball:FindFirstChild('zoomies')
+    if not zoomies then return pos end
+    local ping = Get_Comp_Ping()
+    local pred_time = math.clamp(ping / 1000 + 0.05, 0.05, 0.30)
+    return pos + zoomies.VectorVelocity * pred_time
+end
+
 function Auto_Parry.Get_Balls(single)
     local List = {}
     local Folder = BallsFolder
@@ -365,6 +389,26 @@ local Target_Ball = nil
 
 function Auto_Parry.Get_Targeting_Balls()
     return Target_Ball
+end
+
+function Auto_Parry.Get_Targeting_Balls_List()
+    local List = {}
+    local Folder = BallsFolder
+    if not Folder or Folder.Parent ~= workspace then
+        Folder = workspace:FindFirstChild('Balls')
+        BallsFolder = Folder
+    end
+    if not Folder then return List end
+    local PName = Player.Name
+    for _, Ball in ipairs(Folder:GetChildren()) do
+        if Ball:IsA('BasePart')
+            and Ball:GetAttribute('realBall') == true
+            and Ball:GetAttribute('target') == PName
+            and Ball:FindFirstChild('zoomies') then
+            List[#List + 1] = Ball
+        end
+    end
+    return List
 end
 
 local CURVE_DOT_THRESHOLD = 0.5
@@ -521,8 +565,8 @@ function Auto_Parry.Parry_Data(Parry_Type)
     return {0, CFrame.new(Cam_Pos, Cam_Pos + Cam.CFrame.LookVector), Events, Vector2_Mouse_Location}
 end
 
-local Auto_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Slashes of Fury', 'Singularity'}
-local Protect_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Forcefield', 'Singularity', 'Invisibility', 'Telekinesis', 'Ninja Dash', 'Continuity Zero', 'Infinity', 'Time Hole', 'Dribble', 'Slashes of Fury', 'Phantom', 'Dragon Spirit', 'Quantum Arena'}
+local Auto_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Slashes of Fury', 'Singularity', 'Fracture'}
+local Protect_Abilities = {'Calming Deflection', 'Raging Deflection', 'Rapture', 'Aerodynamic Slash', 'Forcefield', 'Singularity', 'Invisibility', 'Telekinesis', 'Ninja Dash', 'Continuity Zero', 'Infinity', 'Time Hole', 'Dribble', 'Slashes of Fury', 'Phantom', 'Dragon Spirit', 'Quantum Arena', 'Fracture'}
 local Use_Ability = ReplicatedStorage.Remotes.AbilityButtonPress
 
 local function Get_Hotbar_Gradient(Slot)
@@ -535,6 +579,9 @@ end
 local Parried = false
 local Last_Parry = 0
 local Parries = 0
+Auto_Parry.Multi_Ball_Busy = false
+Auto_Parry.Multi_Ball_Per_Ball_CD = setmetatable({}, { __mode = 'k' })
+Auto_Parry.MULTI_BALL_PER_BALL_CD = 0.15
 
 local function Find_Target()
     for _, Ball in BallsFolder:GetChildren() do
@@ -646,9 +693,20 @@ function Auto_Parry.Parry(Parry_Type, Silent)
         end
         return true
     end
+    
+    if Auto_Parry.Multi_Ball_Busy then return false end
 
     local Parry_Data = Auto_Parry.Parry_Data(Parry_Type)
-    Remote:FireServer(Hash, Key, Parry_Token(), Parry_Data[1], Parry_Data[2], Parry_Data[3], Parry_Data[4], false)
+    local Targeting_Balls = Auto_Parry.Get_Targeting_Balls_List()
+    local Multi_Fired, Multi_In_Range = false, 0
+    if #Targeting_Balls >= 2 then
+        Multi_Fired, Multi_In_Range = Auto_Parry.Fire_Multi_Balls(Targeting_Balls, Parry_Data)
+    end
+    if Multi_In_Range == -1 then
+        return false
+    elseif not Multi_Fired and Multi_In_Range == 0 then
+        Remote:FireServer(Hash, Key, Parry_Token(), Parry_Data[1], Parry_Data[2], Parry_Data[3], Parry_Data[4], false)
+    end
 
     if not Silent and not Connections_Manager['Manual Spam'] then
         Auto_Parry.Parry_Animation()
@@ -1568,187 +1626,57 @@ local function Calculate_Parry_Distance(Velocity, Offset, Ping, Multiplier, Buff
     return Result
 end
 
-local Immortality_Module = {}
-do
-    local Enabled = false
-    local PreSimConn, HeartbeatConn, RenderConn, CharDescConn = nil, nil, nil, nil
-    local TrueCFrame = nil
-    local JitterRadius = 5
-    local CurrentOffset = Vector3.zero
-    local TargetOffset = Vector3.zero
-    local LastRetarget = 0
-    local OriginalProperties = {}
-    local RETARGET_INTERVAL = 0
-    local FLOOR_NAMES = { PlayerFloor = true, FLOOR = true, INVISIBLE_FLOOR = true }
+function Auto_Parry.Fire_Multi_Balls(Targeting_Balls, Parry_Data)
+    if Auto_Parry.Multi_Ball_Busy then return false, -1 end
+    Auto_Parry.Multi_Ball_Busy = true
 
-    local function SetCollisions(part, state)
-        if not part:IsA("BasePart") then return end
-        if state then
-            local orig = OriginalProperties[part]
-            if orig then
-                part.CanTouch, part.CanQuery, part.CanCollide = orig.CanTouch, orig.CanQuery, orig.CanCollide
-                OriginalProperties[part] = nil
-            else
-                part.CanTouch, part.CanQuery, part.CanCollide = true, true, true
-            end
-        else
-            if not OriginalProperties[part] then
-                OriginalProperties[part] = { CanTouch = part.CanTouch, CanQuery = part.CanQuery, CanCollide = part.CanCollide }
-            end
-            part.CanTouch, part.CanQuery, part.CanCollide = false, false, false
-        end
+    local Char = Player.Character
+    local MyRoot = Char and Char.PrimaryPart
+    if not MyRoot then
+        Auto_Parry.Multi_Ball_Busy = false
+        return false, 0
     end
+    local Cam = workspace.CurrentCamera
+    local Events_Tbl = Parry_Data[3]
+    local MyPos = MyRoot.Position
+    local Ping = Get_Comp_Ping()
+    local Now = os.clock()
+    local Fired = 0
+    local In_Range = 0
 
-    local function IsFloor(inst, ny)
-        if not inst then return false end
-        if FLOOR_NAMES[inst.Name] then return true end
-        local p = inst
-        while p and p ~= workspace do
-            if p.Name == 'Map' then return true end
-            p = p.Parent
-        end
-        return inst:IsA('BasePart') and inst.CanCollide and math.abs(ny) > 0.7
-    end
-
-    local function RaycastFloor(char, pos)
-        local params = RaycastParams.new()
-        params.FilterDescendantsInstances = { char }
-        params.FilterType = Enum.RaycastFilterType.Exclude
-        local hit = workspace:Raycast(pos + Vector3.new(0, 10, 0), Vector3.new(0, -100, 0), params)
-        if not hit or hit.Distance > 60 then return false end
-        return IsFloor(hit.Instance, hit.Normal.Y)
-    end
-
-    local function Wait_Grounded(char, timeout)
-        local root = char and char.PrimaryPart
-        if not root then return false end
-        local deadline = os.clock() + (timeout or 2)
-        while os.clock() < deadline do
-            if not Env.WantImmortality or Player.Character ~= char then return false end
-            local params = RaycastParams.new()
-            params.FilterDescendantsInstances = { char }
-            params.FilterType = Enum.RaycastFilterType.Exclude
-            local hit = workspace:Raycast(root.Position, Vector3.new(0, -8, 0), params)
-            if hit and hit.Distance <= 8 then return true end
-            task.wait(0.03)
-        end
-        return false
-    end
-
-    function Immortality_Module.Start()
-        if Enabled then return end
-        if not Env.WantImmortality then return end
-        if not Wait_Grounded(Player.Character, 2) then return end
-        if not Env.WantImmortality then return end
-        Enabled = true
-        TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
-        pcall(function() setsimulationradius(1e9, 1e9) end)
-
-        local char = Player.Character
-        if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if hum then hum.PlatformStand = false; hum.Sit = false end
-            for _, v in ipairs(char:GetDescendants()) do SetCollisions(v, false) end
-            CharDescConn = char.DescendantAdded:Connect(function(v)
-                if Enabled then SetCollisions(v, false) end
-            end)
-        end
-
-        PreSimConn = RunService.PreSimulation:Connect(function(dt)
-            if not Env.WantImmortality then return end
-            local c = Player.Character
-            local root = c and c.PrimaryPart
-            if not root then return end
-            if not TrueCFrame then TrueCFrame = root.CFrame end
-
-            local now = os.clock()
-            if now - LastRetarget >= RETARGET_INTERVAL then
-                LastRetarget = now
-                local theta = math.random() * math.pi * 2
-                local r = JitterRadius * (0.5 + 0.5 * math.random())
-                local testOffset = Vector3.new(r * math.cos(theta), 0, r * math.sin(theta))
-                CurrentOffset = RaycastFloor(c, TrueCFrame.Position + testOffset) and testOffset or Vector3.zero
-            end
-
-            root.CFrame = CFrame.new(TrueCFrame.Position + CurrentOffset) * TrueCFrame.Rotation
-        end)
-
-        HeartbeatConn = RunService.Heartbeat:Connect(function()
-            if not Env.WantImmortality then return end
-            local c = Player.Character
-            if not c or c.Parent ~= AliveFolder then Immortality_Module.Stop(); return end
-            local hum = c:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Health <= 0 then Immortality_Module.Stop(); return end
-            local root = c.PrimaryPart
-            if not root then return end
-
-            if not TrueCFrame then
-                TrueCFrame, CurrentOffset, TargetOffset = root.CFrame, Vector3.zero, Vector3.zero
-                return
-            end
-            if root.Position.Y < -50 then
-                if TrueCFrame.Position.Y > -50 then
-                    root.CFrame = TrueCFrame
-                    root.AssemblyLinearVelocity = Vector3.zero
-                else
-                    TrueCFrame = CFrame.new(0, 50, 0)
-                    root.CFrame = TrueCFrame
-                end
-                return
-            end
-            for _, v in ipairs(c:GetDescendants()) do SetCollisions(v, false) end
-            local expected = TrueCFrame.Position + CurrentOffset
-            TrueCFrame = CFrame.new(TrueCFrame.Position + (root.Position - expected)) * root.CFrame.Rotation
-        end)
-
-        RenderConn = RunService:BindToRenderStep("CamFix", Enum.RenderPriority.Camera.Value - 1, function()
-            if not Env.WantImmortality or not TrueCFrame then return end
-            local c = Player.Character
-            local root = c and c.PrimaryPart
-            if root then root.CFrame = TrueCFrame end
-        end)
-    end
-
-    function Immortality_Module.Stop()
-        Enabled = false
-        if PreSimConn then PreSimConn:Disconnect(); PreSimConn = nil end
-        if HeartbeatConn then HeartbeatConn:Disconnect(); HeartbeatConn = nil end
-        if CharDescConn then CharDescConn:Disconnect(); CharDescConn = nil end
-        pcall(function() RunService:UnbindFromRenderStep("CamFix") end)
-
-        local c = Player.Character
-        if c then
-            pcall(function()
-                for _, v in ipairs(c:GetDescendants()) do SetCollisions(v, true) end
-                local root, hum = c.PrimaryPart, c:FindFirstChildOfClass("Humanoid")
-                if root and root.Parent then
-                    local params = RaycastParams.new()
-                    params.FilterDescendantsInstances = { c }
-                    params.FilterType = Enum.RaycastFilterType.Exclude
-                    local hit = workspace:Raycast(root.Position + Vector3.new(0, 10, 0), Vector3.new(0, -1000, 0), params)
-                    if hit then
-                        root.CFrame = CFrame.new(root.Position.X, hit.Position.Y + 3, root.Position.Z) * root.CFrame.Rotation
+    for _, Ball in ipairs(Targeting_Balls) do
+        if Ball and Ball.Parent then
+            local Z = Ball:FindFirstChild('zoomies')
+            if Z then
+                local Ball_Pos = GetPredictedBallPosition(Ball)
+                local Offset = MyPos - Ball_Pos
+                local Distance = Offset.Magnitude
+                if Distance <= 100 then
+                    local Ball_Vel = Z.VectorVelocity
+                    local Acc = Calculate_Parry_Distance(Ball_Vel, Offset, Ping,
+                        Speed_Divisor_Multiplier, Parry_Distance_Buffer)
+                    if Distance <= Acc then
+                        In_Range += 1
+                        local Last_Fire = Auto_Parry.Multi_Ball_Per_Ball_CD[Ball]
+                        if not Last_Fire or Now - Last_Fire >= Auto_Parry.MULTI_BALL_PER_BALL_CD then
+                            local ok, Token = pcall(Parry_Token)
+                            if ok and type(Token) == 'string' and #Token > 0 then
+                                local Aim = CFrame.new(MyPos, Ball_Pos)
+                                local Screen = Cam:WorldToScreenPoint(Ball_Pos)
+                                Remote:FireServer(Hash, Key, Token, 0, Aim, Events_Tbl,
+                                    {Screen.X, Screen.Y}, false)
+                                Auto_Parry.Multi_Ball_Per_Ball_CD[Ball] = Now
+                                Fired += 1
+                            end
+                        end
                     end
-                    root.Anchored = false
-                    root.AssemblyLinearVelocity = Vector3.zero
-                    root.AssemblyAngularVelocity = Vector3.zero
                 end
-                if hum then
-                    hum.PlatformStand = false
-                    hum.Sit = false
-                    hum:ChangeState(Enum.HumanoidStateType.Running)
-                end
-            end)
+            end
         end
-        TrueCFrame, CurrentOffset, TargetOffset, LastRetarget = nil, Vector3.zero, Vector3.zero, 0
-        table.clear(OriginalProperties)
     end
 
-    function Immortality_Module.SetBaseRadius(v) JitterRadius = v end
-    function Immortality_Module.SetMaxRadius(v) end
-    function Immortality_Module.SetBaseSpeed(v) end
-    function Immortality_Module.SetMaxSpeed(v) end
-    function Immortality_Module.IsEnabled() return Enabled end
+    Auto_Parry.Multi_Ball_Busy = false
+    return Fired > 0, In_Range
 end
 
 local Tornado_Time = nil
@@ -2034,10 +1962,6 @@ function UnloadScript()
         end
     end
 
-    if Immortality_Module then
-        Immortality_Module.Stop()
-    end
-
     for FName in pairs(FuryUI.Timers) do FuryUI.ClearTimer(FName) end
     for FPlr in pairs(FuryUI.Uses) do FuryUI.Clear(FPlr) end
 
@@ -2092,7 +2016,7 @@ function UnloadScript()
     Env.Auto_Ability = nil
     Env.Animation_Fix = nil
     Env.ThunderDash_NoCD = nil
-    Env.WantImmortality = false
+
     if Env._PreclickDB_State then
         Env._PreclickDB_State.Enabled = false
         Env._PreclickDB_State = nil
@@ -2139,37 +2063,38 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
     Default = false,
     Notify = false,
     Callback = function(state)
-        local Manual_Parry_Time = 0
         local Last_CD_Y = 0.5
         if state then
-            Connections_Manager['Manual_Parry_Detect'] = UserInputService.InputBegan:Connect(function(Input, Processed)
-                if Processed or _ScriptUnloaded then return end
-                if Input.KeyCode == Enum.KeyCode.F
-                    or Input.UserInputType == Enum.UserInputType.MouseButton1
-                    or Input.UserInputType == Enum.UserInputType.Touch then
-                    if not Env.Last_Auto_Fire or (os.clock() - Env.Last_Auto_Fire) > 0.05 then
-                        Env.Manual_Parry_Until = os.clock() + 0.3
-                    end
-                end
-            end)
-            Connections_Manager['Auto Parry'] = RunService.PreSimulation:Connect(function()
+            Connections_Manager['Auto Parry'] = RunService.PreRender:Connect(function()
                 local Character = Player.Character
                 if not Character or Character.Parent ~= AliveFolder then return end
 
                 local Root = Character.PrimaryPart
-                if not Root then 
-                    return 
-                end
+                if not Root then return end
 
-                local Ball = Auto_Parry.Get_Targeting_Balls()
-                if not Ball then
-                    return
+                local Targeting_Balls = Auto_Parry.Get_Targeting_Balls_List()
+                if #Targeting_Balls == 0 then return end
+                local Ball, Best_Score = nil, math.huge
+                local Root_Pos = Root.Position
+                for _, B in ipairs(Targeting_Balls) do
+                    local Z = B:FindFirstChild('zoomies')
+                    if Z then
+                        local V = Z.VectorVelocity
+                        local BP = GetPredictedBallPosition(B)
+                        local D = (Root_Pos - BP).Magnitude
+                        local Score = (V.Magnitude > 1) and (D / V.Magnitude) or D
+                        if Score < Best_Score then
+                            Best_Score = Score
+                            Ball = B
+                        end
+                    end
                 end
+                if not Ball then return end
 
                 local Zoomies = Ball:FindFirstChild('zoomies')
                 if not Zoomies then return end
 
-                if Parried or os.clock() < (Env.Manual_Parry_Until or 0) then return end
+                if Parried then return end
 
                 local Preclick_Armed = Env._PreclickDB_State
                     and Env._PreclickDB_State.Enabled
@@ -2190,15 +2115,14 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 local Ping = Get_Comp_Ping()
                 local Parry_Accuracy = Calculate_Parry_Distance(Velocity, Offset, Ping, Speed_Divisor_Multiplier, Parry_Distance_Buffer)
 
-                local Parry_Cooldown = Get_Hotbar_Gradient('Block')
-                local Ability_CD = Get_Hotbar_Gradient('Ability')
+                local Parry_Cooldown, Ability_CD
+                if Distance <= Parry_Accuracy then
+                    Parry_Cooldown = Get_Hotbar_Gradient('Block')
+                    Ability_CD = Get_Hotbar_Gradient('Ability')
 
-                if Parry_Cooldown then
-                    local cur_y = Parry_Cooldown.Offset.Y
-                    if Last_CD_Y >= 0.42 and cur_y < 0.4 and Recent_Parries(os.clock(), 0.2) == 0 then
-                        Manual_Parry_Time = os.clock()
+                    if Parry_Cooldown then
+                        Last_CD_Y = Parry_Cooldown.Offset.Y
                     end
-                    Last_CD_Y = cur_y
                 end
 
                 if RuntimeFolder:FindFirstChild('Tornado') then
@@ -2220,7 +2144,8 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 local Used_Ability = false
 
                 local Phantom_Wants_Protect = Env.Phantom_Detection and Phantom_On_Player and Phantom_Detection_Mode == 'Normal'
-                if (os.clock() - Manual_Parry_Time) >= 0.6 and not Preclick_Armed and (Env.Cooldown_Protection or Phantom_Wants_Protect) and Parry_Cooldown and Time_View > 0.5 and Parry_Cooldown.Offset.Y <= 0.4 and Distance <= Parry_Accuracy then
+                
+                if not Preclick_Armed and (Env.Cooldown_Protection or Phantom_Wants_Protect) and Parry_Cooldown and Time_View > 0.5 and Parry_Cooldown.Offset.Y <= 0.4 and Distance <= Parry_Accuracy then
                     for _, Ability in Protect_Abilities do
                         local A = Abilities and Abilities:FindFirstChild(Ability)
                         if A and A.Enabled then
@@ -2256,7 +2181,7 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                     Parried = true
                     task.spawn(function()
                         local T = os.clock()
-                        repeat RunService.PreSimulation:Wait() until (os.clock() - T) >= 0.6 or not Parried
+                        repeat RunService.PreRender:Wait() until (os.clock() - T) >= 0.6 or not Parried
                         Parried = false
                     end)
                 end
@@ -2266,11 +2191,6 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                 Connections_Manager['Auto Parry']:Disconnect()
                 Connections_Manager['Auto Parry'] = nil
             end
-            if Connections_Manager['Manual_Parry_Detect'] then
-                Connections_Manager['Manual_Parry_Detect']:Disconnect()
-                Connections_Manager['Manual_Parry_Detect'] = nil
-            end
-            Env.Manual_Parry_Until = 0
         end
     end
 })
@@ -2478,7 +2398,7 @@ do
         LastGlobalFire = 0
         LastTBAnimation = 0
         Connections_Manager['Triggerbot_Sweep'] = RunService.RenderStepped:Connect(TB_Sweep)
-        Connections_Manager['Triggerbot_PreSim'] = RunService.PreSimulation:Connect(TB_Sweep)
+        Connections_Manager['Triggerbot_PreSim'] = RunService.PreRender:Connect(TB_Sweep)
         for _, Ball in ipairs(BallsFolder:GetChildren()) do TB_WatchBall(Ball) end
         Connections_Manager['Triggerbot_BallAdded'] = BallsFolder.ChildAdded:Connect(TB_WatchBall)
         Connections_Manager['Triggerbot_BallRemoved'] = BallsFolder.ChildRemoved:Connect(TB_UnwatchBall)
@@ -2943,7 +2863,7 @@ local Auto_Spam_Toggle = Auto_Spam_Group:AddToggle('Auto_Spam_Toggle', {
         end
 
         Connections_Manager['Auto Spam'] = {
-            RunService.PreSimulation:Connect(Spam_Step),
+            RunService.PreRender :Connect(Spam_Step),
             RunService.PostSimulation:Connect(Spam_Step),
         }
     end
@@ -3719,79 +3639,6 @@ Connections_Manager['ThunderDash_NoCD_Input_TopLevel'] = UserInputService.InputB
         end)
     end)
 end)
-
-local Immortality_Group = Tabs.Main:AddRightGroupbox({
-    Name = "Semi-Immortality", 
-    Icon = "shield-check", 
-})
-
-local Immortality_Toggle = Immortality_Group:AddToggle('Immortality_Toggle', {
-    Text = 'Semi-Immortality (BETA)',
-    Default = false,
-    Notify = false,
-
-    Callback = function(state)
-        Env.WantImmortality = state
-        
-        if state then
-            local char = Player.Character
-            if char and char.Parent == AliveFolder then
-                Immortality_Module.Start()
-            end
-        else
-            Immortality_Module.Stop()
-        end
-    end
-})
-
-Connections_Manager['Immortality_AutoStart'] = AliveFolder.ChildAdded:Connect(function(child)
-    if child == Player.Character and Env.WantImmortality then
-        task.wait(1.5)
-        if Env.WantImmortality and Player.Character == child then
-            Immortality_Module.Start()
-        end
-    end
-end)
-
-Immortality_Toggle:AddKeyPicker('Immortality_Keybind', {
-    Text = 'Immortality',
-    Mode = 'Toggle',
-})
-
-Immortality_Group:AddSlider('Immortality_BaseRadius', {
-    Text = 'Base Radius',
-    Default = 5,
-    Min = 3,
-    Max = 50,
-    Increment = 1,
-    Callback = function(Value)
-        Immortality_Module.SetBaseRadius(Value)
-    end
-})
-
-Immortality_Group:AddSlider('Immortality_MaxRadius', {
-    Text = 'Max Radius',
-    Default = 24,
-    Min = 10,
-    Max = 100,
-    Increment = 1,
-    Callback = function(Value)
-        Immortality_Module.SetMaxRadius(Value)
-    end
-})
-
-Immortality_Group:AddSlider('Immortality_MaxSpeed', {
-    Text = 'Max Spin Speed',
-    Default = 90,
-    Min = 30,
-    Max = 400,
-    Increment = 5,
-    Callback = function(Value)
-        Immortality_Module.SetMaxSpeed(Value)
-    end
-})
-
-
 
 do
 local CameraUnlocked = false
@@ -9756,15 +9603,7 @@ end
 
 local oldLoad = SaveManager.LoadAutoloadConfig
 SaveManager.LoadAutoloadConfig = function(self, ...)
-    local oldCallback = Immortality_Toggle.Callback
-    Immortality_Toggle.Callback = function() end
     oldLoad(self, ...)
-    Immortality_Toggle.Callback = oldCallback
-    
-    if Immortality_Toggle.Value then
-        Immortality_Toggle:SetValue(false)
-    end
-    Env.WantImmortality = false
 end
 
 task.spawn(function()
