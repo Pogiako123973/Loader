@@ -75,6 +75,7 @@ Byte.State = {
     LastRoleFetch = 0,
     LastShoot = 0,
     LastStab = 0,
+    LastKnifeThrow = 0,
     ActionBusy = false,
     BusySince = 0,
     ShootBusy = false,
@@ -102,6 +103,8 @@ Byte.State = {
         AutoShoot = false,
         SilentAim = false,
         SilentAimV2 = false,
+        AimPrediction = true,
+        PingComp = true,
         AutoKillAll = false,
         KillAura = false,
         KnifeAim = false,
@@ -613,16 +616,84 @@ function Byte.Murderer.KillAuraStep()
     end
 end
 
-function Byte.Murderer.NearestVictimRoot(origin)
-    local best, bestDistance
-    for _, victim in ipairs(Byte.Murderer.Victims()) do
-        local victimRoot = Byte.Util.Root(victim)
-        local distance = victimRoot and (victimRoot.Position - origin).Magnitude
-        if distance and (not bestDistance or distance < bestDistance) then
-            best, bestDistance = victimRoot, distance
+function Byte.Murderer.GetClosestKnifeTarget()
+    local root = Byte.Util.Root()
+    if not root then return nil end
+
+    local camera = workspace.CurrentCamera
+    local mousePos = UserInputService:GetMouseLocation()
+    local bestTarget = nil
+    local bestDist = math.huge
+
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and not Byte.Util.IsDead(p) and p.Character then
+            local tRoot = Byte.Util.Root(p)
+            if tRoot then
+                local screenPos = camera:WorldToViewportPoint(tRoot.Position)
+                local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                if dist < bestDist then
+                    bestDist = dist
+                    bestTarget = p
+                end
+            end
         end
     end
-    return best
+
+    if not bestTarget then
+        local minDist = math.huge
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and not Byte.Util.IsDead(p) and p.Character then
+                local tRoot = Byte.Util.Root(p)
+                if tRoot then
+                    local d = (root.Position - tRoot.Position).Magnitude
+                    if d < minDist then
+                        minDist = d
+                        bestTarget = p
+                    end
+                end
+            end
+        end
+    end
+    return bestTarget
+end
+
+function Byte.Murderer.AutoThrowStep()
+    if not State.Opt.KnifeAim or not State.Alive then return end
+    
+    local knife = Byte.Murderer.Knife()
+    if not knife then return end
+    
+    if knife.Parent ~= LocalPlayer.Character then
+        Byte.Sheriff.Equip(knife)
+        return
+    end
+    
+    local events = knife:FindFirstChild("Events")
+    if not events then return end
+
+    local target = Byte.Murderer.GetClosestKnifeTarget()
+    if not target or not target.Character then return end
+    
+    local tRoot = Byte.Util.Root(target)
+    if not tRoot then return end
+        
+    local targetPos = tRoot.Position
+    if State.Opt.AimPrediction then
+        local lead = State.Opt.PingComp and 0.16 or 0.12
+        targetPos = targetPos + (tRoot.AssemblyLinearVelocity * lead)
+    end
+    
+    if events:FindFirstChild("HandleTouched") then
+        events.HandleTouched:FireServer(tRoot)
+        if events:FindFirstChild("KnifeStabbed") then
+            events.KnifeStabbed:FireServer()
+        end
+    end
+    
+    if events:FindFirstChild("KnifeThrown") and os.clock() - State.LastKnifeThrow > 0.5 then
+        events.KnifeThrown:FireServer(knife.Handle.CFrame, CFrame.new(targetPos))
+        State.LastKnifeThrow = os.clock()
+    end
 end
 
 function Byte.Sheriff.SyncAimHook()
@@ -636,34 +707,84 @@ function Byte.Sheriff.SyncAimHook()
     end
 end
 
+function Byte.Murderer.BuildKnifeAimArgs(self, ...)
+    if not State.Opt.KnifeAim then return nil end
+    if self.Name ~= "KnifeThrown" then return nil end
+    local parent = self.Parent
+    if not parent or parent.Name ~= "Events" then return nil end
+
+    local args = { ... }
+    local target = Byte.Murderer.GetClosestKnifeTarget()
+    if target and target.Character then
+        local tRoot = Byte.Util.Root(target)
+        if tRoot then
+            local targetPos = tRoot.Position
+            if State.Opt.AimPrediction then
+                local lead = State.Opt.PingComp and 0.16 or 0.12
+                targetPos = targetPos + (tRoot.AssemblyLinearVelocity * lead)
+            end
+            args[2] = CFrame.new(targetPos)
+            
+            task.spawn(function()
+                local knife = Byte.Murderer.Knife()
+                local events = knife and knife:FindFirstChild("Events")
+                if events then
+                    if events:FindFirstChild("KnifeStabbed") then
+                        events.KnifeStabbed:FireServer()
+                    end
+                    if events:FindFirstChild("HandleTouched") then
+                        events.HandleTouched:FireServer(tRoot)
+                    end
+                end
+            end)
+            return args
+        end
+    end
+    return nil
+end
+
 function Byte.Sheriff.InstallAimHook()
     if type(hookmetamethod) ~= "function" or type(checkcaller) ~= "function" or type(getnamecallmethod) ~= "function" then
         Byte.Util.Alert("This executor cannot hook the aim function")
         return
     end
 
+    local function getRemote()
+        local backpack = LocalPlayer:FindFirstChild("Backpack")
+        local character = LocalPlayer.Character
+        if backpack and backpack:FindFirstChild("Gun") then
+            return backpack:FindFirstChild("Gun"):FindFirstChild("Shoot", true)
+        elseif character and character:FindFirstChild("Gun") then
+            return character:FindFirstChild("Gun"):FindFirstChild("Shoot", true)
+        end
+    end
+
+    local gunRemote = nil
+    local gunConn = RunService.RenderStepped:Connect(function()
+        gunRemote = getRemote()
+    end)
+    table.insert(State.Conns, gunConn)
+
     local original
-    original = hookmetamethod(game, "__namecall", function(self, ...)
-        if not State.Alive or getnamecallmethod() ~= "FireServer" or checkcaller() then
+    original = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        
+        if not State.Alive or method ~= "FireServer" or checkcaller() then
+            if setnamecallmethod then setnamecallmethod(method) end
             return original(self, ...)
         end
         
-        local parent = self.Parent
         local opt = State.Opt
         
-        if (opt.SilentAim or opt.SilentAimV2) and self.Name == "Shoot" and parent and parent.Name == "Gun" then
-            local murdererRoot = nil
-            
-            if opt.SilentAimV2 and State.CachedMurderer then
-                murdererRoot = State.CachedMurderer
-            end
+        if gunRemote and self == gunRemote then
+            local murdererRoot = State.CachedMurderer
             
             if not murdererRoot and opt.SilentAim then
                 local murderer = Byte.Round.FindByRole("Murderer")
                 murdererRoot = murderer and Byte.Util.Root(murderer)
             end
             
-            if murdererRoot then
+            if murdererRoot and (opt.SilentAimV2 or opt.SilentAim) then
                 local args = {...}
                 if opt.SilentAimV2 then
                     args[1] = murdererRoot.CFrame + Vector3.new(0, 3, 0)
@@ -671,19 +792,23 @@ function Byte.Sheriff.InstallAimHook()
                 else
                     args[2] = murdererRoot.CFrame
                 end
+                if setnamecallmethod then setnamecallmethod("FireServer") end
                 return original(self, unpack(args))
             end
-        elseif opt.KnifeAim and self.Name == "KnifeThrown" and parent and parent.Name == "Events" then
-            local origin = ...
-            local victimRoot = Byte.Murderer.NearestVictimRoot(origin.Position)
-            if victimRoot then
-                return original(self, origin, victimRoot.Position)
-            end
         end
+        
+        local knifeAimArgs = Byte.Murderer.BuildKnifeAimArgs(self, ...)
+        if knifeAimArgs then
+            if setnamecallmethod then setnamecallmethod("FireServer") end
+            return original(self, unpack(knifeAimArgs))
+        end
+        
+        if setnamecallmethod then setnamecallmethod(method) end
         return original(self, ...)
-    end)
-    
+    end))
+
     State.Hook = function()
+        if gunConn then gunConn:Disconnect() end
         hookmetamethod(game, "__namecall", original)
     end
 end
@@ -1347,7 +1472,9 @@ Byte.Scheduler.Jobs = {
     },
     Stepped = { { "Anti Fling", Byte.Movement.AntiFlingStep, "AntiFling" } },
     Render = { { "Aimbot", Byte.Aim.Step, "Aimbot" } },
-    Heartbeat = { { "Kill Aura", Byte.Murderer.KillAuraStep, "KillAura" } },
+    Heartbeat = { 
+        { "Kill Aura", Byte.Murderer.KillAuraStep, "KillAura" }
+    },
 }
 
 function Byte.Scheduler.OnToggles(job)
@@ -1619,9 +1746,9 @@ local function BuildInterface()
         Callback = Bind("KillAura"),
     }):AddKeyPicker("KillAuraKey", { Default = "None", Mode = "Toggle" })
     murdererBox:AddToggle("KnifeAim", {
-        Text = "Knife Throw Aim",
+        Text = "Insta Knife Throw",
         Default = false,
-        Callback = AimHookBind("KnifeAim"),
+        Callback = Bind("KnifeAim"),
     })
 
     local aimBox = CombatTab:AddRightGroupbox("Aimbot", "crosshair")
