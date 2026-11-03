@@ -208,6 +208,47 @@ local Window = nil
 
 local Auto_Parry = {}
 
+Auto_Parry.Training_Area = nil
+Auto_Parry.Training_Balls = nil
+Auto_Parry._Training_Check_At = 0
+
+function Auto_Parry.Is_Alive(Character)
+    if not Character then return false end
+    if Character.Parent == AliveFolder then return true end
+    if not Auto_Parry.Training_Area or not Auto_Parry.Training_Area.Parent then
+        local Now = os.clock()
+        if Now - Auto_Parry._Training_Check_At >= 1 then
+            Auto_Parry._Training_Check_At = Now
+            local LobbyTraining = workspace:FindFirstChild("LobbyTraining", true)
+            Auto_Parry.Training_Area = LobbyTraining and LobbyTraining:FindFirstChild("TrainingArea")
+        end
+    end
+    if not Auto_Parry.Training_Area then return false end
+    local Root = Character:FindFirstChild("HumanoidRootPart") or Character.PrimaryPart
+    if not Root then return false end
+    local LocalPos = Auto_Parry.Training_Area.CFrame:PointToObjectSpace(Root.Position)
+    local Half = Auto_Parry.Training_Area.Size * 0.5
+    return math.abs(LocalPos.X) <= Half.X
+        and math.abs(LocalPos.Y) <= Half.Y
+        and math.abs(LocalPos.Z) <= Half.Z
+end
+
+function Auto_Parry.Get_Ball_Folder()
+    local Character = Player.Character
+    if Character and Character.Parent ~= AliveFolder and Auto_Parry.Is_Alive(Character) then
+        if not Auto_Parry.Training_Balls or not Auto_Parry.Training_Balls.Parent then
+            Auto_Parry.Training_Balls = workspace:FindFirstChild("TrainingBalls")
+        end
+        if Auto_Parry.Training_Balls then
+            return Auto_Parry.Training_Balls
+        end
+    end
+    if not BallsFolder or BallsFolder.Parent ~= workspace then
+        BallsFolder = workspace:FindFirstChild('Balls')
+    end
+    return BallsFolder
+end
+
 do
     local AnimationController = require(ReplicatedStorage.Controllers.AnimationController)
     local SwordApi = require(ReplicatedStorage.Shared.SwordAPI)
@@ -364,11 +405,7 @@ end
 
 function Auto_Parry.Get_Balls(single)
     local List = {}
-    local Folder = BallsFolder
-    if not Folder or Folder.Parent ~= workspace then
-        Folder = workspace:FindFirstChild('Balls')
-        BallsFolder = Folder
-    end
+    local Folder = Auto_Parry.Get_Ball_Folder()
     if not Folder then
         if single then return nil end
         return List
@@ -393,11 +430,7 @@ end
 
 function Auto_Parry.Get_Targeting_Balls_List()
     local List = {}
-    local Folder = BallsFolder
-    if not Folder or Folder.Parent ~= workspace then
-        Folder = workspace:FindFirstChild('Balls')
-        BallsFolder = Folder
-    end
+    local Folder = Auto_Parry.Get_Ball_Folder()
     if not Folder then return List end
     local PName = Player.Name
     for _, Ball in ipairs(Folder:GetChildren()) do
@@ -461,6 +494,9 @@ function Auto_Parry.Parry_Data(Parry_Type)
     local Mouse_Direction = nil
     local Best_Target = nil
     local Best_Dot = -math.huge
+    if Parry_Type == 'NearestTarget' then
+        Best_Dot = math.huge
+    end
     local candidates = Parry_Type == 'RandomTarget' and {} or nil
 
     if Parry_Type == 'Dot' or Parry_Type == 'InstaDot' then
@@ -482,6 +518,13 @@ function Auto_Parry.Parry_Data(Parry_Type)
                         Best_Dot = Dot
                         Best_Target = Instance
                     end
+                elseif Parry_Type == 'NearestTarget' or Parry_Type == 'FarthestTarget' then
+                    local Dist = (Target_Pos - My_Pos).Magnitude
+                    if (Parry_Type == 'NearestTarget' and Dist < Best_Dot)
+                        or (Parry_Type == 'FarthestTarget' and Dist > Best_Dot) then
+                        Best_Dot = Dist
+                        Best_Target = Instance
+                    end
                 elseif Parry_Type == 'RandomTarget' then
                     local pos, onScreen = Cam:WorldToScreenPoint(Target_Pos)
                     if onScreen then
@@ -490,6 +533,21 @@ function Auto_Parry.Parry_Data(Parry_Type)
                 end
             end
         end
+    end
+
+    if Parry_Type == 'NearestTarget' or Parry_Type == 'FarthestTarget' then
+        local Center_Screen = { ViewportSize.X * 0.5, ViewportSize.Y * 0.5 }
+
+        if Best_Target and Best_Target.PrimaryPart then
+            local Target_Position = Best_Target.PrimaryPart.Position
+            local Aimed_Position = CFrame.new(My_Pos, Target_Position + Vector3.new(0, 2, 0))
+            local Screen_Pos = Cam:WorldToScreenPoint(Target_Position)
+            return {0, Aimed_Position, Events, {Screen_Pos.X, Screen_Pos.Y}}
+        end
+
+        local LookVector = MyRoot.CFrame.LookVector
+        local Forward_Position = My_Pos + LookVector * 1000
+        return {0, CFrame.new(My_Pos, Forward_Position), Events, Center_Screen}
     end
 
     if Parry_Type == 'Camera' then
@@ -698,13 +756,20 @@ function Auto_Parry.Parry(Parry_Type, Silent)
 
     local Parry_Data = Auto_Parry.Parry_Data(Parry_Type)
     local Targeting_Balls = Auto_Parry.Get_Targeting_Balls_List()
+    
+    local In_Training = false
+    local TB = Auto_Parry.Training_Balls
+    if TB and TB.Parent then
+        In_Training = (Auto_Parry.Get_Ball_Folder() == TB)
+    end
+    
     local Multi_Fired, Multi_In_Range = false, 0
-    if #Targeting_Balls >= 2 then
-        Multi_Fired, Multi_In_Range = Auto_Parry.Fire_Multi_Balls(Targeting_Balls, Parry_Data)
+    if #Targeting_Balls >= 2 and not In_Training then
+        Multi_Fired, Multi_In_Range = Auto_Parry["Fire_Multi_Balls"](Targeting_Balls, Parry_Data)
     end
     if Multi_In_Range == -1 then
         return false
-    elseif not Multi_Fired and Multi_In_Range == 0 then
+    elseif not Multi_Fired and (Multi_In_Range == 0 or In_Training) then
         Remote:FireServer(Hash, Key, Parry_Token(), Parry_Data[1], Parry_Data[2], Parry_Data[3], Parry_Data[4], false)
     end
 
@@ -2065,9 +2130,16 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
     Callback = function(state)
         local Last_CD_Y = 0.5
         if state then
-            Connections_Manager['Auto Parry'] = RunService.PreRender:Connect(function()
+            local function Parry_Loop_Tick(For_Training)
+                local In_Training = false
+                local TB = Auto_Parry.Training_Balls
+                if TB and TB.Parent then
+                    In_Training = (Auto_Parry.Get_Ball_Folder() == TB)
+                end
+                if In_Training ~= For_Training then return end
+
                 local Character = Player.Character
-                if not Character or Character.Parent ~= AliveFolder then return end
+                if not Auto_Parry.Is_Alive(Character) then return end
 
                 local Root = Character.PrimaryPart
                 if not Root then return end
@@ -2185,10 +2257,16 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                         Parried = false
                     end)
                 end
-            end)
+            end
+            Connections_Manager['Auto Parry'] = {
+                RunService.PreRender:Connect(function() Parry_Loop_Tick(false) end),
+                RunService.PreSimulation:Connect(function() Parry_Loop_Tick(true) end),
+            }
         else
             if Connections_Manager['Auto Parry'] then
-                Connections_Manager['Auto Parry']:Disconnect()
+                for _, c in ipairs(Connections_Manager['Auto Parry']) do
+                    pcall(function() c:Disconnect() end)
+                end
                 Connections_Manager['Auto Parry'] = nil
             end
         end
@@ -2217,11 +2295,15 @@ Main_Group:AddDropdown("Parry_Method_Dropdown", {
 
 Main_Group:AddDropdown("Parry_Type_Dropdown", {
     Text = "Parry Type",
-    Values = { "Camera", "Dot", "Insta Dot", "Backward", "Random", "Random Target"},
+    Values = { "Camera", "Dot", "Insta Dot", "Backward", "Random", "Random Target", "Nearest Target", "Farthest Target" },
     Multi = false,
     Default = 1,
     Callback = function(Value)
-        Selected_Parry_Type = (Value == "Random Target") and "RandomTarget" or (Value == "Insta Dot") and "InstaDot" or Value
+        Selected_Parry_Type = (Value == "Random Target") and "RandomTarget"
+            or (Value == "Insta Dot") and "InstaDot"
+            or (Value == "Nearest Target") and "NearestTarget"
+            or (Value == "Farthest Target") and "FarthestTarget"
+            or Value
 
         if Auto_Parry_Toggle.Notify then
             Window:Notify({
@@ -2274,7 +2356,7 @@ do
     local LastTBAnimation = 0
     local function TB_Fire(Ball)
         local Character = Player.Character
-        if not Character or Character.Parent ~= AliveFolder then return false end
+        if not Auto_Parry.Is_Alive(Character) then return false end
         if not Character.PrimaryPart then return false end
         if Auto_Parry.Player_Has_Immortality() then return false end
 
@@ -2817,7 +2899,7 @@ local Auto_Spam_Toggle = Auto_Spam_Group:AddToggle('Auto_Spam_Toggle', {
 
         local function Spam_Step()
             local Character = Player.Character
-            if not Character or Character.Parent ~= AliveFolder then return end
+            if not Auto_Parry.Is_Alive(Character) then return end
 
             local Root = Character.PrimaryPart
             if not Root then return end
@@ -8854,6 +8936,453 @@ do
     })
 end
 
+do 
+    local Group  = Tabs.Sword:AddRightGroupbox('Custom Assets', 'package')
+    local Holder = Instance.new('Folder')
+    Holder.Name, Holder.Parent = 'ByteAssetHolder', ReplicatedStorage
+
+    local Bundle
+    local function Load()
+        if Bundle then return Bundle end
+        local ok, objs = pcall(function() return game:GetObjects('rbxassetid://100516952563313') end)
+        if ok and objs and objs[1] then
+            Bundle = objs[1]
+            Bundle.Name = 'ByteAssets'
+            Bundle.Parent = Holder
+        end
+        return Bundle
+    end
+
+    local Followers = {}
+    
+    RunService.Heartbeat:Connect(function(dt)
+        for model, data in pairs(Followers) do
+            if not model or not model.Parent or not data.Target or not data.Target.Parent then
+                if model then model:Destroy() end
+                Followers[model] = nil
+            else
+                if model.PrimaryPart then
+                    if data.IsUFO then
+                        data.Elapsed = (data.Elapsed or 0) + dt
+                        
+                        if data.Elapsed >= data.Duration then
+                            model:Destroy()
+                            Followers[model] = nil
+                            return
+                        end
+                        
+                        local timeLeft = data.Duration - data.Elapsed
+                        local isLeaving = false
+                        local targetHeight = 35
+                        
+                        if timeLeft > 3 then
+                            targetHeight = 35
+                            data.WanderX = 0
+                            data.WanderZ = 0
+                        elseif timeLeft > 2 then
+                            targetHeight = 35
+                            data.WanderX = math.sin(tick() * 1.5) * 15
+                            data.WanderZ = math.cos(tick() * 2.0) * 15
+                        elseif timeLeft > 1 then
+                            targetHeight = 15
+                            data.WanderX = data.WanderX * (1 - dt * 5)
+                            data.WanderZ = data.WanderZ * (1 - dt * 5)
+                        elseif timeLeft > 0 then
+                            targetHeight = 200
+                            isLeaving = true
+                            data.WanderX = 0
+                            data.WanderZ = 0
+                        end
+                        
+                        if not isLeaving then
+                            data.Spin = data.Spin + (dt * 90)
+                        end
+                        
+                        if isLeaving then
+                            data.CurrentHeight = data.CurrentHeight + (dt * 150)
+                        else
+                            data.CurrentHeight = data.CurrentHeight + (targetHeight - data.CurrentHeight) * math.min(1, dt * 4)
+                        end
+                        
+                        local bob = isLeaving and 0 or math.sin(tick() * 2.5) * 1.5
+                        local targetPos = data.Target.Position + Vector3.new(data.WanderX, data.CurrentHeight + bob, data.WanderZ)
+                        
+                        local rot = CFrame.Angles(0, math.rad(data.Spin), 0) * CFrame.Angles(math.rad(90), 0, 0)
+                        model:PivotTo(CFrame.new(targetPos) * rot)
+                        
+                    else
+                        model:PivotTo(data.Target.CFrame * data.Offset)
+                    end
+                    
+                    for _, p in ipairs(model:GetDescendants()) do
+                        if p:IsA('BasePart') and not data.IsUFO then
+                            p.AssemblyLinearVelocity = Vector3.zero
+                            p.AssemblyAngularVelocity = Vector3.zero
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
+    local function PlayAnims(m)
+        task.defer(function()
+            if not m.Parent then return end
+            local animator = m:FindFirstChildWhichIsA('Animator', true)
+            if not animator then
+                local controller = m:FindFirstChildWhichIsA('Humanoid', true) or m:FindFirstChildWhichIsA('AnimationController', true)
+                if not controller then
+                    controller = Instance.new('AnimationController')
+                    controller.Parent = m.PrimaryPart or m:FindFirstChildWhichIsA('BasePart', true) or m
+                end
+                animator = controller:FindFirstChildWhichIsA('Animator') or Instance.new('Animator', controller)
+            end
+            
+            if animator then
+                for _, anim in ipairs(m:GetDescendants()) do
+                    if anim:IsA('Animation') then
+                        local track = animator:LoadAnimation(anim)
+                        track.Looped = true
+                        track:Play()
+                    elseif anim:IsA('KeyframeSequence') then
+                        local ok, hash = pcall(function()
+                            return game:GetService("KeyframeSequenceProvider"):RegisterKeyframeSequence(anim)
+                        end)
+                        if ok and hash then
+                            local newAnim = Instance.new("Animation")
+                            newAnim.AnimationId = hash
+                            local track = animator:LoadAnimation(newAnim)
+                            track.Looped = true
+                            track:Play()
+                        end
+                    end
+                end
+            end
+        end)
+    end
+
+    local function PrepModel(c, isUFO)
+        local basePart
+        if c:IsA('BasePart') then
+            basePart = c
+        else
+            basePart = c:FindFirstChildWhichIsA('BasePart', true)
+        end
+        
+        local m
+        if c:IsA('Model') then
+            m = c
+        else
+            m = Instance.new('Model')
+            c.Parent = m
+        end
+
+        if not basePart then
+            basePart = Instance.new('Part')
+            basePart.Anchored = false
+            basePart.CanCollide = false
+            basePart.Transparency = 1
+            basePart.Size = Vector3.new(0.1, 0.1, 0.1)
+            basePart.Parent = m
+        end
+        m.PrimaryPart = basePart
+
+        if isUFO then
+            local largest
+            local max = 0
+            for _, p in ipairs(m:GetDescendants()) do
+                if p:IsA('BasePart') then
+                    local sz = p.Size.Magnitude
+                    if sz > max then
+                        max = sz
+                        largest = p
+                    end
+                end
+            end
+            if largest then
+                m.PrimaryPart = largest
+                m.WorldPivot = largest.CFrame
+            end
+            
+            for _, p in ipairs(m:GetDescendants()) do
+                if p:IsA('BasePart') then
+                    p.Anchored = true
+                    p.CanCollide = false
+                end
+            end
+        else
+            local hum = m:FindFirstChildWhichIsA('Humanoid')
+            if hum then
+                hum:ChangeState(Enum.HumanoidStateType.Physics)
+                hum.PlatformStand = true
+            end
+
+            for _, p in ipairs(m:GetDescendants()) do
+                if p:IsA('BasePart') then
+                    p.Anchored = false
+                    p.CanCollide = false
+                    p.Massless = true
+                end
+            end
+        end
+        return m
+    end
+
+    local function SpawnEffect(item, pos, dur, targetPart, offset, isCosmetic, isWorld)
+        if not item.Archivable then item.Archivable = true end
+        local c = item:Clone()
+        if not c then return end
+        
+        local isUFO = string.find(string.lower(item.Name), "ufo")
+        c = PrepModel(c, isUFO)
+        
+        if targetPart then
+            if isCosmetic then c.Name = 'ByteCosmetic_' .. c.Name end
+            if c.PrimaryPart then
+                c:PivotTo(targetPart.CFrame * offset)
+                Followers[c] = { Target = targetPart, Offset = offset }
+            end
+            PlayAnims(c)
+            c.Parent = Player.Character or workspace
+        else
+            if c.PrimaryPart then
+                if isUFO then
+                    local anchor = Instance.new("Part")
+                    anchor.Anchored = true
+                    anchor.CanCollide = false
+                    anchor.Transparency = 1
+                    anchor.Size = Vector3.new(0.1, 0.1, 0.1)
+                    anchor.CFrame = CFrame.new(pos)
+                    anchor.Parent = workspace
+                    
+                    local groundAttach = Instance.new("Attachment")
+                    groundAttach.Parent = anchor
+                    
+                    for _, desc in ipairs(c:GetDescendants()) do
+                        if desc:IsA("Beam") then
+                            desc.Attachment1 = groundAttach
+                            desc.Enabled = true
+                        end
+                    end
+                    
+                    Followers[c] = { 
+                        Target = anchor, 
+                        IsUFO = true,
+                        Spin = 0,
+                        CurrentHeight = 120,
+                        Elapsed = 0,
+                        WanderX = 0,
+                        WanderZ = 0,
+                        Duration = dur
+                    }
+                    PlayAnims(c)
+                    Debris:AddItem(anchor, dur)
+                else
+                    local _, size = c:GetBoundingBox()
+                    local spawnCF = CFrame.new(pos + Vector3.new(0, size.Y / 2 + 2, 0))
+                    c:PivotTo(spawnCF)
+                    
+                    local anchor = Instance.new("Part")
+                    anchor.Anchored = true
+                    anchor.CanCollide = false
+                    anchor.Transparency = 1
+                    anchor.Size = Vector3.new(0.1, 0.1, 0.1)
+                    anchor.CFrame = spawnCF
+                    anchor.Parent = workspace
+                    
+                    Followers[c] = { Target = anchor, Offset = CFrame.new(0, 0, 0) }
+                    PlayAnims(c)
+                    Debris:AddItem(anchor, dur)
+                end
+            end
+            c.Parent = workspace
+            Debris:AddItem(c, dur)
+        end
+    end
+
+    local function PlayOnce(s)
+        if not s then return end
+        if not s.Archivable then s.Archivable = true end
+        local k = s:Clone(); if not k then return end
+        k.Parent = workspace
+        pcall(function() k:Play() end)
+        Debris:AddItem(k, (k.TimeLength > 0 and k.TimeLength or 3) + 1)
+    end
+
+    local HitSound = { Enabled = false, Selected = nil, Items = {}, Last = 0 }
+    local Sky      = { Enabled = false, Selected = nil, Items = {}, Orig = nil, Replaced = nil }
+    local FX       = {}
+
+    Connections_Manager['Assets_HitSound'] = ReplicatedStorage.Remotes.ParrySuccess.OnClientEvent:Connect(function()
+        if _ScriptUnloaded or not HitSound.Enabled or not HitSound.Selected then return end
+        local n = os.clock(); if n - HitSound.Last < 0.05 then return end; HitSound.Last = n
+        PlayOnce(HitSound.Items[HitSound.Selected])
+    end)
+
+    local function ApplySky()
+        if not Sky.Enabled or not Sky.Selected then return end
+        local src = Sky.Items[Sky.Selected]
+        if not src then return end
+        if not src.Archivable then src.Archivable = true end
+        
+        if not Sky.Orig then
+            Sky.Orig = Lighting:FindFirstChildOfClass('Sky')
+        end
+        
+        if Sky.Replaced then Sky.Replaced:Destroy(); Sky.Replaced = nil end
+        for _, c in ipairs(Lighting:GetChildren()) do
+            if c:IsA('Sky') then c.Parent = Holder end
+        end
+        local newSky = src:Clone()
+        if newSky then
+            newSky.Parent = Lighting
+            Sky.Replaced = newSky
+        end
+    end
+    
+    local function ClearSky()
+        if Sky.Replaced then Sky.Replaced:Destroy(); Sky.Replaced = nil end
+        if Sky.Orig then Sky.Orig.Parent = Lighting; Sky.Orig = nil end
+    end
+
+    local LastKillTime = 0
+    local function TriggerKillFX(vname, overridePos)
+        if _ScriptUnloaded then return end
+        if os.clock() - LastKillTime < 0.5 then return end
+        
+        local pos = overridePos
+        if not pos and vname then
+            local v = AliveFolder:FindFirstChild(vname) or workspace:FindFirstChild(vname)
+            if v then
+                pos = v:GetPivot().Position
+            else
+                local plr = Players:FindFirstChild(vname)
+                if plr and plr.Character then
+                    pos = plr.Character:GetPivot().Position
+                end
+            end
+        end
+        
+        if not pos then return end
+        
+        LastKillTime = os.clock()
+        for _, s in pairs(FX) do
+            if s.Enabled and s.Selected and s.Kind == 'victim' and s.Items[s.Selected] then
+                SpawnEffect(s.Items[s.Selected], pos, 5, nil, nil, false, true)
+            end
+        end
+    end
+
+    local function HookKillFX()
+        if Connections_Manager['Assets_KillFX_Remote'] then return end
+        
+        Connections_Manager['Assets_KillFX_Remote'] = ReplicatedStorage.Remotes.Killed.OnClientEvent:Connect(function(vname)
+            TriggerKillFX(vname)
+        end)
+        
+        Connections_Manager['Assets_KillFX_ChildRemoved'] = AliveFolder.ChildRemoved:Connect(function(v)
+            if _ScriptUnloaded then return end
+            if os.clock() - LastKillTime < 0.5 then return end
+            
+            local pos = v:GetPivot().Position
+            TriggerKillFX(v.Name, pos)
+        end)
+    end
+
+    local function BuildFolder(folder)
+        local name = folder.Name
+        if name == 'HitSounds' then
+            local vals = {}
+            for _, s in ipairs(folder:GetChildren()) do
+                if s:IsA('Sound') then HitSound.Items[s.Name] = s; vals[#vals+1] = s.Name end
+            end
+            if #vals == 0 then return end
+            table.sort(vals)
+            Group:AddDropdown('Asset_HitSound', { Text='Hit Sound', Values=vals, Multi=false, Default=1,
+                Callback=function(v) HitSound.Selected = v end })
+            Group:AddToggle('Asset_HitSound_On', { Text='Enable Hit Sound', Default=false,
+                Callback=function(s) HitSound.Enabled = s end })
+            Group:AddButton({ Text='Preview Hit Sound',
+                Callback=function() if HitSound.Selected then PlayOnce(HitSound.Items[HitSound.Selected]) end end })
+            return
+        end
+        if name == 'Skybox' then
+            local vals = {}
+            for _, s in ipairs(folder:GetChildren()) do
+                if s:IsA('Sky') then Sky.Items[s.Name] = s; vals[#vals+1] = s.Name end
+            end
+            if #vals == 0 then return end
+            table.sort(vals)
+            Group:AddDropdown('Asset_Skybox', { Text='Skybox', Values=vals, Multi=false, Default=1,
+                Callback=function(v) Sky.Selected = v; if Sky.Enabled then ApplySky() end end })
+            Group:AddToggle('Asset_Skybox_On', { Text='Enable Skybox', Default=false,
+                Callback=function(s) Sky.Enabled = s; if s then ApplySky() else ClearSky() end end })
+            return
+        end
+        
+        if name == 'KillEffects' then
+            local vals = {}
+            local items = {}
+            for _, it in ipairs(folder:GetChildren()) do
+                if it.Name == 'UFO' then
+                    items[it.Name] = it
+                    table.insert(vals, it.Name)
+                end
+            end
+            if #vals == 0 then return end
+            table.sort(vals)
+            FX[name] = { Enabled=false, Selected=vals[1], Items=items, Kind='victim' }
+            local st = FX[name]
+            
+            Group:AddDropdown('Asset_' .. name, { Text='Kill Effect', Values=vals, Multi=false, Default=1,
+                Callback=function(v) st.Selected = v end })
+                
+            Group:AddToggle('Asset_' .. name .. '_On', { Text='Use UFO Kill Effect', Default=false,
+                Callback=function(s)
+                    st.Enabled = s
+                    if s then HookKillFX() end
+                end })
+            return
+        end
+    end
+
+    task.spawn(function()
+        if not Load() then
+            Group:AddButton({ Text='Reload Assets', Callback=function() Load() end })
+            return
+        end
+        for _, f in ipairs(Bundle:GetChildren()) do
+            if f:IsA('Folder') then BuildFolder(f) end
+        end
+        Group:AddDivider()
+        Group:AddButton({ Text='Disable All Assets', Callback=function()
+            HitSound.Enabled, Sky.Enabled = false, false
+            ClearSky()
+            for _, s in pairs(FX) do s.Enabled = false end
+            for _, k in ipairs({ 'Asset_HitSound_On','Asset_Skybox_On' }) do
+                local t = Library.Toggles[k]; if t then t:SetValue(false) end
+            end
+            for n in pairs(FX) do
+                local t = Library.Toggles['Asset_' .. n .. '_On']; if t then t:SetValue(false) end
+            end
+        end })
+    end)
+
+    local prevUnload = Env.Visual_Unload
+    local function cleanup()
+        HitSound.Enabled, Sky.Enabled = false, false
+        ClearSky()
+        for _, k in ipairs({ 'Assets_HitSound','Assets_KillFX_Remote','Assets_KillFX_ChildRemoved' }) do
+            local c = Connections_Manager[k]
+            if c then pcall(function() c:Disconnect() end); Connections_Manager[k] = nil end
+        end
+        if Holder then pcall(function() Holder:Destroy() end) end
+        if prevUnload then pcall(prevUnload) end
+        if Env.Visual_Unload == cleanup then Env.Visual_Unload = nil end
+    end
+    Env.Visual_Unload = cleanup
+end
+
 local ESP_Group = Tabs.Client:AddLeftGroupbox("ESP", "palette")
 
 local FuryStartCount = {}
@@ -9508,7 +10037,9 @@ if not Is_Mobile then
         [Enum.KeyCode.Three] = 'InstaDot',
         [Enum.KeyCode.Four] = 'Backward',
         [Enum.KeyCode.Five] = 'Random',
-        [Enum.KeyCode.Six] = 'RandomTarget'
+        [Enum.KeyCode.Six] = 'RandomTarget',
+        [Enum.KeyCode.Seven] = 'NearestTarget',
+        [Enum.KeyCode.Eight] = 'FarthestTarget',
     }
 
     Connections_Manager['Parry_Type_Keybinds'] = UserInputService.InputBegan:Connect(function(Input, Value)
@@ -9521,7 +10052,11 @@ if not Is_Mobile then
             Selected_Parry_Type = New_Type
 
             if Library.Options.Parry_Type_Dropdown then
-                local Display = (New_Type == 'RandomTarget') and 'Random Target' or (New_Type == 'InstaDot') and 'Insta Dot' or New_Type
+                local Display = (New_Type == 'RandomTarget') and 'Random Target'
+                    or (New_Type == 'InstaDot') and 'Insta Dot'
+                    or (New_Type == 'NearestTarget') and 'Nearest Target'
+                    or (New_Type == 'FarthestTarget') and 'Farthest Target'
+                    or New_Type
                 Library.Options.Parry_Type_Dropdown:SetValue(Display)
             end
         end
