@@ -2082,6 +2082,18 @@ function UnloadScript()
     Env.Animation_Fix = nil
     Env.ThunderDash_NoCD = nil
 
+    if Env.AutoJump then
+        if Env.AutoJump.Conn then
+            pcall(function() Env.AutoJump.Conn:Disconnect() end)
+            Env.AutoJump.Conn = nil
+        end
+        if Env.AutoJump.GUI then
+            pcall(function() Env.AutoJump.GUI:Destroy() end)
+            Env.AutoJump.GUI = nil
+        end
+        Env.AutoJump.Enabled = false
+    end
+
     if Env._PreclickDB_State then
         Env._PreclickDB_State.Enabled = false
         Env._PreclickDB_State = nil
@@ -2293,6 +2305,8 @@ Main_Group:AddDropdown("Parry_Method_Dropdown", {
     end
 })
 
+local UpdateMobileParryUI
+
 Main_Group:AddDropdown("Parry_Type_Dropdown", {
     Text = "Parry Type",
     Values = { "Camera", "Dot", "Insta Dot", "Backward", "Random", "Random Target", "Nearest Target", "Farthest Target" },
@@ -2305,6 +2319,10 @@ Main_Group:AddDropdown("Parry_Type_Dropdown", {
             or (Value == "Farthest Target") and "FarthestTarget"
             or Value
 
+        if UpdateMobileParryUI then
+            UpdateMobileParryUI(Value)
+        end
+
         if Auto_Parry_Toggle.Notify then
             Window:Notify({
                 Title = 'Parry Type',
@@ -2314,6 +2332,426 @@ Main_Group:AddDropdown("Parry_Type_Dropdown", {
         end
     end
 })
+
+do
+    local TweenService = game:GetService('TweenService')
+
+    if Env.MobileParry and Env.MobileParry.Destroy then
+        pcall(Env.MobileParry.Destroy)
+    end
+
+    local MP = {
+        GUI = nil,
+        Conns = {},
+        DragConns = {},
+        OutsideConn = nil,
+    }
+    Env.MobileParry = MP
+
+    local isMobile = Is_Mobile or false
+
+    local THEME = {
+        Bg = Color3.fromRGB(22, 24, 32),
+        Row = Color3.fromRGB(34, 37, 48),
+        RowHover = Color3.fromRGB(46, 50, 65),
+        RowActive = Color3.fromRGB(38, 46, 78),
+        Accent = Color3.fromRGB(110, 140, 255),
+        Border = Color3.fromRGB(70, 75, 100),
+        Text = Color3.fromRGB(205, 208, 220),
+        Muted = Color3.fromRGB(150, 154, 170),
+    }
+
+    local CARD_W = isMobile and 180 or 164
+    local CARD_H = isMobile and 54 or 44
+    local ITEM_H = isMobile and 38 or 32
+    local LIST_MAX_H = isMobile and 230 or 200
+    local GAP = 4
+    local PAD = 6
+
+    local TWEEN = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local ActiveTweens = setmetatable({}, { __mode = 'k' })
+
+    local function Tween(obj, prop, value)
+        local map = ActiveTweens[obj]
+        if not map then
+            map = {}
+            ActiveTweens[obj] = map
+        end
+
+        local old = map[prop]
+        if old then old:Cancel() end
+
+        local tween = TweenService:Create(obj, TWEEN, { [prop] = value })
+        map[prop] = tween
+        tween:Play()
+        return tween
+    end
+
+    local function track(conn)
+        table.insert(MP.Conns, conn)
+    end
+
+    local Parry_Options = {
+        { Name = 'Camera', Val = 'Camera' },
+        { Name = 'Dot', Val = 'Dot' },
+        { Name = 'Insta Dot', Val = 'Insta Dot' },
+        { Name = 'Backward', Val = 'Backward' },
+        { Name = 'Random', Val = 'Random' },
+        { Name = 'Random Target', Val = 'Random Target' },
+        { Name = 'Nearest Target', Val = 'Nearest Target' },
+        { Name = 'Farthest Target', Val = 'Farthest Target' },
+    }
+
+    local gui = Instance.new('ScreenGui')
+    gui.Name = 'MobileParryUI'
+    gui.ResetOnSpawn = false
+    gui.IgnoreGuiInset = true
+    gui.DisplayOrder = 100
+    gui.Enabled = false
+    gui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+    MP.GUI = gui
+
+    local root = Instance.new('Frame')
+    root.Name = 'Root'
+    root.Size = UDim2.fromOffset(CARD_W, CARD_H)
+    root.Position = UDim2.new(0, 20, 0.5, 100)
+    root.BackgroundTransparency = 1
+    root.Parent = gui
+
+    local header = Instance.new('Frame')
+    header.Name = 'Header'
+    header.Size = UDim2.fromScale(1, 1)
+    header.BackgroundColor3 = THEME.Bg
+    header.BackgroundTransparency = 0.08
+    header.BorderSizePixel = 0
+    header.Active = true
+    header.Parent = root
+    Instance.new('UICorner', header).CornerRadius = UDim.new(0, 12)
+
+    local headerStroke = Instance.new('UIStroke')
+    headerStroke.Color = THEME.Border
+    headerStroke.Thickness = 1.5
+    headerStroke.Transparency = 0.2
+    headerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    headerStroke.Parent = header
+
+    local scale = Instance.new('UIScale')
+    scale.Parent = header
+
+    local bar = Instance.new('Frame')
+    bar.Size = UDim2.new(0, 4, 1, -16)
+    bar.Position = UDim2.fromOffset(8, 8)
+    bar.BackgroundColor3 = THEME.Accent
+    bar.BorderSizePixel = 0
+    bar.Parent = header
+    Instance.new('UICorner', bar).CornerRadius = UDim.new(0, 2)
+
+    local title = Instance.new('TextLabel')
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.fromOffset(20, isMobile and 8 or 5)
+    title.Size = UDim2.new(1, -52, 0, 14)
+    title.Font = Enum.Font.GothamMedium
+    title.Text = 'PARRY MODE'
+    title.TextColor3 = THEME.Muted
+    title.TextSize = isMobile and 11 or 10
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = header
+
+    local value = Instance.new('TextLabel')
+    value.BackgroundTransparency = 1
+    value.Position = UDim2.fromOffset(20, isMobile and 23 or 19)
+    value.Size = UDim2.new(1, -52, 0, isMobile and 24 or 20)
+    value.Font = Enum.Font.GothamBold
+    value.Text = 'Camera'
+    value.TextColor3 = Color3.new(1, 1, 1)
+    value.TextSize = isMobile and 17 or 15
+    value.TextXAlignment = Enum.TextXAlignment.Left
+    value.TextTruncate = Enum.TextTruncate.AtEnd
+    value.Parent = header
+
+    local chevron = Instance.new('TextLabel')
+    chevron.BackgroundTransparency = 1
+    chevron.AnchorPoint = Vector2.new(1, 0.5)
+    chevron.Position = UDim2.new(1, -10, 0.5, 0)
+    chevron.Size = UDim2.fromOffset(18, 18)
+    chevron.Font = Enum.Font.GothamBold
+    chevron.Text = '▼'
+    chevron.TextColor3 = THEME.Muted
+    chevron.TextSize = 10
+    chevron.Parent = header
+
+    local listHeight = math.min(#Parry_Options * ITEM_H + (#Parry_Options - 1) * GAP + PAD * 2, LIST_MAX_H)
+
+    local list = Instance.new('Frame')
+    list.Name = 'List'
+    list.Size = UDim2.new(1, 0, 0, 0)
+    list.Position = UDim2.new(0, 0, 1, 6)
+    list.BackgroundColor3 = THEME.Bg
+    list.BackgroundTransparency = 0.04
+    list.BorderSizePixel = 0
+    list.ClipsDescendants = true
+    list.Visible = false
+    list.Parent = root
+    Instance.new('UICorner', list).CornerRadius = UDim.new(0, 12)
+
+    local listStroke = Instance.new('UIStroke')
+    listStroke.Color = THEME.Border
+    listStroke.Thickness = 1.5
+    listStroke.Transparency = 0.2
+    listStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    listStroke.Parent = list
+
+    local scroll = Instance.new('ScrollingFrame')
+    scroll.Size = UDim2.fromScale(1, 1)
+    scroll.BackgroundTransparency = 1
+    scroll.BorderSizePixel = 0
+    scroll.ScrollBarThickness = 3
+    scroll.ScrollBarImageColor3 = THEME.Accent
+    scroll.ScrollingDirection = Enum.ScrollingDirection.Y
+    scroll.CanvasSize = UDim2.new()
+    scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scroll.Parent = list
+
+    local pad = Instance.new('UIPadding')
+    pad.PaddingTop = UDim.new(0, PAD)
+    pad.PaddingBottom = UDim.new(0, PAD)
+    pad.PaddingLeft = UDim.new(0, PAD)
+    pad.PaddingRight = UDim.new(0, PAD)
+    pad.Parent = scroll
+
+    local layout = Instance.new('UIListLayout')
+    layout.Padding = UDim.new(0, GAP)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Parent = scroll
+
+    local rows = {}
+    local currentVal = Selected_Parry_Type or 'Camera'
+    local isOpen = false
+
+    local function ApplySelection(val)
+        currentVal = val
+        for _, opt in ipairs(Parry_Options) do
+            local row = rows[opt.Val]
+            local selected = opt.Val == val
+            if selected then
+                value.Text = opt.Name
+            end
+            if row then
+                Tween(row.Button, 'BackgroundColor3', selected and THEME.RowActive or THEME.Row)
+                Tween(row.Button, 'TextColor3', selected and Color3.new(1, 1, 1) or THEME.Text)
+                Tween(row.Dot, 'BackgroundTransparency', selected and 0 or 1)
+            end
+        end
+    end
+
+    local function SetOpen(state)
+        if isOpen == state then return end
+        isOpen = state
+
+        if state then
+            local center = root.AbsolutePosition.Y + root.AbsoluteSize.Y / 2
+            local openUp = center > gui.AbsoluteSize.Y / 2
+
+            list.AnchorPoint = Vector2.new(0, openUp and 1 or 0)
+            list.Position = openUp and UDim2.new(0, 0, 0, -6) or UDim2.new(0, 0, 1, 6)
+            list.Size = UDim2.new(1, 0, 0, 0)
+            list.Visible = true
+
+            Tween(list, 'Size', UDim2.new(1, 0, 0, listHeight))
+            Tween(chevron, 'Rotation', 180)
+            Tween(headerStroke, 'Color', THEME.Accent)
+
+            MP.OutsideConn = UserInputService.InputBegan:Connect(function(input)
+                local t = input.UserInputType
+                if t ~= Enum.UserInputType.MouseButton1 and t ~= Enum.UserInputType.Touch then return end
+
+                local p = input.Position
+                local function inside(f)
+                    local a, s = f.AbsolutePosition, f.AbsoluteSize
+                    return p.X >= a.X and p.X <= a.X + s.X and p.Y >= a.Y and p.Y <= a.Y + s.Y
+                end
+
+                if not inside(header) and not inside(list) then
+                    SetOpen(false)
+                end
+            end)
+        else
+            if MP.OutsideConn then
+                MP.OutsideConn:Disconnect()
+                MP.OutsideConn = nil
+            end
+
+            local tween = Tween(list, 'Size', UDim2.new(1, 0, 0, 0))
+            tween.Completed:Connect(function()
+                if not isOpen then list.Visible = false end
+            end)
+            Tween(chevron, 'Rotation', 0)
+            Tween(headerStroke, 'Color', THEME.Border)
+        end
+    end
+
+    for i, opt in ipairs(Parry_Options) do
+        local btn = Instance.new('TextButton')
+        btn.Name = opt.Val
+        btn.LayoutOrder = i
+        btn.Size = UDim2.new(1, -6, 0, ITEM_H)
+        btn.BackgroundColor3 = THEME.Row
+        btn.BorderSizePixel = 0
+        btn.AutoButtonColor = false
+        btn.Font = Enum.Font.GothamMedium
+        btn.Text = opt.Name
+        btn.TextColor3 = THEME.Text
+        btn.TextSize = isMobile and 14 or 13
+        btn.TextXAlignment = Enum.TextXAlignment.Left
+        btn.TextTruncate = Enum.TextTruncate.AtEnd
+        btn.Parent = scroll
+        Instance.new('UICorner', btn).CornerRadius = UDim.new(0, 8)
+
+        local textPad = Instance.new('UIPadding')
+        textPad.PaddingLeft = UDim.new(0, 24)
+        textPad.Parent = btn
+
+        local dot = Instance.new('Frame')
+        dot.AnchorPoint = Vector2.new(0, 0.5)
+        dot.Position = UDim2.new(0, -14, 0.5, 0)
+        dot.Size = UDim2.fromOffset(6, 6)
+        dot.BackgroundColor3 = THEME.Accent
+        dot.BackgroundTransparency = 1
+        dot.BorderSizePixel = 0
+        dot.Parent = btn
+        Instance.new('UICorner', dot).CornerRadius = UDim.new(1, 0)
+
+        rows[opt.Val] = { Button = btn, Dot = dot }
+
+        if not isMobile then
+            track(btn.MouseEnter:Connect(function()
+                if currentVal ~= opt.Val then
+                    Tween(btn, 'BackgroundColor3', THEME.RowHover)
+                end
+            end))
+            track(btn.MouseLeave:Connect(function()
+                if currentVal ~= opt.Val then
+                    Tween(btn, 'BackgroundColor3', THEME.Row)
+                end
+            end))
+        end
+
+        track(btn.MouseButton1Click:Connect(function()
+            Selected_Parry_Type = opt.Val
+            ApplySelection(opt.Val)
+            SetOpen(false)
+
+            local dropdown = Library and Library.Options and Library.Options.Parry_Type_Dropdown
+            if dropdown and dropdown.Value ~= opt.Name then
+                dropdown:SetValue(opt.Name)
+            end
+        end))
+    end
+
+    UpdateMobileParryUI = ApplySelection
+    ApplySelection(currentVal)
+
+    local DRAG_THRESHOLD = 8
+    local dragConns = MP.DragConns
+    local dragInput, dragStart, startPos, moved = nil, nil, nil, false
+
+    local function clamp(pos)
+        local max = gui.AbsoluteSize - root.AbsoluteSize
+        return Vector2.new(
+            math.clamp(pos.X, 0, math.max(max.X, 0)),
+            math.clamp(pos.Y, 0, math.max(max.Y, 0))
+        )
+    end
+
+    local function setPos(pos)
+        pos = clamp(pos)
+        root.Position = UDim2.fromOffset(pos.X, pos.Y)
+    end
+
+    local function disconnectDrag()
+        for i = #dragConns, 1, -1 do
+            dragConns[i]:Disconnect()
+            dragConns[i] = nil
+        end
+        dragInput = nil
+    end
+
+    track(header.InputBegan:Connect(function(input)
+        local t = input.UserInputType
+        if t ~= Enum.UserInputType.MouseButton1 and t ~= Enum.UserInputType.Touch then return end
+        if dragInput then return end
+
+        dragInput = input
+        dragStart = Vector2.new(input.Position.X, input.Position.Y)
+        startPos = root.AbsolutePosition
+        moved = false
+        Tween(scale, 'Scale', 0.96)
+
+        local isMouse = t == Enum.UserInputType.MouseButton1
+
+        dragConns[1] = UserInputService.InputChanged:Connect(function(changed)
+            if changed ~= input and not (isMouse and changed.UserInputType == Enum.UserInputType.MouseMovement) then
+                return
+            end
+
+            local delta = Vector2.new(changed.Position.X, changed.Position.Y) - dragStart
+            if not moved then
+                if delta.Magnitude < DRAG_THRESHOLD then return end
+                moved = true
+                SetOpen(false)
+            end
+            setPos(startPos + delta)
+        end)
+
+        dragConns[2] = UserInputService.InputEnded:Connect(function(ended)
+            if ended ~= input and not (isMouse and ended.UserInputType == Enum.UserInputType.MouseButton1) then
+                return
+            end
+
+            local wasTap = not moved
+            disconnectDrag()
+            Tween(scale, 'Scale', 1)
+
+            if wasTap then
+                SetOpen(not isOpen)
+            end
+        end)
+    end))
+
+    track(header.MouseEnter:Connect(function()
+        if not isOpen then Tween(headerStroke, 'Color', THEME.Accent) end
+    end))
+    track(header.MouseLeave:Connect(function()
+        if not isOpen then Tween(headerStroke, 'Color', THEME.Border) end
+    end))
+
+    track(gui:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+        setPos(root.AbsolutePosition)
+    end))
+
+    function MP.Destroy()
+        if MP.OutsideConn then MP.OutsideConn:Disconnect() MP.OutsideConn = nil end
+        for _, c in ipairs(MP.Conns) do c:Disconnect() end
+        table.clear(MP.Conns)
+        for _, c in ipairs(MP.DragConns) do c:Disconnect() end
+        table.clear(MP.DragConns)
+        if MP.GUI then MP.GUI:Destroy() MP.GUI = nil end
+    end
+
+    Main_Group:AddToggle('Mobile_Parry_UI_Toggle', {
+        Text = 'Mobile ParryType UI',
+        Default = isMobile,
+        Tooltip = 'Shows a draggable widget to change parry type',
+        Callback = function(state)
+            gui.Enabled = state
+            if not state then SetOpen(false) end
+        end
+    })
+
+    if isMobile then
+        gui.Enabled = true
+    end
+end
 
 Main_Group:AddSlider('Parry_Accuracy', {
 	Text = 'Parry Accuracy',
@@ -3417,6 +3855,417 @@ CD_Protection_Group:AddToggle('Dash_NoCD_Toggle', {
         end
     end
 })
+
+do
+    local TweenService = game:GetService('TweenService')
+
+    if Env.AutoJump and Env.AutoJump.Destroy then
+        pcall(Env.AutoJump.Destroy)
+    end
+
+    local STATE_JUMPING = Enum.HumanoidStateType.Jumping
+    local STATE_FREEFALL = Enum.HumanoidStateType.Freefall
+    local STATE_LANDED = Enum.HumanoidStateType.Landed
+    local STATE_RUNNING = Enum.HumanoidStateType.Running
+    local STATE_RUNNING_NP = Enum.HumanoidStateType.RunningNoPhysics
+
+    local DOUBLE_JUMP_POWER = 76
+    local APEX_VELOCITY = 10
+
+    local AJ = {
+        Enabled = false,
+        DoubleJump = false,
+        DoubleJumpChance = 60,
+        HasDoubleJumped = false,
+        ShowUI = Is_Mobile or false,
+        GUI = nil,
+        Widget = nil,
+        Refs = nil,
+        Conn = nil,
+        CharConn = nil,
+        UIConns = {},
+        DragConns = {},
+        Syncing = false,
+        AnimTrack = nil,
+        Char = nil,
+        Hum = nil,
+        Root = nil,
+    }
+    Env.AutoJump = AJ
+
+    local DoubleJumpAnim = Instance.new('Animation')
+    DoubleJumpAnim.AnimationId = 'rbxassetid://13772476731'
+
+    local animGen = 0
+
+    local function SetupAnim(char)
+        animGen += 1
+        local gen = animGen
+
+        if AJ.AnimTrack then
+            AJ.AnimTrack:Stop()
+            AJ.AnimTrack = nil
+        end
+
+        task.spawn(function()
+            local hum = char:WaitForChild('Humanoid', 5)
+            if not hum then return end
+
+            local animator = hum:FindFirstChildOfClass('Animator') or hum:WaitForChild('Animator', 5)
+            if not animator or gen ~= animGen then return end
+
+            local track = animator:LoadAnimation(DoubleJumpAnim)
+            track.Priority = Enum.AnimationPriority.Action
+            AJ.AnimTrack = track
+        end)
+    end
+
+    if Player.Character then
+        SetupAnim(Player.Character)
+    end
+    AJ.CharConn = Player.CharacterAdded:Connect(SetupAnim)
+
+    local THEME = {
+        On  = { Accent = Color3.fromRGB(70, 220, 120), Bg = Color3.fromRGB(22, 38, 28) },
+        Off = { Accent = Color3.fromRGB(235, 80, 80),  Bg = Color3.fromRGB(26, 26, 32) },
+    }
+    local TWEEN = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local ActiveTweens = setmetatable({}, { __mode = 'k' })
+
+    local function Tween(obj, prop, value)
+        local map = ActiveTweens[obj]
+        if not map then
+            map = {}
+            ActiveTweens[obj] = map
+        end
+
+        local old = map[prop]
+        if old then old:Cancel() end
+
+        local tween = TweenService:Create(obj, TWEEN, { [prop] = value })
+        map[prop] = tween
+        tween:Play()
+    end
+
+    local function UpdateAutoJumpUI()
+        local r = AJ.Refs
+        if not r then return end
+
+        local theme = AJ.Enabled and THEME.On or THEME.Off
+        r.State.Text = AJ.Enabled and 'ON' or 'OFF'
+
+        Tween(r.State,  'TextColor3', theme.Accent)
+        Tween(r.Bar,    'BackgroundColor3', theme.Accent)
+        Tween(r.Stroke, 'Color', theme.Accent)
+        Tween(r.Widget, 'BackgroundColor3', theme.Bg)
+    end
+
+    local function Step()
+        local char = Player.Character
+        if not char or char.Parent ~= AliveFolder then return end
+
+        local hum, root = AJ.Hum, AJ.Root
+
+        if char ~= AJ.Char then
+            hum = char:FindFirstChildOfClass('Humanoid')
+            root = char:FindFirstChild('HumanoidRootPart')
+            if not (hum and root) then return end
+
+            AJ.Char, AJ.Hum, AJ.Root = char, hum, root
+            AJ.HasDoubleJumped = false
+        end
+
+        if hum.Health <= 0 then return end
+
+        local state = hum:GetState()
+
+        if state == STATE_LANDED or state == STATE_RUNNING or state == STATE_RUNNING_NP then
+            AJ.HasDoubleJumped = false
+
+            if AJ.Enabled then
+                hum.Jump = true
+                hum:ChangeState(STATE_JUMPING)
+            end
+        elseif state == STATE_FREEFALL and AJ.DoubleJump and not AJ.HasDoubleJumped then
+            local vel = root.AssemblyLinearVelocity
+            if vel.Y < APEX_VELOCITY then
+                AJ.HasDoubleJumped = true
+
+                if math.random(100) <= AJ.DoubleJumpChance then
+                    root.AssemblyLinearVelocity = Vector3.new(vel.X, DOUBLE_JUMP_POWER, vel.Z)
+
+                    local track = AJ.AnimTrack
+                    if track then
+                        track:Play(0.1, 1, 1.5)
+                    end
+                end
+            end
+        end
+    end
+
+    local function UpdateJumpLogic()
+        if AJ.Enabled or AJ.DoubleJump then
+            if not AJ.Conn then
+                AJ.Conn = RunService.PreRender:Connect(Step)
+            end
+        elseif AJ.Conn then
+            AJ.Conn:Disconnect()
+            AJ.Conn = nil
+        end
+    end
+
+    local function ToggleAutoJump(state)
+        AJ.Enabled = state
+        UpdateAutoJumpUI()
+        UpdateJumpLogic()
+
+        local toggle = Library and Library.Toggles and Library.Toggles.Auto_Jump_Toggle
+        if toggle and not AJ.Syncing and toggle.Value ~= state then
+            AJ.Syncing = true
+            toggle:SetValue(state)
+            AJ.Syncing = false
+        end
+    end
+
+    local function CreateAutoJumpUI()
+        if AJ.GUI then return end
+
+        local isMobile = Is_Mobile or false
+        local size = isMobile and Vector2.new(156, 60) or Vector2.new(136, 48)
+
+        local gui = Instance.new('ScreenGui')
+        gui.Name = 'AutoJumpUI'
+        gui.ResetOnSpawn = false
+        gui.IgnoreGuiInset = true
+        gui.DisplayOrder = 100
+        gui.Parent = (typeof(gethui) == 'function' and gethui()) or game:GetService('CoreGui')
+
+        local widget = Instance.new('Frame')
+        widget.Name = 'Widget'
+        widget.Size = UDim2.fromOffset(size.X, size.Y)
+        widget.Position = UDim2.new(1, -size.X - 20, 0.5, 100)
+        widget.BackgroundColor3 = THEME.Off.Bg
+        widget.BackgroundTransparency = 0.1
+        widget.BorderSizePixel = 0
+        widget.Active = true
+        widget.Parent = gui
+
+        Instance.new('UICorner', widget).CornerRadius = UDim.new(0, 12)
+
+        local stroke = Instance.new('UIStroke')
+        stroke.Color = THEME.Off.Accent
+        stroke.Thickness = 1.5
+        stroke.Transparency = 0.35
+        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        stroke.Parent = widget
+
+        local gradient = Instance.new('UIGradient')
+        gradient.Rotation = 90
+        gradient.Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(190, 190, 190))
+        gradient.Parent = widget
+
+        local scale = Instance.new('UIScale')
+        scale.Parent = widget
+
+        local bar = Instance.new('Frame')
+        bar.Name = 'Bar'
+        bar.Size = UDim2.new(0, 4, 1, -16)
+        bar.Position = UDim2.fromOffset(8, 8)
+        bar.BackgroundColor3 = THEME.Off.Accent
+        bar.BorderSizePixel = 0
+        bar.Parent = widget
+        Instance.new('UICorner', bar).CornerRadius = UDim.new(0, 2)
+
+        local title = Instance.new('TextLabel')
+        title.Name = 'Title'
+        title.BackgroundTransparency = 1
+        title.Position = UDim2.fromOffset(20, isMobile and 9 or 6)
+        title.Size = UDim2.new(1, -52, 0, 16)
+        title.Font = Enum.Font.GothamMedium
+        title.Text = 'AUTO JUMP'
+        title.TextColor3 = Color3.fromRGB(170, 170, 180)
+        title.TextSize = isMobile and 13 or 11
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.Parent = widget
+
+        local state = Instance.new('TextLabel')
+        state.Name = 'State'
+        state.BackgroundTransparency = 1
+        state.Position = UDim2.new(0, 20, 0, isMobile and 26 or 22)
+        state.Size = UDim2.new(1, -52, 0, isMobile and 26 or 20)
+        state.Font = Enum.Font.GothamBold
+        state.Text = 'OFF'
+        state.TextColor3 = THEME.Off.Accent
+        state.TextSize = isMobile and 24 or 20
+        state.TextXAlignment = Enum.TextXAlignment.Left
+        state.Parent = widget
+
+        local grip = Instance.new('Frame')
+        grip.Name = 'Grip'
+        grip.AnchorPoint = Vector2.new(1, 0.5)
+        grip.Position = UDim2.new(1, -10, 0.5, 0)
+        grip.Size = UDim2.fromOffset(16, 14)
+        grip.BackgroundTransparency = 1
+        grip.Parent = widget
+        for i = 0, 2 do
+            local line = Instance.new('Frame')
+            line.Size = UDim2.new(1, 0, 0, 2)
+            line.Position = UDim2.fromOffset(0, i * 6)
+            line.BackgroundColor3 = Color3.fromRGB(120, 120, 130)
+            line.BorderSizePixel = 0
+            line.Parent = grip
+            Instance.new('UICorner', line).CornerRadius = UDim.new(0, 1)
+        end
+
+        AJ.GUI = gui
+        AJ.Widget = widget
+        AJ.Refs = { Widget = widget, Stroke = stroke, Bar = bar, State = state }
+
+        local DRAG_THRESHOLD = 8
+        local dragConns = AJ.DragConns
+        local dragInput, dragStart, startPos, moved = nil, nil, nil, false
+
+        local function clamp(pos)
+            local max = gui.AbsoluteSize - widget.AbsoluteSize
+            return Vector2.new(
+                math.clamp(pos.X, 0, math.max(max.X, 0)),
+                math.clamp(pos.Y, 0, math.max(max.Y, 0))
+            )
+        end
+
+        local function setPos(pos)
+            pos = clamp(pos)
+            widget.Position = UDim2.fromOffset(pos.X, pos.Y)
+        end
+
+        local function disconnectDrag()
+            for i = #dragConns, 1, -1 do
+                dragConns[i]:Disconnect()
+                dragConns[i] = nil
+            end
+            dragInput = nil
+        end
+
+        local function track(conn)
+            table.insert(AJ.UIConns, conn)
+        end
+
+        track(widget.InputBegan:Connect(function(input)
+            local t = input.UserInputType
+            if t ~= Enum.UserInputType.MouseButton1 and t ~= Enum.UserInputType.Touch then return end
+            if dragInput then return end
+
+            dragInput = input
+            dragStart = Vector2.new(input.Position.X, input.Position.Y)
+            startPos = widget.AbsolutePosition
+            moved = false
+            Tween(scale, 'Scale', 0.96)
+
+            local isMouse = t == Enum.UserInputType.MouseButton1
+
+            dragConns[1] = UserInputService.InputChanged:Connect(function(changed)
+                if changed ~= input and not (isMouse and changed.UserInputType == Enum.UserInputType.MouseMovement) then
+                    return
+                end
+
+                local delta = Vector2.new(changed.Position.X, changed.Position.Y) - dragStart
+                if not moved and delta.Magnitude < DRAG_THRESHOLD then return end
+                moved = true
+                setPos(startPos + delta)
+            end)
+
+            dragConns[2] = UserInputService.InputEnded:Connect(function(ended)
+                if ended ~= input and not (isMouse and ended.UserInputType == Enum.UserInputType.MouseButton1) then
+                    return
+                end
+
+                local wasTap = not moved
+                disconnectDrag()
+                Tween(scale, 'Scale', 1)
+
+                if wasTap then
+                    ToggleAutoJump(not AJ.Enabled)
+                end
+            end)
+        end))
+
+        track(widget.MouseEnter:Connect(function() Tween(stroke, 'Transparency', 0) end))
+        track(widget.MouseLeave:Connect(function() Tween(stroke, 'Transparency', 0.35) end))
+
+        track(gui:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+            setPos(widget.AbsolutePosition)
+        end))
+
+        UpdateAutoJumpUI()
+    end
+
+    function AJ.Destroy()
+        animGen += 1
+
+        if AJ.Conn then AJ.Conn:Disconnect() AJ.Conn = nil end
+        if AJ.CharConn then AJ.CharConn:Disconnect() AJ.CharConn = nil end
+
+        for _, c in ipairs(AJ.UIConns) do c:Disconnect() end
+        table.clear(AJ.UIConns)
+        for _, c in ipairs(AJ.DragConns) do c:Disconnect() end
+        table.clear(AJ.DragConns)
+
+        if AJ.GUI then AJ.GUI:Destroy() AJ.GUI = nil end
+        AJ.Widget, AJ.Refs = nil, nil
+
+        if AJ.AnimTrack then AJ.AnimTrack:Stop() AJ.AnimTrack = nil end
+        DoubleJumpAnim:Destroy()
+
+        AJ.Char, AJ.Hum, AJ.Root = nil, nil, nil
+    end
+
+    local Auto_Jump_Toggle = CD_Protection_Group:AddToggle('Auto_Jump_Toggle', {
+        Text = 'Auto Jump',
+        Default = false,
+        Callback = function(state)
+            if AJ.Syncing then return end
+            ToggleAutoJump(state)
+        end
+    })
+
+    Auto_Jump_Toggle:AddKeyPicker('Auto_Jump_Keybind', {
+        Text = 'Auto Jump',
+        Mode = 'Toggle',
+    })
+
+    local Double_Jump_Toggle = CD_Protection_Group:AddToggle('Double_Jump_Toggle', {
+        Text = 'With Double Jump',
+        Default = false,
+        Callback = function(state)
+            AJ.DoubleJump = state
+            UpdateJumpLogic()
+        end
+    })
+
+    Double_Jump_Toggle:AddKeyPicker('Double_Jump_Keybind', {
+        Text = 'Double Jump',
+        Mode = 'Toggle',
+    })
+
+    CD_Protection_Group:AddToggle('Auto_Jump_UI_Toggle', {
+        Text = 'Auto Jump UI',
+        Default = AJ.ShowUI,
+        Callback = function(state)
+            AJ.ShowUI = state
+            if state then
+                CreateAutoJumpUI()
+                if AJ.GUI then AJ.GUI.Enabled = true end
+            elseif AJ.GUI then
+                AJ.GUI.Enabled = false
+            end
+        end
+    })
+
+    if AJ.ShowUI then
+        CreateAutoJumpUI()
+    end
+end
+
 
 do
     local _DashVFX_LastFire = 0
@@ -8601,7 +9450,26 @@ do
     local TeleportService = game:GetService("TeleportService")
     local GENV = getgenv()
 
-    GENV.txtDeviceSpoofType = GENV.txtDeviceSpoofType or "PC"
+    local SavePath = "Vanana/DeviceSpoof.txt"
+    
+    local function GetSavedSpoof()
+        if isfile and readfile and isfile(SavePath) then
+            local content = readfile(SavePath)
+            if content == "Mobile" or content == "Console" or content == "PC" then
+                return content
+            end
+        end
+        return "PC"
+    end
+
+    local function SaveSpoof(device)
+        if writefile and makefolder then
+            if not isfolder("Vanana") then makefolder("Vanana") end
+            writefile(SavePath, device)
+        end
+    end
+
+    GENV.txtDeviceSpoofType = GetSavedSpoof()
 
     local Group = Tabs.Sword:AddLeftGroupbox("Device Spoofer", "monitor")
 
@@ -8609,9 +9477,10 @@ do
         Text = "Device",
         Values = { "PC", "Mobile", "Console" },
         Multi = false,
-        Default = "PC",
+        Default = GENV.txtDeviceSpoofType,
         Callback = function(Value)
             GENV.txtDeviceSpoofType = Value
+            SaveSpoof(Value)
         end,
     })
 
@@ -8623,14 +9492,104 @@ do
         end
     end
 
-    do
-        local applied = GENV.txtDeviceSpoofApplied
-        if type(applied) == "table" and applied.JobId == game.JobId and applied.Device then
-            local label = (applied.Device == "Phone" or applied.Device == "Tablet") and "Mobile" or applied.Device
-            task.defer(function()
-                Notify("Device Spoofer", "Active: " .. tostring(label), 3)
+    local function ForceSpoofNow()
+        local deviceType = GENV.txtDeviceSpoofType
+        if deviceType == "PC" then return end
+        
+        local spoofDevice = (deviceType == "Mobile") and "Phone" or deviceType
+        
+        task.spawn(function()
+            while not workspace:GetAttribute('ClientModulesLoaded') do
+                workspace:GetAttributeChangedSignal('ClientModulesLoaded'):Wait()
+            end
+            
+            local ReplicatedStorage = game:GetService('ReplicatedStorage')
+            local UserInputService = game:GetService('UserInputService')
+            local Listener = require(ReplicatedStorage:WaitForChild('ClientGameModules'):WaitForChild('DeviceListener'))
+            
+            local function IsTouch() return spoofDevice == "Phone" or spoofDevice == "Tablet" or spoofDevice == "Mobile" end
+            local function IsGamepad() return spoofDevice == "Console" or spoofDevice == "Xbox" or spoofDevice == "PlayStation" end
+
+            local mt = getrawmetatable(game)
+            local oldIndex = mt.__index
+            setreadonly(mt, false)
+            
+            mt.__index = newcclosure(function(self, key)
+                if self == UserInputService then
+                    if key == "TouchEnabled" then 
+                        if IsTouch() then return true end
+                    elseif key == "KeyboardEnabled" then 
+                        if IsTouch() or IsGamepad() then return false end
+                    elseif key == "GamepadEnabled" then 
+                        if IsGamepad() then return true end
+                    end
+                end
+                return oldIndex(self, key)
             end)
-        end
+            setreadonly(mt, true)
+
+            Listener.Device = spoofDevice
+            Listener.IsMobile = function() return IsTouch() end
+            
+            local function ApplyToAll()
+                task.spawn(function()
+                    pcall(function()
+                        for _, Connection in ipairs(Listener.OnChange:GetConnections()) do
+                            local fn = Connection._fn or Connection.Function
+                            if type(fn) == 'function' then pcall(fn, spoofDevice) end
+                        end
+                        local HUD = require(ReplicatedStorage.Controllers.UI.HUDController)
+                        if HUD.UpdateLayout then HUD:UpdateLayout(spoofDevice) end
+                        local UIState = require(ReplicatedStorage.Controllers.UI.UIStateController)
+                        if UIState.UpdateLayout then UIState:UpdateLayout(spoofDevice) end
+                        local InputController = ReplicatedStorage.Controllers:FindFirstChild("InputController")
+                        if InputController then
+                            local IC = require(InputController)
+                            if IC.SetupBindings then IC:SetupBindings() end
+                        end
+                    end)
+                end)
+            end
+
+            ApplyToAll()
+            GENV.txtDeviceSpoofApplied = { Device = spoofDevice, JobId = game.JobId }
+            
+            local RunService = game:GetService('RunService')
+            local last_force = 0
+            RunService.Heartbeat:Connect(function()
+                if tick() - last_force < 0.5 then return end
+                last_force = tick()
+                if Listener.Device ~= spoofDevice then
+                    Listener.Device = spoofDevice
+                    ApplyToAll()
+                end
+            end)
+            
+            if IsTouch() then
+                task.spawn(function()
+                    while task.wait(1) do
+                        pcall(function()
+                            local PlayerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+                            if PlayerGui then
+                                local TouchGui = PlayerGui:FindFirstChild("TouchGui")
+                                if TouchGui and TouchGui.Enabled then TouchGui.Enabled = false end
+                                
+                                local TouchControlFrame = PlayerGui:FindFirstChild("TouchControlFrame")
+                                if TouchControlFrame and TouchControlFrame.Visible then TouchControlFrame.Visible = false end
+                            end
+                            
+                            local CoreGui = game:GetService("CoreGui")
+                            local CoreTouchGui = CoreGui:FindFirstChild("TouchGui")
+                            if CoreTouchGui and CoreTouchGui.Enabled then CoreTouchGui.Enabled = false end
+                        end)
+                    end
+                end)
+            end
+        end)
+    end
+
+    if GENV.txtDeviceSpoofType ~= "PC" then
+        ForceSpoofNow()
     end
 
     Group:AddButton({
@@ -8640,11 +9599,11 @@ do
             local opt = Library and Library.Options and Library.Options.DeviceSpoof_Type
             if opt then
                 local ok, val = pcall(function() return opt.Value end)
-                if ok and type(val) == "string" and (val == "PC" or val == "Mobile" or val == "Console") then
-                    deviceType = val
-                end
+                if ok and type(val) == "string" then deviceType = val end
             end
             deviceType = deviceType or "PC"
+            
+            SaveSpoof(deviceType)
             GENV.txtDeviceSpoofType = deviceType
 
             local spoofDevice = (deviceType == "Mobile") and "Phone" or deviceType
@@ -8656,6 +9615,7 @@ do
             local Players = game:GetService('Players')
             local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
             local Environment = getgenv()
+            
             if Environment.txtDeviceSpoofQueue then
                 Environment.txtDeviceSpoofQueue:Disconnect()
             end
@@ -8666,59 +9626,102 @@ do
                     Queued = true
                 end
             end)
+            
             local Device = ]] .. HttpService:JSONEncode(spoofDevice) .. [[
-            if game.GameId ~= ]] .. tostring(game.GameId) .. [[ then return end
+            
             local Previous = Environment.txtDeviceSpoofRun
             if Previous and Previous.JobId == game.JobId and Previous.Device == Device then return end
             if Previous and Previous.Restore then Previous.Restore() end
             local Run = { Device = Device, JobId = game.JobId }
             Environment.txtDeviceSpoofRun = Run
+            
             while not workspace:GetAttribute('ClientModulesLoaded') do
                 workspace:GetAttributeChangedSignal('ClientModulesLoaded'):Wait()
             end
             if Environment.txtDeviceSpoofRun ~= Run then return end
+            
             local ReplicatedStorage = game:GetService('ReplicatedStorage')
+            local UserInputService = game:GetService('UserInputService')
             local Listener = require(ReplicatedStorage:WaitForChild('ClientGameModules'):WaitForChild('DeviceListener'))
-            local Observe = Listener.Observe
+            
+            local function IsTouch() return Device == "Phone" or Device == "Tablet" or Device == "Mobile" end
+            local function IsGamepad() return Device == "Console" or Device == "Xbox" or Device == "PlayStation" end
 
-            local function Apply(Callback)
-                if Run.Restore then Run.Restore() end
-                task.spawn(function()
-                    local Success, Result = pcall(function()
-                        Callback(Device)
-                        Callback(Listener.Device)
-                    end)
-                    if not Success then
-                        Environment.txtDeviceSpoofRun = nil
-                        error(Result, 0)
+            local mt = getrawmetatable(game)
+            local oldIndex = mt.__index
+            setreadonly(mt, false)
+            
+            mt.__index = newcclosure(function(self, key)
+                if self == UserInputService then
+                    if key == "TouchEnabled" then 
+                        if IsTouch() then return true end
+                    elseif key == "KeyboardEnabled" then 
+                        if IsTouch() or IsGamepad() then return false end
+                    elseif key == "GamepadEnabled" then 
+                        if IsGamepad() then return true end
                     end
-                    Environment.txtDeviceSpoofApplied = { Device = Device, JobId = game.JobId }
+                end
+                return oldIndex(self, key)
+            end)
+            setreadonly(mt, true)
+
+            Listener.Device = Device
+            Listener.IsMobile = function() return IsTouch() end
+            
+            local function ApplyToAll()
+                task.spawn(function()
                     pcall(function()
-                        workspace:SetAttribute("txtDeviceSpoof_" .. Player.UserId, Device)
+                        for _, Connection in ipairs(Listener.OnChange:GetConnections()) do
+                            local fn = Connection._fn or Connection.Function
+                            if type(fn) == 'function' then pcall(fn, Device) end
+                        end
+                        local HUD = require(ReplicatedStorage.Controllers.UI.HUDController)
+                        if HUD.UpdateLayout then HUD:UpdateLayout(Device) end
+                        local UIState = require(ReplicatedStorage.Controllers.UI.UIStateController)
+                        if UIState.UpdateLayout then UIState:UpdateLayout(Device) end
+                        local InputController = ReplicatedStorage.Controllers:FindFirstChild("InputController")
+                        if InputController then
+                            local IC = require(InputController)
+                            if IC.SetupBindings then IC:SetupBindings() end
+                        end
                     end)
                 end)
             end
 
-            for _, Connection in Listener.OnChange:GetConnections() do
-                if debug.info(Connection._fn, 's') == 'ReplicatedStorage.Controllers.PlayerProfileController' then
-                    Apply(Connection._fn)
-                    return
+            ApplyToAll()
+            Environment.txtDeviceSpoofApplied = { Device = Device, JobId = game.JobId }
+            
+            local RunService = game:GetService('RunService')
+            local last_force = 0
+            RunService.Heartbeat:Connect(function()
+                if tick() - last_force < 0.5 then return end
+                last_force = tick()
+                if Listener.Device ~= Device then
+                    Listener.Device = Device
+                    ApplyToAll()
                 end
+            end)
+            
+            if IsTouch() then
+                task.spawn(function()
+                    while task.wait(1) do
+                        pcall(function()
+                            local PlayerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+                            if PlayerGui then
+                                local TouchGui = PlayerGui:FindFirstChild("TouchGui")
+                                if TouchGui and TouchGui.Enabled then TouchGui.Enabled = false end
+                                
+                                local TouchControlFrame = PlayerGui:FindFirstChild("TouchControlFrame")
+                                if TouchControlFrame and TouchControlFrame.Visible then TouchControlFrame.Visible = false end
+                            end
+                            
+                            local CoreGui = game:GetService("CoreGui")
+                            local CoreTouchGui = CoreGui:FindFirstChild("TouchGui")
+                            if CoreTouchGui and CoreTouchGui.Enabled then CoreTouchGui.Enabled = false end
+                        end)
+                    end
+                end)
             end
-
-            local function ObserveDevice(Self, Callback)
-                if debug.info(Callback, 's') == 'ReplicatedStorage.Controllers.PlayerProfileController' then
-                    Apply(Callback)
-                    return Self.OnChange:Connect(Callback)
-                end
-                return Observe(Self, Callback)
-            end
-
-            Run.Restore = function()
-                if Listener.Observe == ObserveDevice then Listener.Observe = Observe end
-                Run.Restore = nil
-            end
-            Listener.Observe = ObserveDevice
             ]]
 
             local concatenated = query:format(query)
@@ -8747,6 +9750,18 @@ do
                     game:GetService("ExperienceService"):LaunchExperience({ placeId = game.PlaceId, gameInstanceId = game.JobId })
                 end)
             end
+        end,
+    })
+
+    Group:AddButton({
+        Text = "Reset to PC",
+        Callback = function()
+            SaveSpoof("PC")
+            GENV.txtDeviceSpoofType = "PC"
+            if Library.Options.DeviceSpoof_Type then
+                Library.Options.DeviceSpoof_Type:SetValue("PC")
+            end
+            Notify("Device Spoofer", "Saved as PC. Rejoin to fully reset.", 3)
         end,
     })
 
