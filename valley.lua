@@ -42,6 +42,7 @@ local SkinCatalog = require(Weapons:WaitForChild("SkinCatalog"))
 local StorefrontClient = require(Weapons:WaitForChild("StorefrontClient"))
 local KnifeClips = require(Weapons:WaitForChild("KnifeClips"))
 local successDual, DualWield = pcall(require, Weapons:WaitForChild("DualWield"))
+local GearPredictionClient = require(COH.Gear:WaitForChild("GearPredictionClient"))
 local ArmoryEvent = COH:WaitForChild("Weapons"):WaitForChild("ArmoryEvent")
 local SpinWheelEvent = COH:WaitForChild("SpinWheelEvent")
 local JourneyConfig = require(COH:WaitForChild("Progression"):WaitForChild("JourneyConfig"))
@@ -49,6 +50,9 @@ local JourneyEvent = COH:WaitForChild("Progression"):WaitForChild("JourneyEvent"
 local PlayerPreferences = COH:WaitForChild("Game"):WaitForChild("PlayerPreferences")
 local Presentation = COH:WaitForChild("Presentation")
 local HudNavigation = require(Presentation:WaitForChild("HudNavigation"))
+local ArmoryEvent = ReplicatedStorage.ChickenOrHero.Weapons:WaitForChild("ArmoryEvent")
+local originalArmoryHandler = nil
+local emoteHookConn = nil
 
 local SETTINGS = {
     notifications = true,
@@ -116,8 +120,11 @@ local SETTINGS = {
     showHitboxes = true,
     showGoalUtility = true,
     showThreatUtility = false,
-    showDebugUI = true,
+    showDebugUI = false,
     showPath = true,
+    smartAI = true,
+    smartMargin = 3.5,
+    smartHorizon = 1.3,
     cameraFollow = true,
     cameraResponse = 0.25,
     autoSpinWheel = false,
@@ -422,14 +429,15 @@ local function updatePathVisual()
 
     local char = lp.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not root then return end
+    if not root then
+        if pathVisual.beam then pathVisual.beam.Enabled = false end
+        return
+    end
 
     local startX = root.Position.X
     local startY = root.Position.Y - 2
     local startZ = root.Position.Z
 
-    -- Prefer the real goal point (safe zone deep point).
-    -- If none (e.g. route just completed or assist mode), fall back to a medium-length direction line.
     local targetX, targetZ
     local goal = runtime.goal
     if goal then
@@ -554,17 +562,14 @@ local function hasManualMovementInput()
     local hum = getHumanoid()
     if not hum then return false end
     local move = hum.MoveDirection
-    if move.Magnitude > 0.1 then return true end
+    if move.X * move.X + move.Z * move.Z > 0.01 then return true end 
     if UserInputService then
-        local ok, keys = pcall(function()
-            local active = {}
-            if UserInputService:IsKeyDown(Enum.KeyCode.W) then active[#active + 1] = "W" end
-            if UserInputService:IsKeyDown(Enum.KeyCode.A) then active[#active + 1] = "A" end
-            if UserInputService:IsKeyDown(Enum.KeyCode.S) then active[#active + 1] = "S" end
-            if UserInputService:IsKeyDown(Enum.KeyCode.D) then active[#active + 1] = "D" end
-            return active
-        end)
-        if ok and keys and #keys > 0 then return true end
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) or
+           UserInputService:IsKeyDown(Enum.KeyCode.A) or
+           UserInputService:IsKeyDown(Enum.KeyCode.S) or
+           UserInputService:IsKeyDown(Enum.KeyCode.D) then
+            return true
+        end
     end
     return false
 end
@@ -1328,6 +1333,11 @@ local function refreshCatchers(now)
     end
 end
 
+local BASE_DANGER = math.max(8, tonumber(ContactCatchConfig.MinForward) or 0)
+    + math.max(0, tonumber(ContactCatchConfig.HandRadius) or 0)
+    + math.max(0, tonumber(ContactCatchConfig.ContactPadding) or 0)
+    + math.max(0, tonumber(ContactCatchConfig.RunnerRadius) or 0)
+
 local function updateThreats(now, position)
     if now - runtime.threatAt < 0.035 then return runtime.threats end 
     runtime.threatAt = now
@@ -1385,10 +1395,7 @@ local function updateThreats(now, position)
                 if tackle then prediction = math.min(1.8, prediction + 0.35) end
                 local relativeFuture = relative + relativeVelocity * prediction + acceleration * (0.5 * prediction * prediction)
                 local futureDistance = relativeFuture.Magnitude
-                local danger = math.max(8, tonumber(ContactCatchConfig.MinForward) or 0)
-                    + math.max(0, tonumber(ContactCatchConfig.HandRadius) or 0)
-                    + math.max(0, tonumber(ContactCatchConfig.ContactPadding) or 0)
-                    + math.max(0, tonumber(ContactCatchConfig.RunnerRadius) or 0)
+                local danger = BASE_DANGER
                 if tackle then
                     danger += 10 + math.min(tackleVariantReach(character), 10)
                 elseif velocity.Magnitude > runSpeed * 0.8 then
@@ -1856,7 +1863,162 @@ local function chooseSideGapDirection(position, desired, threats)
     return nil, nil, -math.huge
 end
 
+Hub.SmartAI = {
+    state = { last = Vector3.zero, lastAt = -math.huge, lastClear = nil, planAt = -math.huge, planPos = nil, planGoalDir = nil, planDir = nil, catcherSpeed = 18, catcherSpeedAt = -math.huge },
+    step = 0.1, turn = 7, hysteresis = 4, dashTime = 0.8, dashMul = 2.5,
+    sx = {}, sz = {}, hx = {}, hz = {}, tl = {}
+}
+
+function Hub.SmartAI.getSpeed(now)
+    if now - Hub.SmartAI.state.catcherSpeedAt > 2 then
+        Hub.SmartAI.state.catcherSpeedAt = now
+        local ok, v = pcall(getCatcherSpeed)
+        if ok and type(v) == "number" then Hub.SmartAI.state.catcherSpeed = v end
+    end
+    return Hub.SmartAI.state.catcherSpeed
+end
+
+function Hub.SmartAI.simulate(px, pz, dx, dz, rs, boostT, sims, n, horizon)
+    local sx, sz, hx, hz, tl = Hub.SmartAI.sx, Hub.SmartAI.sz, Hub.SmartAI.hx, Hub.SmartAI.hz, Hub.SmartAI.tl
+    for i = 1, n do
+        local s = sims[i]
+        sx[i], sz[i], hx[i], hz[i], tl[i] = s.x, s.z, s.hx, s.hz, s.tackleT
+    end
+    local rx, rz = px, pz
+    local minClear, hitTime, pen = math.huge, nil, 0
+    local steps = math.max(1, math.floor(horizon / Hub.SmartAI.step + 0.5))
+    for k = 1, steps do
+        local t = k * Hub.SmartAI.step
+        local spd = t <= boostT and rs * Hub.SmartAI.dashMul or rs
+        rx += dx * spd * Hub.SmartAI.step
+        rz += dz * spd * Hub.SmartAI.step
+        local weight = 1 - 0.5 * (t / horizon)
+        for i = 1, n do
+            local s = sims[i]
+            if tl[i] > 0 then
+                sx[i] += s.tdx * s.tsp * Hub.SmartAI.step
+                sz[i] += s.tdz * s.tsp * Hub.SmartAI.step
+                tl[i] -= Hub.SmartAI.step
+            else
+                local ox, oz = rx - sx[i], rz - sz[i]
+                local m = math.sqrt(ox * ox + oz * oz)
+                if m > 0.001 then
+                    ox, oz = ox / m, oz / m
+                    local a = math.min(1, Hub.SmartAI.turn * Hub.SmartAI.step)
+                    local nx = hx[i] + (ox - hx[i]) * a
+                    local nz = hz[i] + (oz - hz[i]) * a
+                    local nm = math.sqrt(nx * nx + nz * nz)
+                    if nm > 0.001 then nx, nz = nx / nm, nz / nm else nx, nz = ox, oz end
+                    hx[i], hz[i] = nx, nz
+                end
+                sx[i] += hx[i] * s.sp * Hub.SmartAI.step
+                sz[i] += hz[i] * s.sp * Hub.SmartAI.step
+            end
+            local ddx, ddz = rx - sx[i], rz - sz[i]
+            local clear = math.sqrt(ddx * ddx + ddz * ddz) - s.radius
+            if clear < minClear then minClear = clear end
+            if clear < 0 and not hitTime then hitTime = t end
+            if clear < s.margin then pen += (s.margin - clear) * weight end
+        end
+    end
+    return minClear, hitTime, pen, rx, rz
+end
+
+function Hub.SmartAI.plan(position, goal, threats, opts)
+    local dash = opts and opts.dash == true
+    local now = os.clock()
+    local goalVec = flat(goal - position)
+    local goalDist = goalVec.Magnitude
+    if goalDist < 0.05 then return nil end
+    local goalDir = goalVec / goalDist
+    local state = Hub.SmartAI.state
+    if not dash and state.planDir and state.planPos
+        and now - state.planAt < 0.04
+        and flat(position - state.planPos).Magnitude < 1.5
+        and state.planGoalDir:Dot(goalDir) > 0.98 then
+        return state.planDir, state.lastClear
+    end
+    local rs = math.max(getRunnerSpeed(), 1)
+    local cs = Hub.SmartAI.getSpeed(now)
+    local margin = SETTINGS.smartMargin or 3.5
+    local horizon = SETTINGS.smartHorizon or 1.3
+    local sims, n = {}, 0
+    for _, threat in ipairs(threats) do
+        if n >= 6 then break end
+        if threat.distance <= 90 then
+            local vel = threat.velocity
+            local speed = vel.Magnitude
+            local toMe = flat(position - threat.position)
+            local h = (speed > 1.5 and vel / speed) or (toMe.Magnitude > 0.05 and toMe.Unit) or goalDir
+            local sim = {
+                x = threat.position.X, z = threat.position.Z, hx = h.X, hz = h.Z,
+                sp = math.clamp(math.max(speed, cs * 0.85), 6, cs * 1.15),
+                radius = math.clamp(threat.danger * 0.55, 4, 9),
+                margin = margin, tackleT = 0, tdx = 0, tdz = 0, tsp = 0,
+            }
+            if threat.tackle then
+                local td = flat(threat.intercept - threat.position)
+                if td.Magnitude < 0.05 then td = flat(vel) end
+                if td.Magnitude > 0.05 then
+                    td = td.Unit
+                    sim.tackleT = 0.4
+                    sim.tdx, sim.tdz = td.X, td.Z
+                    sim.tsp = math.max(speed, rs * 2.4)
+                end
+            end
+            n += 1
+            sims[n] = sim
+        end
+    end
+    if n == 0 then
+        if not dash then
+            state.lastClear = nil
+            state.planDir, state.planPos, state.planGoalDir, state.planAt = goalDir, position, goalDir, now
+        end
+        return goalDir, math.huge
+    end
+    local candidates = {}
+    local boostT = dash and Hub.SmartAI.dashTime or 0
+    local lastRecent = state.last.Magnitude > 0.05 and now - state.lastAt < 0.5
+    local travel = rs * horizon * (dash and 1.6 or 1)
+    for i = 0, 23 do
+        local dir = i == 0 and goalDir or rotate(goalDir, i * 15)
+        dir = flat(dir).Unit
+        local minClear, hitTime, pen, ex, ez = Hub.SmartAI.simulate(position.X, position.Z, dir.X, dir.Z, rs, boostT, sims, n, horizon)
+        local endDist = math.sqrt((goal.X - ex) ^ 2 + (goal.Z - ez) ^ 2)
+        local score = ((goalDist - endDist) / travel) * 14
+        if minClear >= 0 then score += math.min(minClear, 14) * 1.8 end
+        score -= pen * 1.2
+        if hitTime then score -= 70 + 90 * (1 - hitTime / horizon) + math.max(0, -minClear) * 6 end
+        if not dash and lastRecent and state.lastClear and state.lastClear > 0 then
+            score += math.max(0, dir:Dot(state.last)) * Hub.SmartAI.hysteresis
+        end
+        candidates[#candidates + 1] = {dir = dir, score = score, clear = minClear}
+    end
+    table.sort(candidates, function(a, b) return a.score > b.score end)
+    local best
+    for i = 1, math.min(#candidates, 8) do
+        local c = candidates[i]
+        if not invisWallHit(position, c.dir, 14) and groundSupportScore(position, c.dir, position.Y) >= 3 then
+            best = c
+            break
+        end
+    end
+    best = best or candidates[1]
+    if not dash then
+        state.last = best.dir
+        state.lastAt = now
+        state.lastClear = best.clear
+        state.planDir, state.planPos, state.planGoalDir, state.planAt = best.dir, position, goalDir, now
+    end
+    return best.dir, best.clear
+end
+
 local function chooseRunnerDirection(position, goal, threats)
+    if SETTINGS.smartAI and SETTINGS.avoidCatchers then
+        local smart = Hub.SmartAI.plan(position, goal, threats)
+        if smart then return smart end
+    end
     local desired = flat(goal - position)
     if desired.Magnitude < 0.05 then return Vector3.zero end
     desired = desired.Unit
@@ -2014,6 +2176,15 @@ local function chooseRunnerDirection(position, goal, threats)
 end
 
 local function chooseDashDirection(position, direction, threats)
+    if SETTINGS.smartAI then
+        local d0 = flat(direction)
+        local r0 = getRoot()
+        if d0.Magnitude < 0.05 and r0 then d0 = flat(r0.CFrame.LookVector) end
+        if d0.Magnitude > 0.05 then
+            local smart = Hub.SmartAI.plan(position, position + d0.Unit * 52, threats, {dash = true})
+            if smart then return smart end
+        end
+    end
     local desired = flat(direction)
     local root = getRoot()
     if desired.Magnitude < 0.05 and root then
@@ -2187,7 +2358,7 @@ local function shouldDash(position, threats, goalDistance)
         local gap = tonumber(threat.interceptGap) or math.huge
         local danger = math.max(tonumber(threat.danger) or 4, 4)
         imminentTime = math.min(imminentTime, tonumber(threat.timeToDanger) or math.huge)
-        local maxDashRange = threat.tackle and 26 or 18
+        local maxDashRange = threat.tackle and 32 or 24
         if threat.distance <= maxDashRange then
             if threat.tackle and (gap <= danger * 1.6 or (threat.timeToDanger or math.huge) <= 0.45 or threat.distance <= 14) then
                 immediateDanger = true
@@ -2344,7 +2515,9 @@ local function movementStuck(now, position)
         runtime.stuck = false
         return
     end
-    if flat(position - previous).Magnitude >= 0.5 then
+    local dx = position.X - previous.X
+    local dz = position.Z - previous.Z
+    if dx * dx + dz * dz >= 0.25 then
         runtime.lastMovePosition = position
         runtime.lastMove = now
         runtime.stuck = false
@@ -2523,7 +2696,7 @@ local function runnerStep(now, dt)
     if runtime.survivalMode and now > runtime.survivalUntil then
         runtime.survivalMode = false
     end
-    if runtime.survivalMode and #threats > 0 then
+    if runtime.survivalMode and #threats > 0 and not SETTINGS.smartAI then
         local escape = Vector3.zero
         for _, t in ipairs(threats) do
             local away = flat(position - (t.predict or t.position))
@@ -2542,7 +2715,7 @@ local function runnerStep(now, dt)
         end
     end
     
-    local bait = tryOvershootBait(position, threats)
+    local bait = (not SETTINGS.smartAI) and tryOvershootBait(position, threats) or nil
     if bait and bait.Magnitude > 0.05 then
         commitDirection(bait, now, 0.4, "juke")
         runtime.path = bait.Unit
@@ -2599,7 +2772,7 @@ local function runnerStep(now, dt)
     end
     direction = direction.Unit
     local corridorGoal = nil
-    if runtime.goalMode == "SafeZone" and SETTINGS.avoidCatchers and #threats >= 2 then
+    if runtime.goalMode == "SafeZone" and SETTINGS.avoidCatchers and #threats >= 2 and not SETTINGS.smartAI then
         corridorGoal = findCorridorGoal(position, movementGoal, threats, now)
         if corridorGoal then
             movementGoal = corridorGoal
@@ -2626,7 +2799,7 @@ local function runnerStep(now, dt)
     end
     local hardThreat = threats[1]
     local hardDodge = false
-    if SETTINGS.avoidCatchers and hardThreat and (hardThreat.collisionRisk or hardThreat.tackle or hardThreat.preTackle and hardThreat.closing > 0) then
+    if not SETTINGS.smartAI and SETTINGS.avoidCatchers and hardThreat and (hardThreat.collisionRisk or hardThreat.tackle or hardThreat.preTackle and hardThreat.closing > 0) then
         local escape = flat(position - hardThreat.intercept)
         if escape.Magnitude > 0.05 then
             local escapeDir = escape.Unit
@@ -2746,7 +2919,7 @@ local function runnerStep(now, dt)
         runtime.stuckRecoveryDirection = Vector3.zero
         runtime.randomWalkDir = Vector3.zero
     end
-    if SETTINGS.smoothMovement and not hardDodge and runtime.path.Magnitude > 0.05 and not runtime.stuck then
+    if SETTINGS.smoothMovement and not hardDodge and not (SETTINGS.smartAI and #threats > 0) and runtime.path.Magnitude > 0.05 and not runtime.stuck then
         local alpha = math.clamp(SETTINGS.turnRate * math.clamp(dt or (1 / 60), 0.001, 0.1), 0, 1)
         local blended = flat(runtime.path:Lerp(direction, alpha))
         if blended.Magnitude > 0.05 then direction = blended.Unit end
@@ -2947,6 +3120,25 @@ local function catcherStep(now, dt)
     local root = getRoot()
     local hum = getHumanoid()
     if not root or not hum or hum.Health <= 0 or hum.PlatformStand or hum.Sit then return end
+    
+    local nowInput = os.clock()
+    if hasManualMovementInput() then
+        runtime.lastManualInputAt = nowInput
+        runtime.manualOverrideUntil = nowInput + 0.35
+    end
+    local manualOverride = nowInput < runtime.manualOverrideUntil
+    if manualOverride and not runtime.manualOverride then
+        if SETTINGS.notifications then
+            notify("Byte", "Manual control active", 1.2)
+        end
+    end
+    runtime.manualOverride = manualOverride
+    if manualOverride then
+        runtime.catcherTarget = nil
+        runtime.catcherPath = Vector3.zero
+        return
+    end
+
     refreshPing(now)
     local needsTarget = SETTINGS.catcherChase or SETTINGS.autoTackle or SETTINGS.autoMelee or SETTINGS.followTarget
     if not needsTarget then
@@ -3362,6 +3554,7 @@ LocalPlayer.CharacterAdded:Connect(function()
     runtime.wheelLastStateAt = -math.huge
     runtime.wheelStatusAt = -math.huge
     runtime.wheelMinimumCredits = 1
+
 end)
 
 pcall(function() ArmoryEvent:FireServer("Get") end)
@@ -3477,13 +3670,25 @@ RunnerMovement:AddToggle("runnerEnabled", {
             cancelRevive()
         end
     end,
-})
+}):AddKeyPicker("runnerEnabledKey", { Default = "None", Mode = "Toggle" })
 RunnerMovement:AddToggle("autoRevive", {
     Text = "Auto Revive Players",
     Default = true,
     Callback = function(v)
         SETTINGS.autoRevive = v == true
         if not v then cancelRevive() end
+    end,
+})
+
+local AutoGearEnabled = false
+local lastGearPress = 0
+local lastAbilityPress = 0
+
+RunnerMovement:AddToggle("autoGear", {
+    Text = "Auto Use Gear",
+    Default = false,
+    Callback = function(v)
+        AutoGearEnabled = v
     end,
 })
 
@@ -3528,12 +3733,17 @@ getgenv().ByteKnifeUnlocker = (function()
         if type(state.owned) ~= "table" then state.owned = {} end
         for id in pairs(ALL_IDS) do state.owned[id] = true end
         if spoofedEquipped then state.equipped = spoofedEquipped end
+        
+        if type(state.emotes) ~= "table" then state.emotes = {} end
+        for _, entry in ipairs(require(ReplicatedStorage.ChickenOrHero.Emotes.EmoteCatalog).Entries) do
+            state.emotes[entry.Id] = true
+        end
     end
 
-    local oldUpdate = StorefrontClient.update
-    StorefrontClient.update = function(self, state)
+    local originalUpdate = StorefrontClient.update
+    local hookedUpdate = function(self, state)
         if isEnabled then forceOwned(state) end
-        return oldUpdate(self, state)
+        return originalUpdate(self, state)
     end
 
     local function hookUI()
@@ -3760,6 +3970,7 @@ getgenv().ByteKnifeUnlocker = (function()
     return {
         Enable = function()
             isEnabled = true
+            StorefrontClient.update = hookedUpdate
             if not spoofedEquipped then
                 spoofedEquipped = loadKnife()
             end
@@ -3774,26 +3985,335 @@ getgenv().ByteKnifeUnlocker = (function()
         end,
         Disable = function()
             isEnabled = false
+            StorefrontClient.update = originalUpdate
             cleanUp()
             spoofedEquipped = nil
+            pcall(function() ArmoryEvent:FireServer("Get") end)
         end
     }
 end)()
 
-UnlockAllGroup:AddToggle("unlockAllKnives", {
-    Text = "Visual Unlock All",
+local disabledArmoryConn = nil
+local originalArmoryConnections = nil
+local SpoofedEmoteSlots = {}
+local currentEmoteTrack = nil
+local latestArmoryState = nil
+
+Hub.EmotePersist = { file = "Byte/HussValley/EmoteSlots.txt" }
+
+function Hub.EmotePersist.save()
+    if not writefile then return end
+    if makefolder then
+        pcall(makefolder, "Byte")
+        pcall(makefolder, "Byte/HussValley")
+    end
+    local sanitized = {}
+    for slot, id in pairs(SpoofedEmoteSlots) do
+        local slotStr = tostring(slot) 
+        if type(id) == "string" and id ~= "" then
+            sanitized[slotStr] = id
+        end
+    end
+    local ok, encoded = pcall(function() return HttpService:JSONEncode(sanitized) end)
+    if ok and encoded then
+        pcall(writefile, Hub.EmotePersist.file, encoded)
+    end
+end
+
+function Hub.EmotePersist.load()
+    if not isfile or not readfile then return end
+    if not isfile(Hub.EmotePersist.file) then return end
+    local ok, data = pcall(readfile, Hub.EmotePersist.file)
+    if not ok or type(data) ~= "string" or data == "" then return end
+    local okDecode, decoded = pcall(function() return HttpService:JSONDecode(data) end)
+    if not okDecode or type(decoded) ~= "table" then return end
+    for slot, id in pairs(decoded) do
+        local slotNum = tonumber(slot) 
+        if slotNum and type(id) == "string" and id ~= "" then
+            SpoofedEmoteSlots[slotNum] = id
+        end
+    end
+end
+
+Hub.EmotePersist.load()
+
+local function PlayLocalEmote(emoteId)
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    local animator = hum and hum:FindFirstChildOfClass("Animator")
+    if not animator then return end
+
+    local EmotePlayback = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmotePlayback"))
+    local EmoteCatalog = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmoteCatalog"))
+
+    if currentEmoteTrack then
+        currentEmoteTrack:Stop()
+        currentEmoteTrack = nil
+    end
+
+    currentEmoteTrack = EmotePlayback.load(animator, emoteId)
+    if not currentEmoteTrack then
+        local assetId = EmoteCatalog.assetId(emoteId)
+        if assetId then
+            local anim = Instance.new("Animation")
+            anim.AnimationId = assetId
+            task.spawn(function() pcall(function() game:GetService("ContentProvider"):PreloadAsync({anim}) end) end)
+            currentEmoteTrack = animator:LoadAnimation(anim)
+            currentEmoteTrack.Priority = Enum.AnimationPriority.Action4
+            currentEmoteTrack.Looped = true
+        end
+    end
+
+    if currentEmoteTrack then
+        currentEmoteTrack:Play(0.15)
+        char:SetAttribute("EmoteId", emoteId)
+        char:SetAttribute("EmoteStartedAt", workspace:GetServerTimeNow())
+    end
+end
+
+local function StopLocalEmote()
+    local char = LocalPlayer.Character
+    if currentEmoteTrack then
+        currentEmoteTrack:Stop()
+        currentEmoteTrack = nil
+    end
+    if char then
+        char:SetAttribute("EmoteId", nil)
+    end
+end
+
+UnlockAllGroup:AddToggle("unlockAll", {
+    Text = "Unlock All",
     Default = false,
     Callback = function(v)
         SETTINGS.knifeUnlockEnabled = v
         if v then
             getgenv().ByteKnifeUnlocker.Enable()
-            notify("Byte", "Visual Knife Unlocker Enabled", 3)
+            
+            local EmoteCatalog = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmoteCatalog"))
+            pcall(function() EmoteCatalog.ComingSoon = false end)
+            local EmoteEvent = ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmoteEvent")
+            local EmoteStoreClient = require(ReplicatedStorage.ChickenOrHero.Weapons:WaitForChild("EmoteStoreClient"))
+            local EmotePlayback = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmotePlayback"))
+
+            if not getgenv().ByteOldNamecall then
+                getgenv().ByteOldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+                    local method = getnamecallmethod()
+                    if not checkcaller() and method == "FireServer" then
+                        if self == EmoteEvent then
+                            local args = {...}
+                            if args[1] == "Play" then
+                                pcall(PlayLocalEmote, args[2])
+                                task.spawn(function()
+                                    for _, c in ipairs(getconnections(EmoteEvent.OnClientEvent)) do
+                                        if c.Function then
+                                            pcall(c.Function, "Playing", args[2])
+                                        end
+                                    end
+                                end)
+                                return
+                            elseif args[1] == "Stop" then
+                                StopLocalEmote()
+                                return
+                            end
+                        elseif self == ArmoryEvent then
+                            local args = {...}
+                            if args[1] == "EquipEmote" then
+                                local emoteId = args[2]
+                                local slot = args[3]
+                                if slot then
+                                    SpoofedEmoteSlots[slot] = emoteId
+                                    Hub.EmotePersist.save()
+                                end
+                                if latestArmoryState then
+                                    latestArmoryState.emoteSlots = latestArmoryState.emoteSlots or {}
+                                    for s, id in pairs(SpoofedEmoteSlots) do
+                                        latestArmoryState.emoteSlots[s] = id
+                                    end
+                                    task.spawn(function()
+                                        for _, c in ipairs(getconnections(ArmoryEvent.OnClientEvent)) do
+                                            if c.Function then
+                                                pcall(c.Function, "State", latestArmoryState)
+                                            end
+                                        end
+                                    end)
+                                end
+                                return
+                            end
+                        end
+                    end
+                    return getgenv().ByteOldNamecall(self, ...)
+                end)
+            end
+
+            if not getgenv().ByteOriginalEmoteLoad then
+                getgenv().ByteOriginalEmoteLoad = EmotePlayback.load
+                EmotePlayback.load = function(animator, emoteId)
+                    local track = getgenv().ByteOriginalEmoteLoad(animator, emoteId)
+                    if not track then
+                        local assetId = EmoteCatalog.assetId(emoteId)
+                        if assetId then
+                            local anim = Instance.new("Animation")
+                            anim.AnimationId = assetId
+                            local ok, fallbackTrack = pcall(function() return animator:LoadAnimation(anim) end)
+                            if ok and fallbackTrack then
+                                fallbackTrack.Priority = Enum.AnimationPriority.Action4
+                                fallbackTrack.Looped = true
+                                track = fallbackTrack
+                            end
+                            anim:Destroy()
+                        end
+                    end
+                    return track
+                end
+            end
+
+            local allEmoteIds = {}
+            for _, entry in ipairs(EmoteCatalog.Entries) do
+                allEmoteIds[entry.Id] = true
+            end
+
+            if not getgenv().ByteOriginalEmoteOwned then
+                getgenv().ByteOriginalEmoteOwned = EmoteCatalog.owned
+                EmoteCatalog.owned = function() return true end
+            end
+
+            if not getgenv().ByteOriginalEmoteAvail then
+                getgenv().ByteOriginalEmoteAvail = EmoteCatalog.available
+                EmoteCatalog.available = function() return true end
+            end
+
+            if not getgenv().ByteOriginalEquip then
+                getgenv().ByteOriginalEquip = EmoteStoreClient.equip
+                EmoteStoreClient.equip = function(self, slot)
+                    if self.selected and slot then
+                        if SpoofedEmoteSlots[slot] == self.selected then
+                            SpoofedEmoteSlots[slot] = ""
+                        else
+                            SpoofedEmoteSlots[slot] = self.selected
+                        end
+                        Hub.EmotePersist.save()
+                        if latestArmoryState then
+                            latestArmoryState.emoteSlots = latestArmoryState.emoteSlots or {}
+                            for s, id in pairs(SpoofedEmoteSlots) do
+                                latestArmoryState.emoteSlots[s] = id
+                            end
+                            for _, c in ipairs(originalArmoryConnections or {}) do
+                                if c.Function then
+                                    pcall(c.Function, "State", latestArmoryState)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            if not getgenv().ByteOriginalStoreRefresh then
+                getgenv().ByteOriginalStoreRefresh = EmoteStoreClient.refresh
+                EmoteStoreClient.refresh = function(self)
+                    local state = self and self.store and self.store.state
+                    if state then
+                        state.loaded = true
+                        state.pending = false
+                        state.emotes = state.emotes or {}
+                        for _, entry in ipairs(EmoteCatalog.Entries) do
+                            state.emotes[entry.Id] = true
+                        end
+                        state.emoteSlots = state.emoteSlots or {}
+                        for slot, id in pairs(SpoofedEmoteSlots) do
+                            state.emoteSlots[slot] = id
+                        end
+                    end
+                    return getgenv().ByteOriginalStoreRefresh(self)
+                end
+            end
+            
+            if not emoteHookConn then
+                originalArmoryConnections = {}
+                for _, c in ipairs(getconnections(ArmoryEvent.OnClientEvent)) do
+                    if c.Function then
+                        table.insert(originalArmoryConnections, c)
+                        c:Disable()
+                    end
+                end
+
+                emoteHookConn = ArmoryEvent.OnClientEvent:Connect(function(kind, state)
+                    if kind == "State" and type(state) == "table" then
+                        latestArmoryState = state
+                        if not state.emotes then state.emotes = {} end
+                        for id in pairs(allEmoteIds) do
+                            state.emotes[id] = true
+                        end
+                        if not state.emoteSlots then state.emoteSlots = {} end
+                        for slot, id in pairs(SpoofedEmoteSlots) do
+                            state.emoteSlots[slot] = id
+                        end
+                    end
+                    for _, c in ipairs(originalArmoryConnections) do
+                        if c.Function then
+                            pcall(c.Function, kind, state)
+                        end
+                    end
+                end)
+            end
+            
+            pcall(function() ArmoryEvent:FireServer("Get") end)
+            notify("Byte", "Unlock All & Emotes Enabled", 3)
         else
             getgenv().ByteKnifeUnlocker.Disable()
-            notify("Byte", "Visual Knife Unlocker Disabled", 3)
+            
+            if emoteHookConn then
+                emoteHookConn:Disconnect()
+                emoteHookConn = nil
+            end
+            for _, c in ipairs(originalArmoryConnections or {}) do
+                pcall(function() c:Enable() end)
+            end
+            originalArmoryConnections = nil
+            
+            if getgenv().ByteOldNamecall then
+                hookmetamethod(game, "__namecall", getgenv().ByteOldNamecall)
+                getgenv().ByteOldNamecall = nil
+            end
+            
+            StopLocalEmote()
+            latestArmoryState = nil
+
+            local EmoteCatalog = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmoteCatalog"))
+            local EmoteStoreClient = require(ReplicatedStorage.ChickenOrHero.Weapons:WaitForChild("EmoteStoreClient"))
+            local EmotePlayback = require(ReplicatedStorage.ChickenOrHero.Emotes:WaitForChild("EmotePlayback"))
+
+            if getgenv().ByteOriginalEmoteLoad and EmotePlayback then
+                EmotePlayback.load = getgenv().ByteOriginalEmoteLoad
+                getgenv().ByteOriginalEmoteLoad = nil
+            end
+
+            if getgenv().ByteOriginalEmoteOwned then
+                EmoteCatalog.owned = getgenv().ByteOriginalEmoteOwned
+                getgenv().ByteOriginalEmoteOwned = nil
+            end
+
+            if getgenv().ByteOriginalEmoteAvail then
+                EmoteCatalog.available = getgenv().ByteOriginalEmoteAvail
+                getgenv().ByteOriginalEmoteAvail = nil
+            end
+
+            if getgenv().ByteOriginalStoreRefresh then
+                EmoteStoreClient.refresh = getgenv().ByteOriginalStoreRefresh
+                getgenv().ByteOriginalStoreRefresh = nil
+            end
+
+            if getgenv().ByteOriginalEquip then
+                EmoteStoreClient.equip = getgenv().ByteOriginalEquip
+                getgenv().ByteOriginalEquip = nil
+            end
+     
+            pcall(function() ArmoryEvent:FireServer("Get") end)
+            notify("Byte", "Visual Unlock All Disabled", 3)
         end
     end,
-})
+}):AddKeyPicker("unlockAllKey", { Default = "None", Mode = "Toggle" })
 
 local RunnerSafety = RunnerTab:AddRightGroupbox("Protection/Gems", "shield")
 RunnerSafety:AddToggle("reviveBeforeGems", {
@@ -3895,6 +4415,34 @@ RunnerSmoothing:AddSlider("avoidStrength", {
     end,
 })
 
+RunnerSmoothing:AddToggle("smartAI", {
+    Text = "Smart AI Pathing",
+    Default = true,
+    Callback = function(v)
+        SETTINGS.smartAI = v == true
+    end,
+})
+RunnerSmoothing:AddSlider("smartMargin", {
+    Text = "Dodge Margin",
+    Min = 1,
+    Max = 8,
+    Default = 3.5,
+    Rounding = 1,
+    Callback = function(v)
+        SETTINGS.smartMargin = tonumber(v) or 3.5
+    end,
+})
+RunnerSmoothing:AddSlider("smartHorizon", {
+    Text = "AI Look-Ahead",
+    Min = 0.8,
+    Max = 2,
+    Default = 1.3,
+    Rounding = 1,
+    Callback = function(v)
+        SETTINGS.smartHorizon = tonumber(v) or 1.3
+    end,
+})
+
 RunnerSmoothing:AddToggle("showPath", {
     Text = "Show Path Line",
     Default = true,
@@ -3917,7 +4465,7 @@ CatcherCombat:AddToggle("catcherChase", {
             runtime.catcherPath = Vector3.zero
         end
     end,
-})
+}):AddKeyPicker("catcherChaseKey", { Default = "None", Mode = "Toggle" })
 CatcherCombat:AddDropdown("catcherAttackPriority", {
     Text = "Attack Priority",
     Values = {"Smart", "Tackle First", "Melee First"},
@@ -4144,6 +4692,125 @@ RunService:BindToRenderStep(RENDER_NAME, Enum.RenderPriority.Input.Value, functi
     if SETTINGS.autoSpinWheel and now - runtime.utilityTick >= 0.25 then
         runtime.utilityTick = now
         pcall(autoSpinWheelStep, now)
+    end
+
+    if AutoGearEnabled and LocalPlayer:GetAttribute("InMatch") == true then
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local role = LocalPlayer:GetAttribute("GameRole") or "Lobby"
+            local isRunner = (role == "Runner" or role == "Hider" or role == "Coward")
+            local isCatcher = (role == "Catcher" or role == "Chaser" or role == "Catch" or role == "ChaserTeam")
+            
+            if isRunner or isCatcher then
+                local nowServer = workspace:GetServerTimeNow()
+                local gearReady = nowServer >= (LocalPlayer:GetAttribute("GearReadyAt") or 0)
+                local abilityReady = nowServer >= (LocalPlayer:GetAttribute("AbilityReadyAt") or 0)
+                
+                local roleCategory = isRunner and "Runner" or "Catcher"
+                local gearId = runtime.armory and runtime.armory.equippedGear
+                local abilityId = runtime.armory and runtime.armory.equippedAbilities and runtime.armory.equippedAbilities[roleCategory]
+                
+                local shouldUseGear = false
+                local shouldUseAbility = false
+                
+                local threats = runtime.threats or {}
+                local closestThreat = threats[1]
+                local dist = closestThreat and closestThreat.distance or 999
+                local ttd = closestThreat and closestThreat.timeToDanger or 999
+                
+                if isRunner then
+                    if gearReady and gearId then
+                        if gearId == "RescueKit" then
+                            shouldUseGear = LocalPlayer:GetAttribute("RunState") == "Caught" and char:GetAttribute("RescueAvailable") == true
+                        elseif gearId == "Lifeline" then
+                            shouldUseGear = runtime.reviveTarget ~= nil
+                        elseif closestThreat then
+                            if gearId == "EmergencyAirhorn" then
+                                shouldUseGear = dist <= 16
+                            elseif gearId == "Adrenaline" or gearId == "PumpkinBomb" or gearId == "InflatableDecoy" then
+                                shouldUseGear = dist <= 25
+                            elseif gearId == "PocketDoor" then
+                                shouldUseGear = dist <= 20
+                            else
+                                shouldUseGear = dist <= 15 and ttd <= 0.6
+                            end
+                        end
+                    end
+                    
+                    if abilityReady and abilityId then
+                        if abilityId == "SoulReap" then
+                            shouldUseAbility = runtime.reviveTarget ~= nil
+                        elseif closestThreat then
+                            local tackle = closestThreat.tackle
+                            if abilityId == "OneHitShield" then
+                                shouldUseAbility = (tackle and dist <= 12) or ttd <= 0.3
+                            elseif abilityId == "Cloak" or abilityId == "TimeWarp" or abilityId == "Burrow" then
+                                shouldUseAbility = dist <= 15 or ttd <= 0.4
+                            elseif abilityId == "AlleyOop" or abilityId == "FartCloud" then
+                                shouldUseAbility = dist <= 25
+                            else
+                                shouldUseAbility = dist <= 15 and ttd <= 0.6
+                            end
+                        end
+                    end
+                    
+                elseif isCatcher then
+                    local target = runtime.catcherTarget
+                    if target then
+                        local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+                        if targetRoot then
+                            local targetDist = (targetRoot.Position - char.HumanoidRootPart.Position).Magnitude
+                            if gearReady and gearId then
+                                if gearId == "RocketShoes" then
+                                    shouldUseGear = targetDist > 15 and targetDist <= 35
+                                elseif gearId == "BearTrap" or gearId == "BowlingBall" or gearId == "RufusLeash" then
+                                    shouldUseGear = targetDist <= 20
+                                else
+                                    shouldUseGear = targetDist <= 25
+                                end
+                            end
+                            
+                            if abilityReady and abilityId then
+                                if abilityId == "BigDagger" then
+                                    shouldUseAbility = targetDist <= 10
+                                elseif abilityId == "BearTrap" or abilityId == "BowlingBall" or abilityId == "RufusLeash" or abilityId == "SpringBox" then
+                                    shouldUseAbility = targetDist <= 20
+                                elseif abilityId == "KingsDemise" or abilityId == "PiratesCall" then
+                                    shouldUseAbility = targetDist <= 30
+                                else
+                                    shouldUseAbility = targetDist <= 20
+                                end
+                            end
+                        end
+                    end
+                end
+                
+                local useDirection = runtime.path
+                if useDirection.Magnitude < 0.05 then
+                    useDirection = char.HumanoidRootPart.CFrame.LookVector
+                end
+                
+                local now = os.clock()
+                
+                if shouldUseGear and now - lastGearPress > 0.6 then
+                    lastGearPress = now
+                    task.spawn(function()
+                        pcall(function()
+                            GearPredictionClient.request(gearId, useDirection)
+                        end)
+                    end)
+                end
+                
+                if shouldUseAbility and now - lastAbilityPress > 0.6 then
+                    lastAbilityPress = now
+                    task.spawn(function()
+                        pcall(function()
+                            GearPredictionClient.request(abilityId, useDirection)
+                        end)
+                    end)
+                end
+            end
+        end
     end
 end)
 
