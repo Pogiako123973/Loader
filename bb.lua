@@ -2012,7 +2012,7 @@ function UnloadScript()
         'SlashFX_Rainbow', 'SlashFX_Toggle',
         'Show_Wins_Toggle', 'Show_Kills_Toggle',
         'ThunderDash_NoCD_Toggle', 'Dash_NoCD_Toggle',
-        'Immortality_Toggle',
+        'Immortal_Toggle',
         'Triggerbot_Toggle', 'Triggerbot_UI_Toggle',
         'Manual_Spam_UI_Toggle',
     }
@@ -2093,6 +2093,8 @@ function UnloadScript()
         end
         Env.AutoJump.Enabled = false
     end
+
+    if Env._Immortal_Stop then pcall(Env._Immortal_Stop) end
 
     if Env._PreclickDB_State then
         Env._PreclickDB_State.Enabled = false
@@ -3100,6 +3102,282 @@ do
 end
 
 do
+    local PC = {
+        Enabled = false,
+        Distance = 30,
+        Delay = 100,
+        OneVOne = false,
+        Visualize = false,
+        Rainbow = false,
+        Color = Color3.fromRGB(255, 0, 0),
+    }
+    Env._Preclick_Death = PC
+
+    local PC_Group = Tabs.Main:AddLeftGroupbox("Preclick", "crosshair")
+    
+    local Preclick_Death_Toggle = PC_Group:AddToggle('Preclick_Death_Toggle', {
+        Text = 'Preclick',
+        Default = false,
+        Notify = true,
+        Tooltip = 'Preclicks when an enemy dies nearby',
+        Callback = function(state) PC.Enabled = state end
+    })
+
+    Preclick_Death_Toggle:AddKeyPicker('Preclick_Death_Keybind', {
+        Text = 'Preclick',
+        Mode = 'Toggle',
+    })
+
+    local Preclick_1v1_Toggle = PC_Group:AddToggle('Preclick_1v1_Toggle', {
+        Text = 'Preclick 1v1',
+        Default = false,
+        Notify = true,
+        Tooltip = 'Only preclicks in 1v1/standoffs (ignores distance)',
+        Callback = function(state) PC.OneVOne = state end
+    })
+
+    Preclick_1v1_Toggle:AddKeyPicker('Preclick_1v1_Keybind', {
+        Text = 'Preclick 1v1',
+        Mode = 'Toggle',
+    })
+    
+    PC_Group:AddSlider('Preclick_Distance_Slider', {
+        Text = 'Max Distance',
+        Default = 30, Min = 1, Max = 100, Increment = 1,
+        Callback = function(v) PC.Distance = v end
+    })
+    
+    PC_Group:AddSlider('Preclick_Delay_Slider', {
+        Text = 'Delay (ms)',
+        Default = 100, Min = 0, Max = 500, Increment = 10,
+        Callback = function(v) PC.Delay = v end
+    })
+
+    PC_Group:AddDivider()
+
+    local VizFolder = Instance.new("Folder")
+    VizFolder.Name = "PreclickVisualizer"
+    VizFolder:SetAttribute("NoRender_Ignore", true)
+    VizFolder.Parent = workspace
+
+    local SEGMENTS = 90
+    local RING_HEIGHT = 0.12
+    local RING_WIDTH = 0.45
+    local FLOOR_OFFSET = 0.08
+    local COMET_SPEED = 0.28
+    local COMET_FALLOFF = 12
+    local WHITE = Color3.new(1, 1, 1)
+
+    local function NewVizPart(name)
+        local p = Instance.new("Part")
+        p.Name = name
+        p.Material = Enum.Material.Neon
+        p.Anchored = true
+        p.CanCollide = false
+        p.CanQuery = false
+        p.CanTouch = false
+        p.CastShadow = false
+        p.Massless = true
+        p.Transparency = 1
+        p:SetAttribute("NoRender_Ignore", true)
+        p.Parent = VizFolder
+        return p
+    end
+
+    local Ring, RingCFs = table.create(SEGMENTS), table.create(SEGMENTS)
+    local Cos, Sin = table.create(SEGMENTS), table.create(SEGMENTS)
+    for i = 1, SEGMENTS do
+        local a = (i / SEGMENTS) * math.pi * 2
+        Cos[i], Sin[i] = math.cos(a), math.sin(a)
+        Ring[i] = NewVizPart("PCViz_" .. i)
+    end
+
+    local RayParams = RaycastParams.new()
+    RayParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local VizTime, Fade = 0, 0
+    local VizRadius = nil
+    local GroundY, NextRay = nil, 0
+    local FilteredChar = nil
+    local VizHidden = true
+
+    local function HideViz()
+        for i = 1, SEGMENTS do Ring[i].Transparency = 1 end
+        VizHidden = true
+    end
+
+    Connections_Manager['Preclick_Viz_Loop'] = RunService.RenderStepped:Connect(function(dt)
+        if _ScriptUnloaded then return end
+
+        local target = (PC.Enabled and PC.Visualize) and 1 or 0
+        Fade += (target - Fade) * math.min(1, dt * 10)
+        if target == 0 and Fade < 0.01 then
+            Fade = 0
+            if not VizHidden then HideViz() end
+            return
+        end
+
+        local char = Player.Character
+        local root = char and char.PrimaryPart
+        if not root then return end
+        VizHidden = false
+        VizTime += dt
+
+        VizRadius = VizRadius and (VizRadius + (PC.Distance - VizRadius) * math.min(1, dt * 12)) or PC.Distance
+        local R = VizRadius
+        local center = root.Position
+
+        local now = os.clock()
+        if now >= NextRay then
+            NextRay = now + 0.1
+            if FilteredChar ~= char then
+                FilteredChar = char
+                RayParams.FilterDescendantsInstances = { char, VizFolder }
+            end
+            local hit = workspace:Raycast(center, Vector3.new(0, -20, 0), RayParams)
+            local wantY = (hit and hit.Position.Y or (center.Y - 3)) + FLOOR_OFFSET
+            GroundY = GroundY and (GroundY + (wantY - GroundY) * 0.5) or wantY
+        end
+        local gy = GroundY or (center.Y - 3)
+
+        local chord = 2 * R * math.sin(math.pi / SEGMENTS) * 1.3
+        local cx, cz = center.X, center.Z
+        local head = (VizTime * COMET_SPEED) % 1
+        local rainbow = PC.Rainbow
+        local baseColor = PC.Color
+
+        for i = 1, SEGMENTS do
+            local t = i / SEGMENTS
+            local wave = math.sin(VizTime * 6 - t * math.pi * 6) * 0.5 + 0.5
+            local currentHeight = RING_HEIGHT + wave * 2.5
+            
+            local p = Ring[i]
+            p.Size = Vector3.new(chord, currentHeight, RING_WIDTH)
+            
+            local posY = gy + (currentHeight / 2)
+            local pos = Vector3.new(cx + Cos[i] * R, posY, cz + Sin[i] * R)
+            
+            RingCFs[i] = CFrame.lookAt(pos, Vector3.new(cx, posY, cz))
+
+            local d = (head - t) % 1
+            local glow = math.exp(-d * COMET_FALLOFF)
+
+            local col = rainbow and Color3.fromHSV((VizTime * 0.15 + t) % 1, 0.85, 1) or baseColor
+            p.Color = col:Lerp(WHITE, glow * 0.6)
+            p.Transparency = 1 - Fade * (0.35 + glow * 0.45)
+        end
+        workspace:BulkMoveTo(Ring, RingCFs, Enum.BulkMoveMode.FireCFrameChanged)
+    end)
+
+    PC_Group:AddToggle('Preclick_Visuals_Toggle', {
+        Text = 'Show Visualizer',
+        Default = false,
+        Tooltip = 'Displays a circle showing the preclick range',
+        Callback = function(state) PC.Visualize = state end
+    })
+
+    PC_Group:AddColorPicker('Preclick_Visual_Color', {
+        Default = Color3.fromRGB(255, 0, 0),
+        Title = 'Visualizer Color',
+        Callback = function(color) PC.Color = color end
+    })
+
+    PC_Group:AddToggle('Preclick_Visuals_Rainbow_Toggle', {
+        Text = 'Rainbow Visualizer',
+        Default = false,
+        Callback = function(state) PC.Rainbow = state end
+    })
+
+    Connections_Manager['Preclick_Death'] = AliveFolder.ChildRemoved:Connect(function(RemovedChar)
+        if _ScriptUnloaded or not PC.Enabled then return end
+        if not (Library and Library.Toggles and Library.Toggles.Auto_Parry_Toggle and Library.Toggles.Auto_Parry_Toggle.Value) then return end
+
+        local Char = Player.Character
+        if not Char or Char.Parent ~= AliveFolder then return end
+        if not Auto_Parry.Is_Alive(Char) then return end
+        
+        local CharRoot = Char:FindFirstChild("HumanoidRootPart") or Char.PrimaryPart
+        if not CharRoot then return end
+
+        local RemovedPos = nil
+        pcall(function()
+            local RRoot = RemovedChar:FindFirstChild("HumanoidRootPart") or RemovedChar.PrimaryPart
+            if RRoot then
+                RemovedPos = RRoot.Position
+            else
+                RemovedPos = RemovedChar:GetPivot().Position
+            end
+        end)
+
+        local AliveCount = #AliveFolder:GetChildren()
+        local IsOneVOne = (AliveCount <= 2)
+        
+        local Distance = 0 
+        if RemovedPos then
+            Distance = (CharRoot.Position - RemovedPos).Magnitude
+        end
+
+        local TriggerPreclick = (PC.OneVOne and IsOneVOne) or (Distance <= PC.Distance)
+
+        if TriggerPreclick then
+            task.spawn(function()
+                local is1v1 = (PC.OneVOne and IsOneVOne)
+                -- Bypass delay for 1v1 standoffs
+                local delayTime = is1v1 and 0 or math.max(PC.Delay / 1000, 0.03)
+                if delayTime > 0 then task.wait(delayTime) end
+                
+                if _ScriptUnloaded or not PC.Enabled then return end
+                
+                local Folder = Auto_Parry.Get_Ball_Folder()
+                if not Folder then return end
+                
+                local ShouldPreclick = false
+                if is1v1 then
+                    -- Bypass ball check in 1v1 so it fires the exact frame the enemy dies
+                    ShouldPreclick = true
+                else
+                    for _, Ball in ipairs(Folder:GetChildren()) do
+                        if Ball:IsA('BasePart') and Ball:GetAttribute('realBall') then
+                            ShouldPreclick = true
+                            break
+                        end
+                    end
+                end
+
+                if ShouldPreclick then
+                    local ap_on = Library and Library.Toggles and Library.Toggles.Auto_Parry_Toggle and Library.Toggles.Auto_Parry_Toggle.Value
+                    if ap_on then
+                        Parries = 0
+                        Keypress_Last_Fire = 0
+                        Parried = false
+                        Auto_Parry.Multi_Ball_Busy = false
+                        
+                        if Env.Animation_Fix and Parry_Input_Method ~= 'Keypress' and not Is_Mobile then
+                            pcall(function()
+                                keypress(0x46)
+                                keyrelease(0x46)
+                            end)
+                        else
+                            if not Is_Mobile then
+                                pcall(Auto_Parry.Parry_Animation)
+                            end
+                        end
+                        
+                        Auto_Parry.Parry(Selected_Parry_Type)
+                    end
+                end
+            end)
+        end
+    end)
+    
+    local oldUnload = Env.Visual_Unload
+    Env.Visual_Unload = function()
+        if Connections_Manager['Preclick_Viz_Loop'] then Connections_Manager['Preclick_Viz_Loop']:Disconnect() end
+        if VizFolder then VizFolder:Destroy() end
+        if oldUnload then oldUnload() end
+    end
+end
+do
     local D = {
         Enabled = false,
         On_Player = false,
@@ -3855,6 +4133,110 @@ CD_Protection_Group:AddToggle('Dash_NoCD_Toggle', {
         end
     end
 })
+
+do
+    Env.Immortal = Env.Immortal or {
+        Initialized = false,
+        State = { Enabled = false },
+        HRP = nil,
+        OrbitConn = nil,
+        CharConn = nil,
+        DesyncTypes = {},
+        Hooked = false,
+    }
+    local I = Env.Immortal
+
+    function Env._Immortal_Start()
+        I.State.Enabled = true
+        if I.Initialized then return end
+        I.Initialized = true
+
+        I.CharConn = Player.CharacterAdded:Connect(function(char)
+            I.HRP = char:WaitForChild("HumanoidRootPart", 5)
+        end)
+        if Player.Character then
+            I.HRP = I.HRP or Player.Character:FindFirstChild("HumanoidRootPart")
+        end
+
+        if not I.Hooked then
+            if not (hookmetamethod and newcclosure) then
+                I.State.Enabled = false
+                I.Initialized = false
+                return
+            end
+            local oldIndex
+            oldIndex = hookmetamethod(game, "__index", newcclosure(function(self, key)
+                if key ~= "CFrame" then return oldIndex(self, key) end
+                if self ~= I.HRP then return oldIndex(self, key) end
+                if not I.State.Enabled then return oldIndex(self, key) end
+                if checkcaller() then return oldIndex(self, key) end
+                return I.DesyncTypes[1] or oldIndex(self, key)
+            end))
+            I.Hooked = true
+        end
+
+        I.OrbitConn = RunService.Heartbeat:Connect(function()
+            if not I.State.Enabled or not I.HRP then return end
+            if not I.HRP.Parent then
+                I.HRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+                if not I.HRP then return end
+            end
+
+            I.DesyncTypes[1] = I.HRP.CFrame
+            I.DesyncTypes[2] = I.HRP.AssemblyLinearVelocity
+
+            local orbitRadius = 20
+            local angleMultiplier = 20
+            local rotAngle = tick() * math.pi * 2 * angleMultiplier / 5
+
+            local pos = Vector3.new(
+                math.cos(rotAngle) * orbitRadius,
+                0,
+                math.sin(rotAngle) * orbitRadius
+            )
+
+            I.HRP.CFrame = I.DesyncTypes[1] + pos
+            I.HRP.AssemblyLinearVelocity = Vector3.zero
+
+            RunService.RenderStepped:Wait()
+
+            if I.State.Enabled and I.HRP then
+                I.HRP.CFrame = I.DesyncTypes[1]
+                I.HRP.AssemblyLinearVelocity = I.DesyncTypes[2]
+            end
+        end)
+
+        if I.OffsetConn then pcall(function() I.OffsetConn:Disconnect() end) end
+        I.OffsetConn = RunService.Heartbeat:Connect(function()
+            if not I.State.Enabled then return end
+            if not I.HRP or not I.HRP.Parent then
+                I.HRP = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            end
+            if I.HRP then
+                I.HRP.CFrame = I.HRP.CFrame + Vector3.new(0, 0.01, 0)
+            end
+        end)
+    end
+
+    function Env._Immortal_Stop()
+        I.State.Enabled = false
+        if I.OrbitConn then pcall(function() I.OrbitConn:Disconnect() end) I.OrbitConn = nil end
+        if I.OffsetConn then pcall(function() I.OffsetConn:Disconnect() end) I.OffsetConn = nil end
+        if I.CharConn then pcall(function() I.CharConn:Disconnect() end) I.CharConn = nil end
+        I.DesyncTypes[1] = nil
+        I.DesyncTypes[2] = nil
+        I.Initialized = false
+    end
+
+    local T = Tabs.Main:AddRightGroupbox("Immortal", "shield"):AddToggle('Immortal_Toggle', {
+        Text = 'Immortal',
+        Default = false,
+        Callback = function(s)
+            if s then pcall(Env._Immortal_Start) else pcall(Env._Immortal_Stop) end
+        end
+    })
+    T:AddKeyPicker('Immortal_Keybind', { Text = 'Immortal', Mode = 'Toggle' })
+end
 
 do
     local TweenService = game:GetService('TweenService')
@@ -4689,38 +5071,57 @@ end
 do
     local Viz_Group = Tabs.Client:AddLeftGroupbox("Visualizer", "wallpaper")
     local VizEnabled, VizColor = false, Color3.new(0, 1, 0)
-    local RING_COUNT = 30
-    local Viz, VizFolder = table.create(RING_COUNT), nil
-    local Viz_CFrame, Viz_Radius = CFrame.new(), 15
+    local VizRainbow = false
+    
+    local VizFolder = Instance.new("Folder")
+    VizFolder.Name = "ParryVisualizer"
+    VizFolder:SetAttribute("NoRender_Ignore", true)
+    VizFolder.Parent = workspace
 
-    local OFFSETS, ROTATIONS = table.create(RING_COUNT), table.create(RING_COUNT)
-    for i = 1, RING_COUNT do
-        local angle = (i / RING_COUNT) * math.pi * 2
-        OFFSETS[i] = Vector3.new(math.cos(angle), 0, math.sin(angle))
-        ROTATIONS[i] = CFrame.Angles(0, -angle - math.pi / 2, 0)
+    local SEGMENTS = 90
+    local RING_HEIGHT = 0.12
+    local RING_WIDTH = 0.45
+    local FLOOR_OFFSET = 0.08
+    local COMET_SPEED = 0.28
+    local COMET_FALLOFF = 12
+    local WHITE = Color3.new(1, 1, 1)
+
+    local function NewVizPart(name)
+        local p = Instance.new("Part")
+        p.Name = name
+        p.Material = Enum.Material.Neon
+        p.Anchored = true
+        p.CanCollide = false
+        p.CanQuery = false
+        p.CanTouch = false
+        p.CastShadow = false
+        p.Massless = true
+        p.Transparency = 1
+        p:SetAttribute("NoRender_Ignore", true)
+        p.Parent = VizFolder
+        return p
     end
 
-    local function DestroyVizParts()
-        if VizFolder then VizFolder:Destroy() VizFolder = nil end
-        table.clear(Viz)
-        Viz_CFrame, Viz_Radius = CFrame.new(), 15
+    local Ring, RingCFs = table.create(SEGMENTS), table.create(SEGMENTS)
+    local Cos, Sin = table.create(SEGMENTS), table.create(SEGMENTS)
+    for i = 1, SEGMENTS do
+        local a = (i / SEGMENTS) * math.pi * 2
+        Cos[i], Sin[i] = math.cos(a), math.sin(a)
+        Ring[i] = NewVizPart("ParryViz_" .. i)
     end
 
-    local function CreateVizParts()
-        DestroyVizParts()
-        VizFolder = Instance.new("Folder")
-        VizFolder.Name = "ParryVizFolder"
-        VizFolder:SetAttribute("NoRender_Ignore", true)
-        VizFolder.Parent = workspace
+    local RayParams = RaycastParams.new()
+    RayParams.FilterType = Enum.RaycastFilterType.Exclude
 
-        for i = 1, RING_COUNT do
-            local p = Instance.new("Part")
-            p.Name, p.Material, p.Color = "Viz_" .. i, Enum.Material.Neon, VizColor
-            p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch, p.Massless = true, false, false, false, true
-            p.Size = Vector3.zero
-            p.Parent = VizFolder
-            Viz[i] = p
-        end
+    local VizTime, Fade = 0, 0
+    local VizRadius = nil
+    local GroundY, NextRay = nil, 0
+    local FilteredChar = nil
+    local VizHidden = true
+
+    local function HideViz()
+        for i = 1, SEGMENTS do Ring[i].Transparency = 1 end
+        VizHidden = true
     end
 
     local function CalcVizRadius()
@@ -4734,64 +5135,74 @@ do
         return 15
     end
 
-    local function StopVisualizer()
-        if Connections_Manager['Visualizer'] then
-            Connections_Manager['Visualizer']:Disconnect()
-            Connections_Manager['Visualizer'] = nil
-        end
-        if Connections_Manager['Viz_CharacterAdded'] then
-            Connections_Manager['Viz_CharacterAdded']:Disconnect()
-            Connections_Manager['Viz_CharacterAdded'] = nil
-        end
-        DestroyVizParts()
-    end
+    Connections_Manager['Visualizer'] = RunService.RenderStepped:Connect(function(dt)
+        if _ScriptUnloaded then return end
 
-    local function StartVisualizer()
-        if not Connections_Manager['Viz_CharacterAdded'] then
-            Connections_Manager['Viz_CharacterAdded'] = Player.CharacterAdded:Connect(function(char)
-                DestroyVizParts()
-                if VizEnabled then CreateVizParts() end
-                char:WaitForChild('Humanoid').Died:Once(DestroyVizParts)
-            end)
+        local target = VizEnabled and 1 or 0
+        Fade += (target - Fade) * math.min(1, dt * 10)
+        if target == 0 and Fade < 0.01 then
+            Fade = 0
+            if not VizHidden then HideViz() end
+            return
         end
 
-        if not Connections_Manager['Visualizer'] then
-            Connections_Manager['Visualizer'] = RunService.RenderStepped:Connect(function(dt)
-                local root = Player.Character and Player.Character.PrimaryPart
-                if not root then return end
+        local char = Player.Character
+        local root = char and char.PrimaryPart
+        if not root then return end
+        VizHidden = false
+        VizTime += dt
 
-                local Target_Radius = CalcVizRadius()
-                if Target_Radius > Viz_Radius then
-                    Viz_Radius = Target_Radius
-                else
-                    Viz_Radius = Viz_Radius + (Target_Radius - Viz_Radius) * math.min(1, dt * 8)
-                end
-                Viz_CFrame = CFrame.new(root.Position)
+        local targetRadius = CalcVizRadius()
+        VizRadius = VizRadius and (VizRadius + (targetRadius - VizRadius) * math.min(1, dt * 8)) or targetRadius
+        local R = VizRadius
+        local center = root.Position
 
-                local partLength = (math.pi * 2 * Viz_Radius) / RING_COUNT
-                local partSize = Vector3.new(partLength, 0.20, 0.4)
-
-                for i = 1, RING_COUNT do
-                    local part = Viz[i]
-                    if part then
-                        part.Size = partSize
-                        part.CFrame = Viz_CFrame * CFrame.new(OFFSETS[i] * Viz_Radius) * ROTATIONS[i]
-                    end
-                end
-            end)
+        local now = os.clock()
+        if now >= NextRay then
+            NextRay = now + 0.1
+            if FilteredChar ~= char then
+                FilteredChar = char
+                RayParams.FilterDescendantsInstances = { char, VizFolder }
+            end
+            local hit = workspace:Raycast(center, Vector3.new(0, -20, 0), RayParams)
+            local wantY = (hit and hit.Position.Y or (center.Y - 3)) + FLOOR_OFFSET
+            GroundY = GroundY and (GroundY + (wantY - GroundY) * 0.5) or wantY
         end
-    end
+        local gy = GroundY or (center.Y - 3)
+
+        local chord = 2 * R * math.sin(math.pi / SEGMENTS) * 1.3
+        local cx, cz = center.X, center.Z
+        local head = (VizTime * COMET_SPEED) % 1
+        local baseColor = VizColor
+
+        for i = 1, SEGMENTS do
+            local t = i / SEGMENTS
+            local wave = math.sin(VizTime * 6 - t * math.pi * 6) * 0.5 + 0.5
+            local currentHeight = RING_HEIGHT + wave * 2.5
+            
+            local p = Ring[i]
+            p.Size = Vector3.new(chord, currentHeight, RING_WIDTH)
+            
+            local posY = gy + (currentHeight / 2)
+            local pos = Vector3.new(cx + Cos[i] * R, posY, cz + Sin[i] * R)
+            
+            RingCFs[i] = CFrame.lookAt(pos, Vector3.new(cx, posY, cz))
+
+            local d = (head - t) % 1
+            local glow = math.exp(-d * COMET_FALLOFF)
+
+            local col = VizRainbow and Color3.fromHSV((VizTime * 0.15 + t) % 1, 0.85, 1) or baseColor
+            p.Color = col:Lerp(WHITE, glow * 0.6)
+            
+            p.Transparency = 1 - Fade * (0.35 + glow * 0.45)
+        end
+        workspace:BulkMoveTo(Ring, RingCFs, Enum.BulkMoveMode.FireCFrameChanged)
+    end)
 
     local Visualizer_Toggle = Viz_Group:AddToggle('Visualizer_Toggle', {
         Text = 'Visualizer', Tooltip = 'Shows parry range visualization', Default = false,
         Callback = function(state)
             VizEnabled = state
-            if state then
-                CreateVizParts()
-                StartVisualizer()
-            else
-                StopVisualizer()
-            end
         end
     })
 
@@ -4799,11 +5210,21 @@ do
         SaveId = "Visualizer_Color", Name = "Visualizer Color", Default = Color3.new(0, 1, 0),
         Callback = function(color)
             VizColor = color
-            for i = 1, RING_COUNT do
-                if Viz[i] then Viz[i].Color = color end
-            end
         end
     })
+    
+    Viz_Group:AddToggle('Visualizer_Rainbow_Toggle', {
+        Text = 'Rainbow Visualizer',
+        Default = false,
+        Callback = function(state) VizRainbow = state end
+    })
+    
+    local oldUnload = Env.Visual_Unload
+    Env.Visual_Unload = function()
+        if Connections_Manager['Visualizer'] then Connections_Manager['Visualizer']:Disconnect() end
+        if VizFolder then VizFolder:Destroy() end
+        if oldUnload then oldUnload() end
+    end
 end
 do
 do
@@ -9856,7 +10277,9 @@ do
         if not Q.Enabled_Blind then return end
         if os.clock() >= Q.Active_Until then return end
         local blind = Lighting:FindFirstChild("Blindness")
-        if blind and blind.Enabled then blind.Enabled = false end
+        if blind and blind:IsA("Atmosphere") and blind.Density > 0 then
+            ClearBlindness(blind)
+        end
         KillBlindGui()
     end
 
@@ -9884,10 +10307,17 @@ do
                 end))
             end
         end
-        Track("Quasar_BlindProp", Lighting:GetPropertyChangedSignal("Enabled"):Connect(OnBlindnessChanged))
+        Track("Quasar_LightingChild", Lighting.ChildAdded:Connect(function(inst)
+            if inst.Name == "Blindness" and inst:IsA("Atmosphere") then
+                Track("Quasar_BlindProp_" .. tostring(inst), inst:GetPropertyChangedSignal("Density"):Connect(OnBlindnessChanged))
+                if Q.Enabled_Blind and os.clock() < Q.Active_Until then
+                    ClearBlindness(inst)
+                end
+            end
+        end))
         local blind = Lighting:FindFirstChild("Blindness")
-        if blind then
-            Track("Quasar_BlindProp2", blind:GetPropertyChangedSignal("Enabled"):Connect(OnBlindnessChanged))
+        if blind and blind:IsA("Atmosphere") then
+            Track("Quasar_BlindProp", blind:GetPropertyChangedSignal("Density"):Connect(OnBlindnessChanged))
         end
         Track("Quasar_Atmo", workspace.ChildAdded:Connect(OnAtmosphereAdded))
         Track("Quasar_Cam", RunService.PreRender:Connect(function()
