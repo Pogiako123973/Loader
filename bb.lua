@@ -24,7 +24,7 @@ local function Get_Comp_Ping()
     if Now - Ping_Sample_At < PING_SAMPLE_INTERVAL then return Comp_Ping end
     Ping_Sample_At = Now
 
-    local Raw = math.clamp(Pings:GetValue(), 0, 500)
+    local Raw = math.clamp(tonumber(select(2, pcall(function() return Pings:GetValue() end))) or 0, 0, 500)
     if not Ping_Mean then
         Ping_Mean = Raw
     else
@@ -165,7 +165,7 @@ do
             local realPing = 0
             local pingStat = Stats.Network.ServerStatsItem:FindFirstChild("Data Ping")
             if pingStat then
-                realPing = math.floor(pingStat:GetValue())
+                realPing = math.floor(tonumber(select(2, pcall(function() return pingStat:GetValue() end))) or 0)
             end
             
             Info.Text = string.format("%s | %d FPS | %d MS | %s", os.date("%H:%M:%S"), math.floor(frames / (now - lastUpdate)), realPing, cachedRegion)
@@ -378,7 +378,23 @@ task.spawn(function()
                     return
                 end
                 if typeof(Server_Position) == 'Vector3' then
-                    Server_Ball_Positions[Ball] = Server_Position
+                    local now = os.clock()
+                    local entry = Server_Ball_Positions[Ball]
+                    if not entry then
+                        Server_Ball_Positions[Ball] = { pos = Server_Position, vel = Vector3.zero, t = now }
+                    else
+                        local dt = now - entry.t
+                        if dt > 0.005 and dt < 0.5 then
+                            local v = (Server_Position - entry.pos) / dt
+                            if v.Magnitude < 500 then
+                                entry.vel = v
+                            else
+                                entry.vel = Vector3.zero
+                            end
+                        end
+                        entry.pos = Server_Position
+                        entry.t = now
+                    end
                 end
             end)
         end
@@ -389,18 +405,22 @@ local function GetBallPosition(ball)
     if getgenv().GetAccurateBallPosition then
         return getgenv().GetAccurateBallPosition(ball)
     end
-    return Server_Ball_Positions[ball] or ball.Position
+    local entry = Server_Ball_Positions[ball]
+    if entry then return entry.pos end
+    return ball.Position
 end
 
 
 local function GetPredictedBallPosition(ball)
     local pos = GetBallPosition(ball)
     if not ball then return pos end
-    local zoomies = ball:FindFirstChild('zoomies')
-    if not zoomies then return pos end
-    local ping = Get_Comp_Ping()
-    local pred_time = math.clamp(ping / 1000 + 0.05, 0.05, 0.30)
-    return pos + zoomies.VectorVelocity * pred_time
+    local entry = Server_Ball_Positions[ball]
+    if not entry or not entry.vel then return pos end
+    local pred_time = math.clamp(
+        Get_Comp_Ping() / 1000 + math.min(os.clock() - entry.t, 0.1) * 0.5 + 0.02,
+        0.04, 0.30
+    )
+    return pos + entry.vel * pred_time
 end
 
 function Auto_Parry.Get_Balls(single)
@@ -777,7 +797,7 @@ function Auto_Parry.Parry(Parry_Type, Silent)
         Auto_Parry.Parry_Animation()
     end
     
-    if Parries >= 7 then return false end
+    if Parries >= 10 then return false end
 
     Parries += 1
     task.delay(0.05, function()
@@ -1929,6 +1949,14 @@ function UnloadScript()
     if Env.Visual_Unload == UnloadScript then Env.Visual_Unload = nil end
     _ScriptUnloaded = true
     Env.Parry_On_Fire = nil
+    if Library then
+        pcall(function() Library:Unload() end)
+        Library = nil
+    end
+    if Window then
+        pcall(function() Window:Destroy() end)
+        Window = nil
+    end
     if Env._WatermarkGui then
         pcall(function()
             if Connections_Manager['Watermark_FPS'] then
@@ -1941,32 +1969,43 @@ function UnloadScript()
     end
     do
         if Env._Unlock_RunReverters then
-            Env._Unlock_RunReverters()
+            pcall(Env._Unlock_RunReverters)
         end
     end
     do
         if Env._Restore_FOV then
-            Env._Restore_FOV()
+            pcall(Env._Restore_FOV)
         end
     end
     do
         if Env._Destroy_Mobile_Spam then
-            Env._Destroy_Mobile_Spam()
+            pcall(Env._Destroy_Mobile_Spam)
         end
     end
     do
         if Env._Destroy_Mobile_Triggerbot then
-            Env._Destroy_Mobile_Triggerbot()
+            pcall(Env._Destroy_Mobile_Triggerbot)
+        end
+    end
+    do
+        if Env.MobileParry and Env.MobileParry.Destroy then
+            pcall(Env.MobileParry.Destroy)
+        end
+    end
+    do
+        if Env._MobileMenuButton then
+            pcall(function() Env._MobileMenuButton:Destroy() end)
+            Env._MobileMenuButton = nil
         end
     end
     do
         if Env._DeviceSpoofUnload then
-            Env._DeviceSpoofUnload()
+            pcall(Env._DeviceSpoofUnload)
         end
     end
     do
         if Env._TB_Stop then
-            Env._TB_Stop()
+            pcall(Env._TB_Stop)
             Env._TB_Stop = nil
         end
     end
@@ -1994,7 +2033,7 @@ function UnloadScript()
     end
     do
         if Env._AntiLag_Stop then
-            Env._AntiLag_Stop()
+            pcall(Env._AntiLag_Stop)
             Env._AntiLag_Stop = nil
         end
     end
@@ -2015,6 +2054,15 @@ function UnloadScript()
         'Immortal_Toggle',
         'Triggerbot_Toggle', 'Triggerbot_UI_Toggle',
         'Manual_Spam_UI_Toggle',
+        'Mobile_Parry_UI_Toggle',
+        'Preclick_Death_Toggle', 'Preclick_1v1_Toggle',
+        'Preclick_Visuals_Toggle', 'Preclick_Visuals_Rainbow_Toggle',
+        'Preclick_DB_Toggle',
+        'Auto_Jump_Toggle', 'Double_Jump_Toggle', 'Auto_Jump_UI_Toggle',
+        'Visualizer_Rainbow_Toggle',
+        'Quasar_Blind_Toggle', 'Quasar_Disorient_Toggle',
+        'Infinity_Aura_Enabled', 'SOF_Aura_Enabled', 'SOF_Aura_Rainbow',
+        'DS_Aura_Enabled', 'DS_Aura_Rainbow', 'REAPER_Aura_Enabled', 'GA_Aura_Enabled',
     }
 
     if Library then
@@ -2067,31 +2115,16 @@ function UnloadScript()
         Env._Reveal_Cleanup = nil
     end
 
-    if Library then
-        Library:Unload()
-        Library = nil
-    end
-
-    if Window then
-        Window:Destroy()
-        Window = nil
-    end
-
     Env.Cooldown_Protection = nil
     Env.Auto_Ability = nil
     Env.Animation_Fix = nil
     Env.ThunderDash_NoCD = nil
 
     if Env.AutoJump then
-        if Env.AutoJump.Conn then
-            pcall(function() Env.AutoJump.Conn:Disconnect() end)
-            Env.AutoJump.Conn = nil
+        if Env.AutoJump.Destroy then
+            pcall(Env.AutoJump.Destroy)
         end
-        if Env.AutoJump.GUI then
-            pcall(function() Env.AutoJump.GUI:Destroy() end)
-            Env.AutoJump.GUI = nil
-        end
-        Env.AutoJump.Enabled = false
+        Env.AutoJump = nil
     end
 
     if Env._Immortal_Stop then pcall(Env._Immortal_Stop) end
@@ -2267,7 +2300,7 @@ local Auto_Parry_Toggle = Main_Group:AddToggle('Auto_Parry_Toggle', {
                     Parried = true
                     task.spawn(function()
                         local T = os.clock()
-                        repeat RunService.PreRender:Wait() until (os.clock() - T) >= 0.6 or not Parried
+                        repeat RunService.PreRender:Wait() until (os.clock() - T) >= 0.5 or not Parried
                         Parried = false
                     end)
                 end
@@ -3322,7 +3355,6 @@ do
         if TriggerPreclick then
             task.spawn(function()
                 local is1v1 = (PC.OneVOne and IsOneVOne)
-                -- Bypass delay for 1v1 standoffs
                 local delayTime = is1v1 and 0 or math.max(PC.Delay / 1000, 0.03)
                 if delayTime > 0 then task.wait(delayTime) end
                 
@@ -3333,7 +3365,6 @@ do
                 
                 local ShouldPreclick = false
                 if is1v1 then
-                    -- Bypass ball check in 1v1 so it fires the exact frame the enemy dies
                     ShouldPreclick = true
                 else
                     for _, Ball in ipairs(Folder:GetChildren()) do
@@ -11507,6 +11538,555 @@ if not Is_Mobile then
         end
     end)
 end
+(function()
+    local Player = game:GetService('Players').LocalPlayer
+    local RS = game:GetService('ReplicatedStorage')
+    local RunService = game:GetService('RunService')
+
+    local State = {
+        Running = true,
+        OG     = { Enabled = false, Aura = nil, Conn = nil, Name = 'TrueInfinityFX', Tag = 'ByteAura_OG' },
+        NEW    = { Enabled = false, Aura = nil, Conn = nil, Name = 'InfinityFX', Tag = 'ByteAura_NEW' },
+        SOF    = { Enabled = false, Aura = nil, Conn = nil, Name = 'TorsoFX', Tag = 'ByteAura_SOF', Color = Color3.fromRGB(255, 0, 0), Touched = false, Rainbow = false, RainbowConn = nil, Hue = 0 },
+        DS     = { Enabled = false, Aura = nil, Conn = nil, Name = 'DeathSlashAura', Tag = 'ByteAura_DS', Color = Color3.fromRGB(174, 34, 255), Rainbow = false, RainbowConn = nil, Hue = 0 },
+        REAPER = { Enabled = false, Aura = nil, Conn = nil, Name = 'MaxReaperFX', Tag = 'ByteAura_REAPER' },
+        GA     = { Enabled = false, Aura = nil, Conn = nil, Name = 'Guardian Angel', Tag = 'ByteAura_GA' },
+    }
+
+    local function GetTemplate(kind)
+        if kind == 'OG' or kind == 'NEW' then
+            local Shared = RS:FindFirstChild('Shared')
+            local Abilities = Shared and Shared:FindFirstChild('Abilities')
+            local Infinity = Abilities and Abilities:FindFirstChild('Infinity')
+            return Infinity and Infinity:FindFirstChild(State[kind].Name)
+        elseif kind == 'SOF' then
+            local Assets = RS:FindFirstChild('Assets')
+            local Abilities = Assets and Assets:FindFirstChild('Abilities')
+            local SofFolder = Abilities and Abilities:FindFirstChild('Slashes of Fury')
+            
+            if SofFolder then
+                local t = SofFolder:FindFirstChild('Torso')
+                if t and t:IsA('BasePart') then return t end
+            end
+            local globalT = RS:FindFirstChild('TorsoFX', true)
+            if globalT and globalT:IsA('BasePart') then return globalT end
+            
+            local fakeSOF = Instance.new("Part")
+            fakeSOF.Name = "TorsoFX"
+            fakeSOF.Size = Vector3.new(0.1, 0.1, 0.1) 
+            fakeSOF.Transparency = 1
+            fakeSOF.CanCollide = false
+            fakeSOF.Massless = true
+            fakeSOF.CollisionGroup = "Players"
+            fakeSOF.Anchored = false
+            fakeSOF.Locked = true
+
+            local function makeAttach(parent, name, cframe)
+                local a = Instance.new("Attachment")
+                a.Name = name
+                if cframe then a.CFrame = cframe end
+                a.Parent = parent
+                return a
+            end
+
+            local attMain = makeAttach(fakeSOF, "Attachment", CFrame.new(0, 0, 0))
+            local attSideL = makeAttach(fakeSOF, "SideEffects", CFrame.new(-1.12487793, 1.59217525, -0.180419922) * CFrame.fromMatrix(Vector3.new(), Vector3.new(-1,0,0), Vector3.new(0,1,0), Vector3.new(0,0,-1)))
+            local attSideR = makeAttach(fakeSOF, "SideEffects", CFrame.new(1.12512207, 1.59216762, -0.180419922))
+            local attVFX = makeAttach(fakeSOF, "VFX", CFrame.new(0, -3.56999993, 0) * CFrame.fromMatrix(Vector3.new(), Vector3.new(0,1,0), Vector3.new(-1,0,0), Vector3.new(0,0,1)))
+            
+            local sideAttL = makeAttach(attSideL, "Attachment", CFrame.new(-0.205871582, -5.7272563, 0.00048828125) * CFrame.fromMatrix(Vector3.new(), Vector3.new(0.945746243, 0.32490629, 0), Vector3.new(-0.32490629, 0.945746243, 0), Vector3.new(0, 0, 1)))
+            local sideAttR = makeAttach(attSideR, "Attachment", CFrame.new(-0.206176758, -5.72723579, 0.000244140625) * CFrame.fromMatrix(Vector3.new(), Vector3.new(0.945746243, 0.32490629, 0), Vector3.new(-0.32490629, 0.945746243, 0), Vector3.new(0, 0, 1)))
+
+            local function makeEmitter(parent, props)
+                local e = Instance.new("ParticleEmitter")
+                for k, v in pairs(props) do e[k] = v end
+                e.Parent = parent
+            end
+
+            local redSeq = ColorSequence.new(Color3.new(1, 0.184314, 0.184314))
+            local redSeq2 = ColorSequence.new(Color3.new(0.996078, 0.0745098, 0.0745098))
+            local vfxTrans = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.19977, 1), NumberSequenceKeypoint.new(0.534782, 0.754667), NumberSequenceKeypoint.new(1, 1)})
+            
+            makeEmitter(attMain, { Name = "ParticleEmitter", Texture = "rbxassetid://1075864321", Color = redSeq, Size = NumberSequence.new(6.95035), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.9625), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.5, 1), Rate = 8, Speed = NumberRange.new(0.00463356), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 1, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(0, 0), Rotation = NumberRange.new(-90, -90), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 1, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = 1.41018, Brightness = 10 })
+            makeEmitter(attMain, { Name = "GlowStickl", Texture = "rbxassetid://1075864321", Color = redSeq, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 3.47847), NumberSequenceKeypoint.new(1, 6.95695)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.498311, 0.925), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(1.2, 1.2), Rate = 2, Speed = NumberRange.new(0.00575507), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 0, LightInfluence = 0.9, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(0, 0), Rotation = NumberRange.new(0, 0), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 1, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = 0.81, Brightness = 1 })
+            makeEmitter(attMain, { Name = "Shine", Texture = "rbxassetid://15741242354", Color = redSeq, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.99272), NumberSequenceKeypoint.new(1, 13.1867)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.105381, 0.687117), NumberSequenceKeypoint.new(0.752534, 0.875), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(1, 1), Rate = 2, Speed = NumberRange.new(0.00152442), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 0, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(-20, 20), Rotation = NumberRange.new(-360, 360), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.9, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = -1, Brightness = 3 })
+            makeEmitter(attMain, { Name = "flare2", Texture = "http://www.roblox.com/asset/?id=16543240123", Color = redSeq, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.51414), NumberSequenceKeypoint.new(1, 4.19023)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.244932, 0.725), NumberSequenceKeypoint.new(0.506757, 0.68125), NumberSequenceKeypoint.new(0.72973, 0.85625), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.425, 0.55), Rate = 3, Speed = NumberRange.new(0.00250224), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 0, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(-150, 120), Rotation = NumberRange.new(-360, 180), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.35, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = 0.07, Brightness = 1 })
+            makeEmitter(attMain, { Name = "Shine", Texture = "rbxassetid://15741242354", Color = redSeq, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.49393), NumberSequenceKeypoint.new(1, 10.9889)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.16723, 0.91875), NumberSequenceKeypoint.new(0.753378, 0.9), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(1, 1), Rate = 2, Speed = NumberRange.new(0.00127035), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 1, LightInfluence = 0.5, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(-20, 20), Rotation = NumberRange.new(-360, 360), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.9, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = -1, Brightness = 7 })
+            makeEmitter(attMain, { Name = "flare2", Texture = "http://www.roblox.com/asset/?id=16543240123", Color = redSeq, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.51414), NumberSequenceKeypoint.new(1, 4.19023)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.244932, 0.725), NumberSequenceKeypoint.new(0.506757, 0.68125), NumberSequenceKeypoint.new(0.72973, 0.85625), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.425, 0.55), Rate = 3, Speed = NumberRange.new(0.00250224), Acceleration = Vector3.new(0, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.None, FlipbookStartRandom = false, LightEmission = 1, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(-150, 120), Rotation = NumberRange.new(-360, 180), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.35, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = 0.07, Brightness = 7 })
+
+            for _, sideAtt in ipairs({sideAttL, sideAttR}) do
+                makeEmitter(sideAtt, { Name = "Misty", Texture = "rbxassetid://16114712910", Color = redSeq2, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.7783), NumberSequenceKeypoint.new(0.190298, 2.05065), NumberSequenceKeypoint.new(1, 0.5292)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.8, 0.8), Rate = 7, Speed = NumberRange.new(15.876, 31.752), Acceleration = Vector3.new(-20.583999633789062, 0, 0), Drag = 5, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(24, 24), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4, FlipbookStartRandom = false, LightEmission = 0.35, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(0, 0), Rotation = NumberRange.new(-360, 360), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.35, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = 0, Brightness = 150 })
+                makeEmitter(sideAtt, { Name = "Misty2", Texture = "rbxassetid://10529923908", Color = redSeq2, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 1.12455), NumberSequenceKeypoint.new(1, 0.2646)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.298879, 0.9125), NumberSequenceKeypoint.new(0.498132, 0.475), NumberSequenceKeypoint.new(0.697385, 0.8625), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.8, 0.8), Rate = 17, Speed = NumberRange.new(15.876, 31.752), Acceleration = Vector3.new(-25.583999633789062, 0, 0), Drag = 5, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(4, 4), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid8x8, FlipbookStartRandom = false, LightEmission = 0.35, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(0, 0), Rotation = NumberRange.new(-360, 360), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.35, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = -0.444418, Brightness = 15 })
+                makeEmitter(sideAtt, { Name = "AV2", Texture = "rbxassetid://13388883743", Color = redSeq2, Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 3.7044), NumberSequenceKeypoint.new(1, 2.11667)}), Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.9625), NumberSequenceKeypoint.new(0.101804, 0.764667), NumberSequenceKeypoint.new(0.490617, 0), NumberSequenceKeypoint.new(0.807804, 0.748), NumberSequenceKeypoint.new(1, 1)}), Lifetime = NumberRange.new(0.8, 0.8), Rate = 10, Speed = NumberRange.new(15.876, 31.752), Acceleration = Vector3.new(-20.583999633789062, 0, 0), Drag = 5, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid8x8, FlipbookStartRandom = false, LightEmission = 0, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.FacingCamera, RotSpeed = NumberRange.new(0, 0), Rotation = NumberRange.new(-360, 360), SpreadAngle = Vector2.new(0, 0), Squash = NumberSequence.new(0), TimeScale = 0.35, VelocityInheritance = 0, VelocitySpread = 0, ZOffset = -1.77767, Brightness = 0 })
+            end
+
+            makeEmitter(attVFX, { Name = "Bottom", Texture = "rbxassetid://15413764911", Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(0.0117647, 0, 0)), ColorSequenceKeypoint.new(0.66782, Color3.new(0.0476695, 0, 0)), ColorSequenceKeypoint.new(1, Color3.new(1, 0, 0))}), Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.199667, 1.10853), NumberSequenceKeypoint.new(0.502, 1.32525), NumberSequenceKeypoint.new(0.899734, 0), NumberSequenceKeypoint.new(1, 0)}), Transparency = vfxTrans, Lifetime = NumberRange.new(0.4, 0.4), Rate = 75, Speed = NumberRange.new(10.512, 15.768), Acceleration = Vector3.new(43.80059051513672, 0, 0), Drag = 2.5, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4, FlipbookStartRandom = false, LightEmission = 0, LightInfluence = 0.35, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(-10, 10), Rotation = NumberRange.new(-90, -90), SpreadAngle = Vector2.new(180, 0), Squash = NumberSequence.new(0), TimeScale = 0.65, VelocityInheritance = 0, VelocitySpread = 180, ZOffset = 1.07992, Brightness = 0 })
+            makeEmitter(attVFX, { Name = "Mid", Texture = "rbxassetid://15413764911", Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0, 0)), ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))}), Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.100266, 0), NumberSequenceKeypoint.new(0.495008, 2.64966), NumberSequenceKeypoint.new(0.899734, 0), NumberSequenceKeypoint.new(1, 0)}), Transparency = vfxTrans, Lifetime = NumberRange.new(0.4, 0.4), Rate = 75, Speed = NumberRange.new(8.76, 11.68), Acceleration = Vector3.new(65.70088958740234, 0, 0), Drag = 0, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4, FlipbookStartRandom = false, LightEmission = 0.5, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(-10, 10), Rotation = NumberRange.new(-90, -90), SpreadAngle = Vector2.new(180, 0), Squash = NumberSequence.new(0), TimeScale = 0.65, VelocityInheritance = 0, VelocitySpread = 180, ZOffset = 1.07992, Brightness = 5 })
+            makeEmitter(attVFX, { Name = "MidHigh", Texture = "rbxassetid://15413764911", Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 0, 0)), ColorSequenceKeypoint.new(1, Color3.new(0, 0, 0))}), Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 2.34324), NumberSequenceKeypoint.new(0.322064, 2.27114), NumberSequenceKeypoint.new(1, 0)}), Transparency = vfxTrans, Lifetime = NumberRange.new(0.4, 0.4), Rate = 75, Speed = NumberRange.new(13.238, 13.238), Acceleration = Vector3.new(146.001953125, 0, 0), Drag = 5, EmissionDirection = Enum.NormalId.Top, Enabled = true, FlipbookFramerate = NumberRange.new(1, 1), FlipbookLayout = Enum.ParticleFlipbookLayout.Grid4x4, FlipbookStartRandom = false, LightEmission = 0.5, LightInfluence = 0, LockedToPart = true, Orientation = Enum.ParticleOrientation.VelocityParallel, RotSpeed = NumberRange.new(-10, 10), Rotation = NumberRange.new(-90, -90), SpreadAngle = Vector2.new(180, 0), Squash = NumberSequence.new(0), TimeScale = 0.65, VelocityInheritance = 0, VelocitySpread = 180, ZOffset = 1.07992, Brightness = 55 })
+
+            return fakeSOF
+        elseif kind == 'DS' then
+            local Misc = RS:FindFirstChild('Misc')
+            if Misc then
+                local t = Misc:FindFirstChild('DeathSlashAura')
+                if t and t:IsA('BasePart') then return t end
+            end
+        elseif kind == 'REAPER' then
+            local Misc = RS:FindFirstChild('Misc')
+            if Misc then
+                local t = Misc:FindFirstChild('MaxReaperFX')
+                if t and t:IsA('BasePart') then return t end
+            end
+        elseif kind == 'GA' then
+            local Assets = RS:FindFirstChild('Assets')
+            local Abilities = Assets and Assets:FindFirstChild('Abilities')
+            local GAFolder = Abilities and Abilities:FindFirstChild('Guardian Angel')
+            if GAFolder then
+                local t = GAFolder:FindFirstChild('Torso')
+                if t and t:IsA('BasePart') then return t end
+            end
+        end
+        return nil
+    end
+
+    local function CleanupTagged(char, tag)
+        if not char then return end
+        local toDelete = {}
+        for _, d in ipairs(char:GetDescendants()) do
+            if d:GetAttribute(tag) then
+                table.insert(toDelete, d)
+            end
+        end
+        for _, d in ipairs(toDelete) do
+            if d and d.Parent then
+                pcall(function() d:Destroy() end)
+            end
+        end
+    end
+
+    local function ApplyColor(kind, color)
+        local char = Player.Character
+        if not char then return end
+        local s = State[kind]
+        local seq = ColorSequence.new(color)
+        for _, d in ipairs(char:GetDescendants()) do
+            if (d:IsA('ParticleEmitter') or d:IsA('Beam')) and d:GetAttribute(s.Tag) then
+                if not string.find(d.Name, 'DONT COLOR', 1, true) then
+                    d.Color = seq
+                end
+            end
+        end
+    end
+
+    local function StartRainbow(kind)
+        local s = State[kind]
+        if s.RainbowConn then s.RainbowConn:Disconnect() end
+        s.RainbowConn = RunService.RenderStepped:Connect(function(dt)
+            s.Hue = (s.Hue + dt * 0.5) % 1
+            ApplyColor(kind, Color3.fromHSV(s.Hue, 1, 1))
+        end)
+    end
+
+    local function Spawn(kind)
+        local s = State[kind]
+        local char = Player.Character
+        if not char then return nil end
+        local hrp = char:FindFirstChild('HumanoidRootPart') or char:WaitForChild('HumanoidRootPart', 5)
+        local head = char:FindFirstChild('Head')
+        local torso = char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+        if not hrp or not head then return nil end
+
+        local template = GetTemplate(kind)
+        if not template then return nil end
+
+        CleanupTagged(char, s.Tag)
+
+        if kind == 'REAPER' then
+            local clone = template:Clone()
+            
+            for _, child in ipairs(clone:GetChildren()) do
+                local target = char:FindFirstChild(child.Name) or hrp
+                child.Parent = target
+                child:SetAttribute(s.Tag, true)
+                
+                if child:IsA('ParticleEmitter') then
+                    local name = child.Name
+                    local tex = child.Texture or ""
+                    local isBurst = (name == 'bba' or name == 'shockwave' or name == 'mee' or name == '1' or name == '2' or name == '3' or name == '4' or name == '5')
+                    if not isBurst and not string.find(tex, '14967667787', 1, true) then
+                        child.Enabled = true
+                    else
+                        child.Enabled = false
+                    end
+                elseif child:IsA('Beam') or child:IsA('Trail') then
+                    child.Enabled = true
+                elseif child:IsA('Sound') then
+                    child.Looped = true
+                    pcall(function() child:Play() end)
+                end
+                
+                for _, desc in ipairs(child:GetDescendants()) do
+                    desc:SetAttribute(s.Tag, true)
+                    if desc:IsA('ParticleEmitter') then
+                        local name = desc.Name
+                        local tex = desc.Texture or ""
+                        local isBurst = (name == 'bba' or name == 'shockwave' or name == 'mee' or name == '1' or name == '2' or name == '3' or name == '4' or name == '5')
+                        if not isBurst and not string.find(tex, '14967667787', 1, true) then
+                            desc.Enabled = true
+                        else
+                            desc.Enabled = false
+                        end
+                    elseif desc:IsA('Beam') or desc:IsA('Trail') then
+                        desc.Enabled = true
+                    end
+                end
+            end
+            
+            local dummy = Instance.new('Part')
+            dummy.Name = 'ByteAuraPart_REAPER'
+            dummy.Transparency = 1
+            dummy.Anchored = false
+            dummy.CanCollide = false
+            dummy.Massless = true
+            dummy.Parent = char
+            dummy:SetAttribute(s.Tag, true)
+            
+            clone:Destroy()
+            return dummy
+            
+        elseif kind == 'GA' then
+            local clone = template:Clone()
+            
+            for _, c in ipairs(clone:GetChildren()) do
+                if c.Name ~= 'L.Wing' and c.Name ~= 'R.Wing' and c.Name ~= 'Dust' then
+                    c:Destroy()
+                end
+            end
+
+            clone.Name = 'ByteAuraPart_GA'
+            clone.Anchored = false
+            clone.CanCollide = false
+            clone.Massless = true
+            clone.Locked = false
+            clone.Transparency = 1
+            clone:SetAttribute('NoRender_Ignore', true)
+            clone:SetAttribute(s.Tag, true)
+
+            local weld = Instance.new('Weld')
+            weld.Name = 'ByteAuraWeld_GA'
+            weld.Part0 = clone
+            weld.Part1 = torso or hrp
+            weld.C0 = CFrame.new(0, 0, 0)
+            weld.C1 = CFrame.new()
+            weld.Parent = clone
+
+            for _, d in ipairs(clone:GetDescendants()) do
+                if d:IsA('Beam') then
+                    d.Enabled = true
+                    d.Width0 = 2
+                    d.Width1 = 2
+                    d.CurveSize0 = 0.630079
+                    d.CurveSize1 = -0.630079
+                elseif d:IsA('ParticleEmitter') then
+                    d.Enabled = true 
+                end
+                d:SetAttribute(s.Tag, true)
+            end
+
+            clone.Parent = char
+            return clone
+        end
+
+        local clone = template:Clone()
+        if not clone:IsA('BasePart') then
+            clone:Destroy()
+            return nil
+        end
+
+        clone.Name = 'ByteAuraPart_' .. kind
+        clone.Anchored = false
+        clone.CanCollide = false
+        clone.Massless = true
+        clone.Locked = false
+        clone.Transparency = 1
+        clone:SetAttribute('NoRender_Ignore', true)
+        clone:SetAttribute(s.Tag, true)
+
+        local weld = Instance.new('Weld')
+        weld.Name = 'ByteAuraWeld_' .. kind
+        weld.Part0 = clone
+
+        if kind == 'SOF' then
+            weld.Part1 = torso or hrp
+        else
+            weld.Part1 = head
+        end
+
+        weld.C0 = CFrame.new(0, 0, 0) 
+        weld.C1 = CFrame.new()
+        weld.Parent = clone
+
+        if kind == 'SOF' or kind == 'DS' then
+            local recolor = (kind == 'DS') or s.Touched or s.Rainbow
+            local seq = ColorSequence.new(s.Color)
+            for _, d in ipairs(clone:GetDescendants()) do
+                if d:IsA('ParticleEmitter') or d:IsA('Beam') then
+                    d:SetAttribute(s.Tag, true)
+                    if recolor and not string.find(d.Name, 'DONT COLOR', 1, true) then
+                        d.Color = seq
+                    end
+                end
+            end
+        end
+
+        local bodyPartSet = {
+            ['Head'] = true, ['Torso'] = true, 
+            ['Left Arm'] = true, ['Right Arm'] = true, 
+            ['Left Leg'] = true, ['Right Leg'] = true
+        }
+
+        local toMove = {}
+        for _, d in ipairs(clone:GetDescendants()) do
+            if d:IsA('ParticleEmitter') then
+                if bodyPartSet[d.Name] and d.Parent == clone then
+                    table.insert(toMove, d)
+                end
+                if d.Name == 'colorme' then
+                    d.Brightness = 3
+                end
+            elseif d:IsA('Beam') and kind ~= 'SOF' then
+                d.Brightness = 2
+            elseif d:IsA('Sound') then
+                table.insert(toMove, d)
+            end
+        end
+
+        for _, d in ipairs(toMove) do
+            if d:IsA('Sound') then
+                d.Parent = hrp
+                d.Looped = true
+                pcall(function() d:Play() end)
+            else
+                local bodyPart = char:FindFirstChild(d.Name)
+                if bodyPart then
+                    d.Parent = bodyPart
+                end
+            end
+            d:SetAttribute(s.Tag, true)
+        end
+
+        clone.Parent = char
+        return clone
+    end
+
+    local function Destroy(kind)
+        local s = State[kind]
+        if s.Aura and s.Aura.Parent then
+            pcall(function() s.Aura:Destroy() end)
+        end
+        s.Aura = nil
+        CleanupTagged(Player.Character, s.Tag)
+    end
+
+    local function Enable(kind)
+        local s = State[kind]
+        if s.Enabled and s.Aura and s.Aura.Parent then return end
+        s.Enabled = true
+        Destroy(kind)
+        s.Aura = Spawn(kind)
+        if s.Conn then s.Conn:Disconnect() end
+        s.Conn = Player.CharacterAdded:Connect(function()
+            task.wait(1.5)
+            if s.Enabled then
+                Destroy(kind)
+                s.Aura = Spawn(kind)
+                if s.Rainbow then StartRainbow(kind) end
+            end
+        end)
+        if s.Rainbow then StartRainbow(kind) end
+    end
+
+    local function Disable(kind)
+        local s = State[kind]
+        s.Enabled = false
+        if s.Conn then s.Conn:Disconnect(); s.Conn = nil end
+        if s.RainbowConn then s.RainbowConn:Disconnect(); s.RainbowConn = nil end
+        Destroy(kind)
+    end
+
+    task.spawn(function()
+        while State.Running and task.wait(1) do
+            if Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') then
+                pcall(function()
+                    if State.OG.Enabled and (not State.OG.Aura or not State.OG.Aura.Parent) then State.OG.Aura = Spawn('OG') end
+                    if State.NEW.Enabled and (not State.NEW.Aura or not State.NEW.Aura.Parent) then State.NEW.Aura = Spawn('NEW') end
+                    if State.SOF.Enabled and (not State.SOF.Aura or not State.SOF.Aura.Parent) then State.SOF.Aura = Spawn('SOF') end
+                    if State.DS.Enabled and (not State.DS.Aura or not State.DS.Aura.Parent) then State.DS.Aura = Spawn('DS') end
+                    if State.REAPER.Enabled and (not State.REAPER.Aura or not State.REAPER.Aura.Parent) then State.REAPER.Aura = Spawn('REAPER') end
+                    if State.GA.Enabled and (not State.GA.Aura or not State.GA.Aura.Parent) then State.GA.Aura = Spawn('GA') end
+                end)
+            end
+        end
+    end)
+
+    local OldUnload = Env.Visual_Unload
+    Env.Visual_Unload = function()
+        State.Running = false
+        for _, key in ipairs({'Infinity_Aura_Enabled', 'SOF_Aura_Enabled', 'SOF_Aura_Rainbow', 'DS_Aura_Enabled', 'DS_Aura_Rainbow', 'REAPER_Aura_Enabled', 'GA_Aura_Enabled'}) do
+            local toggle = Library and Library.Toggles and Library.Toggles[key]
+            if toggle and toggle.SetValue then pcall(function() toggle:SetValue(false) end) end
+        end
+        Disable('OG')
+        Disable('NEW')
+        Disable('SOF')
+        Disable('DS')
+        Disable('REAPER')
+        Disable('GA')
+        if OldUnload then OldUnload() end
+    end
+
+    local Group = Tabs.Client:AddRightGroupbox("Auras", "sparkles")
+
+    local function RefreshAura()
+        local ok1, isEnabled = pcall(function() return Library.Toggles.Infinity_Aura_Enabled.Value end)
+        local ok2, auraType = pcall(function() return Library.Options.Infinity_Aura_Type.Value end)
+        
+        if not ok1 or not ok2 then return end
+
+        if not isEnabled then
+            Disable('OG')
+            Disable('NEW')
+            return
+        end
+
+        if auraType == 'OG' then
+            Disable('NEW')
+            Enable('OG')
+        elseif auraType == 'Normal' then
+            Disable('OG')
+            Enable('NEW')
+        end
+    end
+
+    Group:AddToggle('Infinity_Aura_Enabled', {
+        Text = 'Infinity Aura',
+        Default = false,
+        Callback = function() task.defer(RefreshAura) end,
+    })
+
+    Group:AddDropdown('Infinity_Aura_Type', {
+        Text = 'Aura Type',
+        Values = { 'OG', 'Normal' },
+        Default = 1,
+        Multi = false,
+        Callback = function() task.defer(RefreshAura) end,
+    })
+
+    Group:AddDivider()
+
+    Group:AddToggle('SOF_Aura_Enabled', {
+        Text = 'SOF Aura',
+        Default = false,
+        Callback = function(state)
+            if state then Enable('SOF') else Disable('SOF') end
+        end,
+    })
+
+    Group:AddColorPicker('SOF_Aura_Color', {
+        Title = 'SOF Aura Color',
+        Default = Color3.fromRGB(255, 0, 0),
+        Callback = function(color)
+            State.SOF.Color = color
+            State.SOF.Touched = true
+            if not State.SOF.Rainbow then
+                ApplyColor('SOF', color)
+            end
+        end,
+    })
+
+    Group:AddToggle('SOF_Aura_Rainbow', {
+        Text = 'SOF Rainbow Aura',
+        Default = false,
+        Callback = function(state)
+            State.SOF.Rainbow = state
+            if state then
+                if State.SOF.Enabled then StartRainbow('SOF') end
+            else
+                if State.SOF.RainbowConn then
+                    State.SOF.RainbowConn:Disconnect()
+                    State.SOF.RainbowConn = nil
+                end
+                if State.SOF.Enabled then
+                    if State.SOF.Touched then
+                        ApplyColor('SOF', State.SOF.Color)
+                    else
+                        Disable('SOF')
+                        Enable('SOF')
+                    end
+                end
+            end
+        end,
+    })
+
+    Group:AddDivider()
+
+    Group:AddToggle('DS_Aura_Enabled', {
+        Text = 'Death Slash Aura',
+        Default = false,
+        Callback = function(state)
+            if state then Enable('DS') else Disable('DS') end
+        end,
+    })
+
+    Group:AddColorPicker('DS_Aura_Color', {
+        Title = 'DS Aura Color',
+        Default = Color3.fromRGB(174, 34, 255),
+        Callback = function(color)
+            State.DS.Color = color
+            if not State.DS.Rainbow then
+                ApplyColor('DS', color)
+            end
+        end,
+    })
+
+    Group:AddToggle('DS_Aura_Rainbow', {
+        Text = 'DS Rainbow Aura',
+        Default = false,
+        Callback = function(state)
+            State.DS.Rainbow = state
+            if state then
+                if State.DS.Enabled then StartRainbow('DS') end
+            else
+                if State.DS.RainbowConn then
+                    State.DS.RainbowConn:Disconnect()
+                    State.DS.RainbowConn = nil
+                end
+                if State.DS.Enabled then ApplyColor('DS', State.DS.Color) end
+            end
+        end,
+    })
+
+    Group:AddDivider()
+
+    Group:AddToggle('REAPER_Aura_Enabled', {
+        Text = 'Reaper Aura',
+        Default = false,
+        Callback = function(state)
+            if state then Enable('REAPER') else Disable('REAPER') end
+        end,
+    })
+
+    Group:AddDivider()
+
+    Group:AddToggle('GA_Aura_Enabled', {
+        Text = 'Guardian Angel Wings',
+        Default = false,
+        Callback = function(state)
+            if state then Enable('GA') else Disable('GA') end
+        end,
+    })
+end)()
+
 
 local Menu_Group = Tabs.UISettings:AddLeftGroupbox("Menu", "menu")
 
@@ -11526,7 +12106,13 @@ Menu_Group:AddButton({
         Window:Dialog({
             Title = 'Unload',
             Content = 'Are you SURE?',
-            OnConfirm = UnloadScript,
+            OnConfirm = function()
+                if Env.Visual_Unload then
+                    pcall(Env.Visual_Unload)
+                else
+                    UnloadScript()
+                end
+            end,
         })
     end
 })
@@ -11541,6 +12127,7 @@ if Is_Mobile then
         if ok then
             local btn = Instance.new('TextButton')
             btn.Name = 'ByteMobileMenu'
+            Env._MobileMenuButton = btn
             btn.Size = UDim2.fromOffset(56, 56)
             btn.Position = UDim2.new(0, 12, 0.5, -28)
             btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
